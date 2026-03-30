@@ -391,3 +391,12 @@ function DemoRoute(){
     </Card>
   </div>;
 }
+
+export {
+  NAAForm,
+  NAARegister,
+  AssetBoard,
+  ApprovalPanel,
+  Performance,
+  DemoRoute
+};

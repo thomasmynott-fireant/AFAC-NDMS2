@@ -747,3 +747,17 @@ function C2MovementDashboard(){
     </div>
   </div>;
 }
+
+export {
+  C1Readiness,
+  C1EOIWizard,
+  C1RolesEvidence,
+  C1AgencyReview,
+  C1NationalExceptions,
+  C2RequestRegister,
+  C2OrderConsole,
+  C2ContingentBuilder,
+  C2ManifestBuilder,
+  C2TravelPlanner,
+  C2MovementDashboard
+};

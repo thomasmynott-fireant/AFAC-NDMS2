@@ -1,4 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { C1Readiness, C1EOIWizard, C1RolesEvidence, C1AgencyReview, C1NationalExceptions, C2RequestRegister, C2OrderConsole, C2ContingentBuilder, C2ManifestBuilder, C2TravelPlanner, C2MovementDashboard } from "./ndms-stage1";
+import { C3LiveBoard, C3PersonDetail, C3IIIWorkflow, C3RoleChange, C3FatigueLogs, C3Rotation, C4AgencyDash, C4NationalDash, C4StateDash, C4ReportBuilder, C4SitRep } from "./ndms-stage2";
+import { MyClaims, ClaimSubmit, AgencyReview, NRSCAudit, Reconciliation } from "./ndms-c5-finance";
+import { NAAForm, NAARegister, AssetBoard, ApprovalPanel, Performance, DemoRoute } from "./ndms-stage4-aviation";
 
 /* ─── AFAC Brand Tokens ─── */
 const T = {
@@ -335,9 +339,41 @@ export default function NDMSPrototype() {
 
         {/* Content */}
         <div style={{ flex: 1, overflowY: "auto", padding: "0 0 40px" }}>
-          {role === "nrsc" && <NRSCHome />}
-          {role === "team" && <TeamMemberHome />}
-          {role === "agency" && <AgencyHome />}
+          {(() => {
+            if (role === "nrsc") {
+              switch (activeNav) {
+                case "home": return <NRSCHome />;
+                case "requests": return <C2RequestRegister />;
+                case "contingents": return <C2ContingentBuilder />;
+                case "live": return <C3LiveBoard />;
+                case "dashboards": return <C4NationalDash />;
+                case "sitreps": return <C4SitRep />;
+                case "finance": return <Reconciliation />;
+                case "aviation": return <AssetBoard />;
+                default: return <NRSCHome />;
+              }
+            } else if (role === "team") {
+              switch (activeNav) {
+                case "home": return <TeamMemberHome />;
+                case "profile": return <C1RolesEvidence />;
+                case "documents": return <C1Readiness />;
+                case "deployment": return <TeamMemberHome />; 
+                case "claims": return <MyClaims />;
+                default: return <TeamMemberHome />;
+              }
+            } else if (role === "agency") {
+              switch (activeNav) {
+                case "home": return <AgencyHome />;
+                case "people": return <C1AgencyReview />;
+                case "requests": return <C2RequestRegister />;
+                case "contingents": return <C2ContingentBuilder />;
+                case "approvals": return <C3RoleChange />;
+                case "claims": return <AgencyReview />;
+                case "dashboard": return <C4AgencyDash />;
+                default: return <AgencyHome />;
+              }
+            }
+          })()}
         </div>
       </main>
     </div>
