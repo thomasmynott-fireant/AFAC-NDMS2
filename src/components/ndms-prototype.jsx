@@ -1,8 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-import { C1Readiness, C1EOIWizard, C1RolesEvidence, C1AgencyReview, C1NationalExceptions, C2RequestRegister, C2OrderConsole, C2ContingentBuilder, C2ManifestBuilder, C2TravelPlanner, C2MovementDashboard } from "./ndms-stage1";
-import { C3LiveBoard, C3PersonDetail, C3IIIWorkflow, C3RoleChange, C3FatigueLogs, C3Rotation, C4AgencyDash, C4NationalDash, C4StateDash, C4ReportBuilder, C4SitRep } from "./ndms-stage2";
+import PeopleWorkspace from "./ndms-people";
+import RequestsWorkspace, { RequestWizard } from "./ndms-requests";
+import DeploymentsWorkspace from "./ndms-deployments";
+import ReportingWorkspace from "./ndms-reporting";
 import { MyClaims, ClaimSubmit, AgencyReview, NRSCAudit, Reconciliation } from "./ndms-c5-finance";
 import { NAAForm, NAARegister, AssetBoard, ApprovalPanel, Performance, DemoRoute } from "./ndms-stage4-aviation";
+import { TaskCentre, Deployment360, ApprovalTimeline } from "./ndms-task-centre";
+import { DMTHome, AirDeskHome, ExecutiveHome, INLOHome, RMGHome } from "./ndms-workspaces";
+import AdminWorkspace from "./ndms-admin";
 
 /* ─── AFAC Brand Tokens ─── */
 const T = {
@@ -101,55 +106,46 @@ const Btn = ({ children, variant = "secondary", style: s, ...props }) => {
 
 /* ─── Data ─── */
 const ROLES = [
-  { id: "nrsc", label: "NRSC Staff", name: "Jessica Walsh", agency: "NRSC", initials: "JW", color: T.teal },
-  { id: "team", label: "Team Member", name: "Daniel Thornton", agency: "NSW RFS", initials: "DT", color: T.blue },
-  { id: "agency", label: "Agency Staff", name: "Sarah Patel", agency: "NSW RFS", initials: "SP", color: T.coral },
+  { id: "nrsc", shell: "nrsc", label: "NRSC Operations", name: "Jessica Walsh", agency: "NRSC", initials: "JW", color: T.teal, sysRole: "NRSC Operations", deployRole: null },
+  { id: "team", shell: "team", label: "Team Member", name: "Daniel Thornton", agency: "QLD QFES", initials: "DT", color: T.blue, sysRole: "Team Member", deployRole: "Crew Leader — Northern Rivers" },
+  { id: "agency", shell: "agency", label: "Agency Staff", name: "Sarah Patel", agency: "QLD QFES", initials: "SP", color: T.coral, sysRole: "Agency Administrator", deployRole: null },
+  { id: "dmt", shell: "specialist", label: "DMT", name: "Rachel Kimura", agency: "VIC CFA", initials: "RK", color: "#6C5CE7", sysRole: "Team Member", deployRole: "Deployment Manager — Northern Rivers" },
+  { id: "airdesk", shell: "specialist", label: "Air Desk", name: "Air Desk Operator", agency: "AFAC NRSC", initials: "AD", color: T.orange, sysRole: "Aviation Operations", deployRole: null },
+  { id: "inlo", shell: "specialist", label: "INLO / AREP", name: "Mark Sullivan", agency: "SA CFS", initials: "MS", color: "#00B894", sysRole: "Team Member", deployRole: "AREP — Northern Rivers" },
+  { id: "rmg", shell: "specialist", label: "RMG / State", name: "State Coordinator", agency: "NSW", initials: "SC", color: "#636E72", sysRole: "RMG Member", deployRole: null },
+  { id: "exec", shell: "specialist", label: "Executive", name: "CCOSC Delegate", agency: "AFAC", initials: "CC", color: "#2D3436", sysRole: "Executive Oversight", deployRole: null },
 ];
 
-const NAV_ITEMS = {
-  nrsc: [
-    { section: "Operations", items: [
-      { icon: "home", label: "Home", id: "home", badge: null },
-      { icon: "people", label: "People", id: "people" },
-      { icon: "doc", label: "Requests", id: "requests", badge: "3" },
-      { icon: "truck", label: "Contingents", id: "contingents" },
-      { icon: "mapPin", label: "Live Deployment", id: "live", badge: "!" },
+/* Unified 7-module nav — same structure for all roles, with role-specific labels */
+const getNavItems = (role) => {
+  const shell = ROLES.find(r => r.id === role)?.shell || "nrsc";
+  const homeLabel = { nrsc: "Home", team: "My Readiness", agency: "Agency Home", dmt: "DMT Console", airdesk: "Air Desk", inlo: "Field Console", rmg: "State Overview", exec: "Executive View" }[role] || "Home";
+
+  const core = [
+    { section: "Platform", items: [
+      { icon: "home", label: homeLabel, id: "home" },
+      { icon: "people", label: shell === "team" ? "My Record" : "People", id: "people", badge: shell === "agency" ? "5" : null },
+      { icon: "doc", label: "Requests", id: "requests", badge: shell === "nrsc" ? "3" : null },
+      { icon: "mapPin", label: "Deployments", id: "deployments", badge: shell === "nrsc" ? "!" : null },
+      { icon: "grid", label: "Reporting", id: "reporting" },
     ]},
-    { section: "Intelligence", items: [
-      { icon: "grid", label: "Dashboards", id: "dashboards" },
-      { icon: "flag", label: "SitReps", id: "sitreps" },
-    ]},
-    { section: "Finance", items: [
-      { icon: "dollar", label: "Financial Reconciliation", id: "finance" },
-    ]},
-    { section: "Specialist", items: [
-      { icon: "send", label: "National Aviation", id: "aviation" },
-    ]},
-  ],
-  team: [
-    { section: "My NDMS", items: [
-      { icon: "home", label: "My Readiness", id: "home" },
-      { icon: "people", label: "My Profile", id: "profile" },
-      { icon: "doc", label: "My Documents", id: "documents" },
-    ]},
-    { section: "Deployment", items: [
-      { icon: "mapPin", label: "My Deployment", id: "deployment", badge: "1" },
-      { icon: "dollar", label: "My Claims", id: "claims" },
-    ]},
-  ],
-  agency: [
-    { section: "Agency", items: [
-      { icon: "home", label: "Agency Operations", id: "home" },
-      { icon: "people", label: "Our People", id: "people", badge: "5" },
-      { icon: "doc", label: "Requests", id: "requests" },
-      { icon: "truck", label: "Contingents", id: "contingents" },
-    ]},
-    { section: "Review", items: [
-      { icon: "check", label: "Approvals", id: "approvals", badge: "5" },
-      { icon: "dollar", label: "Claims Review", id: "claims", badge: "8" },
-      { icon: "grid", label: "Dashboard", id: "dashboard" },
-    ]},
-  ],
+  ];
+
+  // Finance — all roles except exec/rmg
+  if (!["exec", "rmg"].includes(role)) {
+    core.push({ section: "Finance", items: [
+      { icon: "dollar", label: shell === "team" ? "My Claims" : shell === "agency" ? "Claims Review" : "Finance", id: "finance", badge: shell === "agency" ? "8" : null },
+    ]});
+  }
+
+  // Aviation — only nrsc, airdesk, exec
+  if (["nrsc", "airdesk", "exec"].includes(role)) {
+    core.push({ section: "Specialist", items: [
+      { icon: "send", label: role === "airdesk" ? "Aviation Console" : "Aviation", id: "aviation" },
+    ]});
+  }
+
+  return core;
 };
 
 /* ─── Main App ─── */
@@ -158,13 +154,57 @@ export default function NDMSPrototype() {
   const [activeNav, setActiveNav] = useState("home");
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [taskDrawerOpen, setTaskDrawerOpen] = useState(false);
+  const [demoMode, setDemoMode] = useState(true);
 
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => { setActiveNav("home"); }, [role]);
 
   const currentRole = ROLES.find(r => r.id === role);
-  const navSections = NAV_ITEMS[role];
+  const navSections = getNavItems(role);
   const iconMap = Icons;
+
+  /* Unified route resolver */
+  const renderContent = () => {
+    const shell = currentRole.shell;
+    switch (activeNav) {
+      case "home":
+        if (role === "nrsc") return <NRSCHome onOpenWizard={() => setWizardOpen(true)} />;
+        if (role === "team") return <TeamMemberHome />;
+        if (role === "agency") return <AgencyHome onOpenWizard={() => setWizardOpen(true)} />;
+        if (role === "dmt") return <DMTHome />;
+        if (role === "airdesk") return <AirDeskHome />;
+        if (role === "inlo") return <INLOHome />;
+        if (role === "rmg") return <RMGHome />;
+        if (role === "exec") return <ExecutiveHome />;
+        return <NRSCHome />;
+      case "people":
+        if (shell === "team") return <PeopleWorkspace scope="personal" />;
+        if (shell === "agency") return <PeopleWorkspace scope="agency" />;
+        return <PeopleWorkspace scope="national" />;
+      case "requests":
+        return <RequestsWorkspace onOpenWizard={() => setWizardOpen(true)} />;
+      case "deployments":
+        return <DeploymentsWorkspace />;
+      case "reporting":
+        if (shell === "agency") return <ReportingWorkspace scope="agency" />;
+        if (role === "rmg") return <ReportingWorkspace scope="state" />;
+        if (role === "exec") return <ReportingWorkspace scope="executive" />;
+        return <ReportingWorkspace scope="national" />;
+      case "finance":
+        if (shell === "team") return <MyClaims />;
+        if (shell === "agency") return <AgencyReview />;
+        return <Reconciliation />;
+      case "aviation":
+        if (role === "airdesk") return <AirDeskHome />;
+        return <AssetBoard />;
+      case "admin":
+        return <AdminWorkspace />;
+      default:
+        return <NRSCHome />;
+    }
+  };
 
   return (
     <div style={{
@@ -178,19 +218,19 @@ export default function NDMSPrototype() {
         width: 248, background: T.navy, display: "flex", flexDirection: "column",
         flexShrink: 0, overflowY: "auto", overflowX: "hidden",
       }}>
-        {/* Logo */}
+        {/* Logo — AFAC Branded */}
         <div style={{
           padding: "20px 20px 16px", borderBottom: "1px solid rgba(255,255,255,.08)",
           display: "flex", alignItems: "center", gap: 12,
         }}>
           <div style={{
-            width: 38, height: 38, background: T.blue, borderRadius: 8,
+            width: 38, height: 38, background: "linear-gradient(135deg, #D4380D 0%, #CF1322 100%)", borderRadius: 8,
             display: "flex", alignItems: "center", justifyContent: "center",
-            color: T.white, fontWeight: 800, fontSize: 15,
-          }}>N</div>
+            color: T.white, fontWeight: 800, fontSize: 11, letterSpacing: .5,
+          }}>AFAC</div>
           <div>
             <div style={{ color: T.white, fontWeight: 700, fontSize: 16, letterSpacing: .3 }}>NDMS</div>
-            <div style={{ color: "rgba(255,255,255,.4)", fontSize: 10.5, letterSpacing: .3 }}>National Deployment</div>
+            <div style={{ color: "rgba(255,255,255,.4)", fontSize: 9.5, letterSpacing: .3 }}>National Resource Sharing Centre</div>
           </div>
         </div>
 
@@ -235,12 +275,14 @@ export default function NDMSPrototype() {
 
         {/* Settings */}
         <div style={{ padding: "0 12px 4px" }}>
-          <div style={{
+          <div onClick={() => setActiveNav("admin")} style={{
             display: "flex", alignItems: "center", gap: 11,
             padding: "8px 12px", borderRadius: 6, cursor: "pointer",
-            color: "rgba(255,255,255,.6)", fontSize: 13.5, fontWeight: 500,
+            color: activeNav === "admin" ? T.white : "rgba(255,255,255,.6)",
+            background: activeNav === "admin" ? "rgba(14,120,201,.2)" : "transparent",
+            fontSize: 13.5, fontWeight: 500,
           }}>
-            <span style={{ opacity: .65, display: "flex" }}>{Icons.settings}</span>
+            <span style={{ opacity: activeNav === "admin" ? 1 : .65, display: "flex" }}>{Icons.settings}</span>
             Admin & Settings
           </div>
         </div>
@@ -294,7 +336,8 @@ export default function NDMSPrototype() {
             <Avatar initials={currentRole.initials} color={currentRole.color} size={34} />
             <div>
               <div style={{ color: "rgba(255,255,255,.85)", fontSize: 13, fontWeight: 550 }}>{currentRole.name}</div>
-              <div style={{ color: "rgba(255,255,255,.38)", fontSize: 11 }}>{currentRole.agency}</div>
+              <div style={{ color: "rgba(255,255,255,.38)", fontSize: 10.5 }}>{currentRole.sysRole}</div>
+              {currentRole.deployRole && <div style={{ color: T.teal, fontSize: 10, fontWeight: 550, marginTop: 1 }}>⬦ {currentRole.deployRole}</div>}
             </div>
           </div>
         </div>
@@ -309,9 +352,18 @@ export default function NDMSPrototype() {
           display: "flex", alignItems: "center", padding: "0 24px", gap: 14, flexShrink: 0,
         }}>
           <span style={{ fontSize: 14, fontWeight: 600, color: T.navy }}>
-            {role === "nrsc" ? "National Operations" : role === "team" ? "My Readiness" : "Agency Operations"}
+            {{nrsc:"National Operations",team:"My Readiness",agency:"Agency Operations",dmt:"DMT Operations",airdesk:"Aviation Operations",inlo:"Field Coordination",rmg:"State Oversight",exec:"Executive View"}[role]}
+          </span>
+          {/* Breadcrumb */}
+          <span style={{ color: T.g300, fontSize: 13 }}>›</span>
+          <span style={{ fontSize: 13, color: T.g500, fontWeight: 500 }}>
+            {navSections.flatMap(s=>s.items).find(i=>i.id===activeNav)?.label || "Home"}
           </span>
           <div style={{ flex: 1 }} />
+          <span style={{
+            padding: "3px 12px", background: "linear-gradient(135deg, #D4380D, #CF1322)", color: T.white,
+            fontSize: 10, fontWeight: 700, borderRadius: 4, letterSpacing: .8,
+          }}>AFAC | NRSC</span>
           <span style={{
             padding: "3px 12px", background: T.orangeL, color: T.orange,
             fontSize: 10.5, fontWeight: 650, borderRadius: 4, letterSpacing: .5,
@@ -328,6 +380,11 @@ export default function NDMSPrototype() {
               borderRadius: 3, padding: "1px 5px", fontSize: 10, fontFamily: "inherit",
             }}>⌘K</span>
           </div>
+          {/* Task Centre icon — opens drawer */}
+          <div onClick={() => setTaskDrawerOpen(!taskDrawerOpen)} style={{ position: "relative", cursor: "pointer", padding: 6, display: "flex", alignItems: "center", gap: 4 }}>
+            {Icons.flag}
+            <span style={{ background: T.coral, color: T.white, fontSize: 9, fontWeight: 700, padding: "0px 5px", borderRadius: 8, minWidth: 14, textAlign: "center" }}>10</span>
+          </div>
           <div style={{ position: "relative", cursor: "pointer", padding: 6 }}>
             {Icons.bell}
             <div style={{
@@ -337,45 +394,37 @@ export default function NDMSPrototype() {
           </div>
         </div>
 
+        {/* Demo mode banner */}
+        {demoMode && <div style={{
+          display: "flex", alignItems: "center", gap: 10, padding: "6px 24px",
+          background: "linear-gradient(90deg, #23344A, #2c4a6a)", fontSize: 12, flexShrink: 0,
+        }}>
+          <span style={{ color: T.orange, fontWeight: 700, fontSize: 10, letterSpacing: .8, textTransform: "uppercase" }}>▶ Demo Mode</span>
+          <span style={{ color: "rgba(255,255,255,.6)", fontSize: 11.5 }}>Northern Rivers Flood Response — End-to-end scenario active</span>
+          <div style={{ flex: 1 }} />
+          <span onClick={() => setDemoMode(false)} style={{ color: "rgba(255,255,255,.4)", cursor: "pointer", fontSize: 11 }}>Dismiss ✕</span>
+        </div>}
+
         {/* Content */}
         <div style={{ flex: 1, overflowY: "auto", padding: "0 0 40px" }}>
-          {(() => {
-            if (role === "nrsc") {
-              switch (activeNav) {
-                case "home": return <NRSCHome />;
-                case "requests": return <C2RequestRegister />;
-                case "contingents": return <C2ContingentBuilder />;
-                case "live": return <C3LiveBoard />;
-                case "dashboards": return <C4NationalDash />;
-                case "sitreps": return <C4SitRep />;
-                case "finance": return <Reconciliation />;
-                case "aviation": return <AssetBoard />;
-                default: return <NRSCHome />;
-              }
-            } else if (role === "team") {
-              switch (activeNav) {
-                case "home": return <TeamMemberHome />;
-                case "profile": return <C1RolesEvidence />;
-                case "documents": return <C1Readiness />;
-                case "deployment": return <TeamMemberHome />; 
-                case "claims": return <MyClaims />;
-                default: return <TeamMemberHome />;
-              }
-            } else if (role === "agency") {
-              switch (activeNav) {
-                case "home": return <AgencyHome />;
-                case "people": return <C1AgencyReview />;
-                case "requests": return <C2RequestRegister />;
-                case "contingents": return <C2ContingentBuilder />;
-                case "approvals": return <C3RoleChange />;
-                case "claims": return <AgencyReview />;
-                case "dashboard": return <C4AgencyDash />;
-                default: return <AgencyHome />;
-              }
-            }
-          })()}
+          {renderContent()}
         </div>
       </main>
+
+      {/* ═══ TASK CENTRE DRAWER ═══ */}
+      {taskDrawerOpen && <>
+        <div onClick={() => setTaskDrawerOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(35,52,74,.2)", zIndex: 500 }} />
+        <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: 520, background: T.white, boxShadow: "-8px 0 30px rgba(0,0,0,.1)", zIndex: 501, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div style={{ padding: "16px 20px", borderBottom: `1px solid ${T.g200}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div><div style={{ fontSize: 16, fontWeight: 700 }}>Task Centre</div><div style={{ fontSize: 12, color: T.g500 }}>10 pending actions</div></div>
+            <button onClick={() => setTaskDrawerOpen(false)} style={{ background: "none", border: "none", fontSize: 18, color: T.g400, cursor: "pointer" }}>✕</button>
+          </div>
+          <div style={{ flex: 1, overflowY: "auto" }}><TaskCentre /></div>
+        </div>
+      </>}
+
+      {/* ═══ REQUEST WIZARD MODAL ═══ */}
+      {wizardOpen && <RequestWizard onClose={() => setWizardOpen(false)} />}
     </div>
   );
 }
@@ -393,7 +442,7 @@ function NRSCHome() {
       }}>
         <div>
           <h1 style={{ color: T.white, fontSize: 21, fontWeight: 700, margin: 0 }}>National Operations Overview</h1>
-          <p style={{ color: "rgba(255,255,255,.55)", fontSize: 13, margin: "4px 0 0" }}>Monday 30 Mar 2026 — Season 2025/26 — Week 22</p>
+          <p style={{ color: "rgba(255,255,255,.55)", fontSize: 13, margin: "4px 0 0" }}>Monday 30 Mar 2026 — Season 2025/26 — Week 22 — Northern Rivers Flood Response Active</p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <Btn variant="light">{Icons.download} Export</Btn>
@@ -411,13 +460,21 @@ function NRSCHome() {
           {Icons.alert}
           <div><strong>I/I/I Report filed</strong> — Welfare incident reported by AREP for contingent IMT1 (Canada 2025). Investigation commenced. <a style={{ color: "inherit", textDecoration: "underline" }}>View report →</a></div>
         </div>
+        <div style={{
+          display: "flex", alignItems: "center", gap: 12,
+          padding: "12px 16px", borderRadius: 6, marginBottom: 10,
+          background: T.blueL, borderLeft: `3px solid ${T.blue}`, fontSize: 13,
+        }}>
+          <span style={{ fontSize: 14 }}>🌊</span>
+          <div><strong>Northern Rivers Flood Response</strong> — 68 personnel deployed to Lismore/Northern Rivers NSW. Response & recovery operations continue. <a style={{ color: "inherit", textDecoration: "underline" }}>View deployment →</a></div>
+        </div>
 
         {/* Metric cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 22 }}>
           {[
-            { label: "Currently Deployed", value: "247", change: "↑ 18 from last week", changeColor: T.green },
-            { label: "Active Requests", value: "12", change: "3 pending allocation", changeColor: T.g500 },
-            { label: "Active Contingents", value: "8", change: "Across 3 deployments", changeColor: T.g500 },
+            { label: "Currently Deployed", value: "101", change: "68 Northern Rivers + 33 Canada", changeColor: T.green },
+            { label: "Active Requests", value: "5", change: "1 pending nomination", changeColor: T.g500 },
+            { label: "Active Contingents", value: "8", change: "Across 2 deployments", changeColor: T.g500 },
             { label: "NAA Assets Active", value: "3", change: "1 pending approval", changeColor: T.coral },
             { label: "Inbound Rotations", value: "14", change: "Next 72h", changeColor: T.orange },
           ].map((m, i) => (
@@ -447,24 +504,26 @@ function NRSCHome() {
                 height: 260, background: `linear-gradient(170deg, ${T.g100} 0%, #e0eef8 40%, #e8f0e4 70%, ${T.g100} 100%)`,
                 borderRadius: 6, position: "relative", overflow: "hidden",
               }}>
-                {/* Stylised Australia outline */}
+                {/* Stylised Australia outline with Northern Rivers focus */}
                 <svg viewBox="0 0 500 300" style={{ width: "100%", height: "100%", position: "absolute" }}>
                   <path d="M180,60 Q200,40 230,55 Q260,35 290,50 L310,65 Q330,60 345,80 L350,110 Q360,130 350,155 L340,180 Q330,200 310,210 L290,215 Q270,225 250,220 L230,225 Q210,230 195,215 L180,195 Q165,175 170,155 L165,130 Q160,100 170,80 Z" fill="rgba(14,120,201,.06)" stroke="rgba(14,120,201,.15)" strokeWidth="1.5"/>
-                  {/* Deploy dots */}
-                  <circle cx="280" cy="65" r="6" fill={T.green} stroke={T.white} strokeWidth="2"/>
-                  <circle cx="280" cy="65" r="11" fill="none" stroke={T.green} strokeWidth="1" opacity=".3"/>
-                  <circle cx="310" cy="110" r="5" fill={T.green} stroke={T.white} strokeWidth="2"/>
-                  <circle cx="295" cy="155" r="5" fill={T.orange} stroke={T.white} strokeWidth="2"/>
-                  <circle cx="270" cy="175" r="5" fill={T.green} stroke={T.white} strokeWidth="2"/>
-                  <circle cx="210" cy="170" r="4" fill={T.green} stroke={T.white} strokeWidth="2"/>
+                  {/* Northern Rivers / Lismore — primary deployment */}
+                  <circle cx="315" cy="138" r="8" fill={T.blue} stroke={T.white} strokeWidth="2.5"/>
+                  <circle cx="315" cy="138" r="14" fill="none" stroke={T.blue} strokeWidth="1" opacity=".3"/>
+                  <circle cx="315" cy="138" r="20" fill="none" stroke={T.blue} strokeWidth=".5" opacity=".2"/>
+                  {/* Other state markers */}
+                  <circle cx="310" cy="110" r="4" fill={T.green} stroke={T.white} strokeWidth="1.5"/>
+                  <circle cx="270" cy="175" r="4" fill={T.teal} stroke={T.white} strokeWidth="1.5"/>
+                  <circle cx="210" cy="170" r="3" fill={T.g400} stroke={T.white} strokeWidth="1.5"/>
+                  <circle cx="280" cy="65" r="3" fill={T.g400} stroke={T.white} strokeWidth="1.5"/>
                   {/* Canada marker */}
                   <circle cx="80" cy="35" r="6" fill={T.coral} stroke={T.white} strokeWidth="2"/>
                   <circle cx="80" cy="35" r="11" fill="none" stroke={T.coral} strokeWidth="1" opacity=".3"/>
                   {/* Labels */}
-                  <text x="290" y="55" fontSize="9" fill={T.navy} fontWeight="600">Darwin</text>
-                  <text x="62" y="27" fontSize="9" fill={T.coral} fontWeight="600">Canada 2025</text>
+                  <text x="330" y="133" fontSize="10" fill={T.navy} fontWeight="700">Lismore (68)</text>
+                  <text x="330" y="146" fontSize="8" fill={T.blue} fontWeight="500">Northern Rivers</text>
+                  <text x="62" y="27" fontSize="9" fill={T.coral} fontWeight="600">Canada 2025 (33)</text>
                   <text x="320" y="107" fontSize="8" fill={T.g500}>QLD</text>
-                  <text x="302" y="150" fontSize="8" fill={T.g500}>NSW</text>
                   <text x="276" y="172" fontSize="8" fill={T.g500}>VIC</text>
                   <text x="218" y="167" fontSize="8" fill={T.g500}>SA</text>
                 </svg>
@@ -507,11 +566,11 @@ function NRSCHome() {
                   </thead>
                   <tbody>
                     {[
-                      { id: "2025_26_007NT_NSW001", route: "NT → NSW", type: "Interstate", roles: "IMT, DM, Safety Officer", status: "Deployed", color: "green", date: "28 Mar" },
-                      { id: "2025_26_012INT_CAN001", route: "NRSC → Canada", type: "International", roles: "INLO, IMT, CREW ×2", status: "Mobilising", color: "blue", date: "29 Mar" },
-                      { id: "2025_26_015QLD_VIC002", route: "QLD → VIC", type: "Interstate", roles: "Crew Leader, Storm Ops ×6", status: "Pending Allocation", color: "orange", date: "30 Mar" },
-                      { id: "2025_26_009SA_NSW003", route: "SA → NSW", type: "Interstate", roles: "Management Support Officer", status: "Demobilising", color: "gray", date: "27 Mar" },
-                      { id: "2025_26_018WA_NT004", route: "WA → NT", type: "Interstate", roles: "JLO, Safety Advisor", status: "Under Review", color: "teal", date: "30 Mar" },
+                      { id: "2025_26_007NSW_QLD001", route: "NSW ← QLD,VIC,SA,TAS", type: "Interstate", roles: "IMT, DM, Crew ×12, Safety", status: "Deployed", color: "green", date: "14 Mar" },
+                      { id: "2025_26_INT_CAN_001", route: "NRSC → Canada", type: "International", roles: "INLO, IMT, CREW ×2", status: "Deployed", color: "green", date: "1 Feb" },
+                      { id: "2025_26_008NSW_VIC001", route: "NSW ← VIC", type: "Interstate", roles: "Crew Leader, Flood Ops ×6", status: "Pending Nomination", color: "orange", date: "28 Mar" },
+                      { id: "2025_26_009NSW_SA001", route: "NSW ← SA", type: "Interstate", roles: "Management Support Officer", status: "Draft", color: "blue", date: "30 Mar" },
+                      { id: "2025_26_010NSW_WA001", route: "NSW ← WA", type: "Interstate", roles: "JLO, Safety Advisor", status: "Cancelled", color: "gray", date: "10 Jan" },
                     ].map((r, i) => (
                       <tr key={i} style={{ cursor: "pointer" }}>
                         <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g200}`, fontFamily: "'DM Mono', monospace", fontSize: 11.5 }}>{r.id}</td>
@@ -555,8 +614,8 @@ function NRSCHome() {
             <Card title="Active Issues" right={<Chip color="coral">4</Chip>} style={{ marginTop: 16 }}>
               {[
                 { icon: "⚠", bg: T.coralL, fg: T.coral, title: "I/I/I — Welfare", sub: "Canada 2025 · IMT1 · Investigation commenced", time: "2h ago" },
-                { icon: "⏱", bg: T.orangeL, fg: T.orange, title: "Fatigue threshold", sub: "NT Support · 3 personnel at 12+ consecutive days", time: "4h ago" },
-                { icon: "↻", bg: T.blueL, fg: T.blue, title: "Rotation gap", sub: "NT Support · 2 DM replacements needed by 4 Apr", time: "6h ago" },
+                { icon: "⏱", bg: T.orangeL, fg: T.orange, title: "Fatigue threshold", sub: "Northern Rivers · 3 personnel at 12+ consecutive days", time: "4h ago" },
+                { icon: "↻", bg: T.blueL, fg: T.blue, title: "Rotation gap", sub: "Northern Rivers · DM replacement needed by 1 Apr", time: "6h ago" },
                 { icon: "$", bg: T.orangeL, fg: T.orange, title: "Claims overdue", sub: "7 claims past 14-day agency review window", time: "1d ago" },
               ].map((iss, i) => (
                 <div key={i} style={{
@@ -582,9 +641,9 @@ function NRSCHome() {
             {/* SitReps */}
             <Card title="Recent SitReps" style={{ marginTop: 16 }}>
               {[
-                { title: "NT Cyclone Response — SitRep #8", status: "Submitted", color: "green", meta: "29 Mar 2026, 16:00 AEST · J. Walsh" },
+                { title: "Northern Rivers Flood — SitRep #8", status: "Submitted", color: "green", meta: "29 Mar 2026, 16:00 AEST · J. Walsh" },
                 { title: "Canada 2025 — Weekly #3", status: "Draft", color: "orange", meta: "30 Mar 2026, 09:12 AEST · P. Nguyễn" },
-                { title: "QLD Storm Season — SitRep #14", status: "Submitted", color: "green", meta: "27 Mar 2026, 14:30 AEST · M. Cooper" },
+                { title: "Northern Rivers Flood — SitRep #9", status: "Draft", color: "orange", meta: "30 Mar 2026, 10:30 AEST · J. Walsh" },
               ].map((sr, i) => (
                 <div key={i} style={{
                   padding: 12, border: `1px solid ${T.g200}`, borderRadius: 6,
@@ -603,11 +662,11 @@ function NRSCHome() {
             <Card title="By Jurisdiction" style={{ marginTop: 16 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {[
-                  { code: "NT", deployed: 64, requests: 3, color: "green" },
-                  { code: "NSW", deployed: 48, requests: 2, color: "blue" },
-                  { code: "VIC", deployed: 42, requests: 2, color: "blue" },
-                  { code: "QLD", deployed: 38, requests: 3, color: "orange" },
-                  { code: "SA", deployed: 22, requests: 1, color: "gray" },
+                  { code: "NSW", deployed: 0, requests: 1, color: "blue" },
+                  { code: "QLD", deployed: 22, requests: 2, color: "green" },
+                  { code: "VIC", deployed: 18, requests: 1, color: "blue" },
+                  { code: "SA", deployed: 10, requests: 1, color: "teal" },
+                  { code: "TAS", deployed: 8, requests: 1, color: "teal" },
                   { code: "INT'L", deployed: 33, requests: 1, color: "coral" },
                 ].map((j, i) => (
                   <div key={i} style={{
@@ -649,7 +708,7 @@ function TeamMemberHome() {
       }}>
         <div>
           <h2 style={{ color: T.white, fontSize: 20, fontWeight: 700, margin: 0 }}>Welcome back, Daniel</h2>
-          <p style={{ color: "rgba(255,255,255,.65)", fontSize: 13, margin: "4px 0 0" }}>You have 2 items requiring attention and 1 active deployment.</p>
+          <p style={{ color: "rgba(255,255,255,.65)", fontSize: 13, margin: "4px 0 0" }}>You have 2 items requiring attention and 1 active deployment — Northern Rivers Flood Response.</p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <Btn variant="light">View deployment</Btn>
@@ -729,15 +788,15 @@ function TeamMemberHome() {
               borderRadius: 6, padding: 16, marginBottom: 16,
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ fontSize: 15, fontWeight: 650 }}>NT Cyclone Response</span>
+                <span style={{ fontSize: 15, fontWeight: 650 }}>Northern Rivers Flood Response</span>
                 <Chip color="blue">Day 8</Chip>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 16px", fontSize: 12 }}>
                 {[
-                  ["Request", "2025_26_007NT_NSW001"],
+                  ["Request", "2025_26_007NSW_QLD001"],
                   ["Role", "Crew Leader"],
-                  ["Location", "Darwin, NT"],
-                  ["Agency", "NSW RFS"],
+                  ["Location", "Lismore, NSW"],
+                  ["Agency", "QLD QFES"],
                   ["Contingent", "CREW2"],
                   ["Status", "Working"],
                   ["Start", "22 Mar 2026"],
@@ -833,7 +892,7 @@ function TeamMemberHome() {
               <div style={{ fontSize: 10, color: T.g400, textTransform: "uppercase", letterSpacing: .8, fontWeight: 600, marginBottom: 8 }}>Deployment</div>
               {[
                 { initials: "RK", name: "Rachel Kimura", role: "Deployment Manager", color: T.blue },
-                { initials: "MS", name: "Mark Sullivan", role: "AREP — NT Operations", color: T.teal },
+                { initials: "MS", name: "Mark Sullivan", role: "AREP — Northern Rivers", color: T.teal },
               ].map((c, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                   <Avatar initials={c.initials} color={c.color} size={28} />
@@ -847,10 +906,10 @@ function TeamMemberHome() {
             <div>
               <div style={{ fontSize: 10, color: T.g400, textTransform: "uppercase", letterSpacing: .8, fontWeight: 600, marginBottom: 8 }}>Agency</div>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <Avatar initials="LB" color={T.coral} size={28} />
+                <Avatar initials="SP" color={T.coral} size={28} />
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 550 }}>Linda Brooks</div>
-                  <div style={{ fontSize: 11, color: T.g500 }}>NSW RFS Coordinator</div>
+                  <div style={{ fontSize: 13, fontWeight: 550 }}>Sarah Patel</div>
+                  <div style={{ fontSize: 11, color: T.g500 }}>QLD QFES Coordinator</div>
                 </div>
               </div>
             </div>
@@ -877,11 +936,11 @@ function AgencyHome() {
           <div style={{
             width: 46, height: 46, background: T.coral, borderRadius: 8,
             display: "flex", alignItems: "center", justifyContent: "center",
-            color: T.white, fontWeight: 700, fontSize: 14,
-          }}>RFS</div>
+            color: T.white, fontWeight: 700, fontSize: 13,
+          }}>QFES</div>
           <div>
-            <div style={{ fontSize: 17, fontWeight: 700 }}>NSW Rural Fire Service</div>
-            <div style={{ fontSize: 13, color: T.g500 }}>New South Wales · Interstate & International Deployments</div>
+            <div style={{ fontSize: 17, fontWeight: 700 }}>Queensland Fire & Emergency Services</div>
+            <div style={{ fontSize: 13, color: T.g500 }}>Queensland · Interstate & International Deployments</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
@@ -975,11 +1034,11 @@ function AgencyHome() {
                 </thead>
                 <tbody>
                   {[
-                    { name: "Daniel Thornton", deploy: "NT Cyclone Response", role: "Crew Leader", status: "Working", color: "blue", day: 8 },
-                    { name: "Rachel Kim", deploy: "NT Cyclone Response", role: "DM", status: "Working", color: "blue", day: 12 },
-                    { name: "Tom Briggs", deploy: "NT Cyclone Response", role: "Storm Damage Ops", status: "Resting", color: "teal", day: 8 },
+                    { name: "Daniel Thornton", deploy: "Northern Rivers Flood", role: "Crew Leader", status: "Working", color: "blue", day: 8 },
+                    { name: "Rachel Kimura", deploy: "Northern Rivers Flood", role: "DM", status: "Working", color: "blue", day: 12 },
+                    { name: "Tom Briggs", deploy: "Northern Rivers Flood", role: "Flood Ops", status: "Resting", color: "teal", day: 8 },
                     { name: "Alice Nguyễn", deploy: "Canada 2025", role: "INLO Admin", status: "In Field", color: "green", day: 18 },
-                    { name: "Peter O'Brien", deploy: "NT Cyclone Response", role: "Safety Officer", status: "Demobilising", color: "gray", day: 14 },
+                    { name: "Peter O'Brien", deploy: "Northern Rivers Flood", role: "Safety Officer", status: "Demobilising", color: "gray", day: 14 },
                   ].map((p, i) => (
                     <tr key={i} style={{ cursor: "pointer" }}>
                       <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g200}`, fontWeight: 600 }}>{p.name}</td>
@@ -1000,10 +1059,10 @@ function AgencyHome() {
           {/* Claims to review */}
           <Card title="Claims Awaiting Review" right={<Chip color="coral">8</Chip>}>
             {[
-              { initials: "DT", color: T.blue, name: "Daniel Thornton", detail: "Meal · 25 Mar · NT Cyclone", amount: "$47.50" },
-              { initials: "RK", color: T.teal, name: "Rachel Kim", detail: "Transport · 23 Mar · NT Cyclone", amount: "$124.00" },
+              { initials: "DT", color: T.blue, name: "Daniel Thornton", detail: "Meal · 25 Mar · Northern Rivers", amount: "$47.50" },
+              { initials: "RK", color: T.teal, name: "Rachel Kimura", detail: "Transport · 23 Mar · Northern Rivers", amount: "$124.00" },
               { initials: "AN", color: T.green, name: "Alice Nguyễn", detail: "Meal · 20 Mar · Canada 2025", amount: "C$62.30" },
-              { initials: "TB", color: T.orange, name: "Tom Briggs", detail: "Sundries · 26 Mar · NT Cyclone", amount: "$31.90" },
+              { initials: "TB", color: T.orange, name: "Tom Briggs", detail: "Sundries · 26 Mar · Northern Rivers", amount: "$31.90" },
             ].map((c, i) => (
               <div key={i} style={{
                 display: "flex", alignItems: "center", gap: 10,
@@ -1026,9 +1085,9 @@ function AgencyHome() {
           {/* Active Requests */}
           <Card title="Our Active Requests" style={{ marginTop: 16 }}>
             {[
-              { title: "NT Cyclone — NSW Support", id: "2025_26_007NT_NSW001", info: "18 personnel deployed · Day 8–14", status: "Active", color: "green" },
-              { title: "Canada 2025 — INLO Support", id: "2025_26_012INT_CAN001", info: "2 personnel deployed · Day 18", status: "In Field", color: "blue" },
-              { title: "QLD Storm — Crew Nomination", id: "2025_26_015QLD_VIC002", info: "Awaiting nomination · 6 roles", status: "Pending", color: "orange" },
+              { title: "Northern Rivers Flood — QLD Support", id: "2025_26_007NSW_QLD001", info: "22 personnel deployed · Day 8–14", status: "Active", color: "green" },
+              { title: "Canada 2025 — INLO Support", id: "2025_26_INT_CAN_001", info: "2 personnel deployed · Day 18", status: "In Field", color: "blue" },
+              { title: "Northern Rivers — VIC Nomination", id: "2025_26_008NSW_VIC001", info: "Awaiting nomination · 12 roles", status: "Pending", color: "orange" },
             ].map((r, i) => (
               <div key={i} style={{ padding: "12px 0", borderBottom: i < 2 ? `1px solid ${T.g100}` : "none" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>

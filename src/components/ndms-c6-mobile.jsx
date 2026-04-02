@@ -6,8 +6,10 @@ const Chip=({color,children,s})=>{const c={blue:{bg:T.blueL,fg:T.blue},teal:{bg:
 
 const SCREENS=[
   {id:"home",label:"Home",icon:"🏠"},
-  {id:"offline",label:"Offline Queue",icon:"📡"},
+  {id:"checkin",label:"Daily Check-In",icon:"📋"},
   {id:"actions",label:"Field Actions",icon:"⚡"},
+  {id:"iii",label:"I/I/I Report",icon:"⚠️"},
+  {id:"offline",label:"Offline Queue",icon:"📡"},
   {id:"dashboard",label:"Dashboard",icon:"📊"},
   {id:"approvals",label:"Approvals",icon:"✓"},
 ];
@@ -16,7 +18,7 @@ export default function C6Mobile(){
   const[screen,setScreen]=useState("home");
   const[m,setM]=useState(false);
   useEffect(()=>setM(true),[]);
-  const R={"home":<MobileHome/>,"offline":<OfflineQueue/>,"actions":<FieldActions/>,"dashboard":<MobileDash/>,"approvals":<MobileApprovals/>};
+  const R={"home":<MobileHome/>,"checkin":<DailyCheckIn/>,"offline":<OfflineQueue/>,"actions":<FieldActions/>,"iii":<IIISelfReport/>,"dashboard":<MobileDash/>,"approvals":<MobileApprovals/>};
 
   return(
     <div style={{display:"flex",height:"100vh",fontFamily:"'DM Sans',-apple-system,sans-serif",color:T.navy,fontSize:14,lineHeight:1.5,WebkitFontSmoothing:"antialiased",opacity:m?1:0,transition:"opacity .3s",background:T.g100,alignItems:"center",justifyContent:"center",gap:32}}>
@@ -32,7 +34,7 @@ export default function C6Mobile(){
         <div style={{marginTop:20,padding:14,background:"#fff",borderRadius:8,border:`1px solid ${T.g200}`}}>
           <div style={{fontSize:11,color:T.g400,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>Viewing as</div>
           <div style={{fontSize:13,fontWeight:600}}>Daniel Thornton</div>
-          <div style={{fontSize:11.5,color:T.g500}}>Team Member · NSW RFS</div>
+          <div style={{fontSize:11.5,color:T.g500}}>Team Member · QLD QFES</div>
         </div>
       </div>
 
@@ -92,7 +94,7 @@ function MobileHome(){
     {/* Header */}
     <div style={{background:T.navy,padding:"16px 20px 20px"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-        <div><div style={{color:"#fff",fontSize:17,fontWeight:700}}>Good morning, Daniel</div><div style={{color:"rgba(255,255,255,.5)",fontSize:12}}>NT Cyclone Response · Day 8</div></div>
+        <div><div style={{color:"#fff",fontSize:17,fontWeight:700}}>Good morning, Daniel</div><div style={{color:"rgba(255,255,255,.5)",fontSize:12}}>Northern Rivers Flood Response · Day 8</div></div>
         <div style={{width:36,height:36,borderRadius:"50%",background:T.blue,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700}}>DT</div>
       </div>
       {/* Sync status */}
@@ -127,11 +129,11 @@ function MobileHome(){
       <div style={{fontSize:13,fontWeight:650,marginTop:16,marginBottom:10}}>Current Deployment</div>
       <div style={{background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,padding:14}}>
         <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
-          <span style={{fontSize:14,fontWeight:650}}>NT Cyclone Response</span>
+          <span style={{fontSize:14,fontWeight:650}}>Northern Rivers Flood Response</span>
           <Chip color="blue">Day 8</Chip>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px 14px",fontSize:12}}>
-          {[["Role","Crew Leader"],["Location","Darwin, NT"],["Contingent","CREW2"],["Status","Working"]].map(([k,v],i)=><div key={i}><span style={{color:T.g400,fontSize:10.5}}>{k}</span><div style={{fontWeight:550}}>{v}</div></div>)}
+          {[["Role","Crew Leader"],["Location","Lismore, NSW"],["Contingent","CREW2"],["Status","Working"]].map(([k,v],i)=><div key={i}><span style={{color:T.g400,fontSize:10.5}}>{k}</span><div style={{fontWeight:550}}>{v}</div></div>)}
         </div>
         {/* Mini fatigue */}
         <div style={{display:"flex",gap:2,marginTop:10}}>
@@ -258,7 +260,7 @@ function MobileDash(){
   return<div>
     <div style={{background:T.navy,padding:"16px 20px 20px"}}>
       <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Dashboard</div>
-      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>NT Cyclone Response overview</div>
+      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>Northern Rivers Flood Response overview</div>
     </div>
     <div style={{padding:16}}>
       {/* Summary cards */}
@@ -274,12 +276,12 @@ function MobileDash(){
         <div style={{height:140,background:`linear-gradient(170deg,${T.g100},#e0eef8 60%,#e8f0e4)`,position:"relative"}}>
           <svg viewBox="0 0 340 140" style={{width:"100%",height:"100%"}}>
             <circle cx="170" cy="50" r="8" fill={T.blue} stroke="#fff" strokeWidth="2.5"/>
-            <text x="185" y="52" fontSize="10" fill={T.navy} fontWeight="600">Darwin (64)</text>
+            <text x="185" y="52" fontSize="10" fill={T.navy} fontWeight="600">Lismore (68)</text>
           </svg>
         </div>
         <div style={{padding:"10px 14px",display:"flex",justifyContent:"space-between",fontSize:11.5}}>
           <span style={{color:T.g500}}>Active deployments</span>
-          <span style={{fontWeight:600}}>Darwin, NT</span>
+          <span style={{fontWeight:600}}>Lismore, NSW</span>
         </div>
       </div>
 
@@ -366,10 +368,136 @@ function MobileApprovals(){
   </div>;
 }
 
+/* ── Daily Check-In (NDMS-014) ── */
+function DailyCheckIn(){
+  return<div>
+    <div style={{background:T.navy,padding:"16px 20px 20px"}}>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Daily Check-In</div>
+      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>30 Mar 2026 · Day 8</div>
+    </div>
+    <div style={{padding:16}}>
+      <div style={{fontSize:13,fontWeight:650,marginBottom:10}}>Today's Status</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:16}}>
+        {[
+          {icon:"🛠",label:"Working",selected:true,c:T.blue},
+          {icon:"💤",label:"Rest Day",selected:false,c:T.teal},
+          {icon:"✈️",label:"Travel Day",selected:false,c:T.orange},
+          {icon:"🏫",label:"Briefing/Training",selected:false,c:T.green},
+        ].map((s,i)=><div key={i} style={{padding:"14px",background:s.selected?`${s.c}10`:"#fff",borderRadius:10,border:`2px solid ${s.selected?s.c:T.g200}`,textAlign:"center",cursor:"pointer"}}>
+          <div style={{fontSize:20}}>{s.icon}</div>
+          <div style={{fontSize:12,fontWeight:s.selected?700:500,color:s.selected?s.c:T.g600,marginTop:4}}>{s.label}</div>
+        </div>)}
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Location</div>
+      <div style={{padding:"12px 14px",background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,marginBottom:14,display:"flex",alignItems:"center",gap:10}}>
+        <span style={{fontSize:16}}>📍</span>
+        <div style={{flex:1}}>
+          <div style={{fontSize:13,fontWeight:550}}>Lismore SES HQ</div>
+          <div style={{fontSize:11,color:T.g500}}>GPS: -28.8149, 153.2794</div>
+        </div>
+        <Chip color="green">Auto-detected</Chip>
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Welfare Check</div>
+      <div style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:14,marginBottom:14}}>
+        {[["Physical wellbeing","😃 Good"],["Mental wellbeing","😃 Good"],["Sleep quality","😐 Fair"],["Any concerns?","No"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",fontSize:12.5,borderBottom:i<3?`1px solid ${T.g100}`:"none"}}>
+          <span style={{color:T.g600}}>{k}</span>
+          <span style={{fontWeight:550}}>{v}</span>
+        </div>)}
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Notes (optional)</div>
+      <div style={{padding:"10px 14px",background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,fontSize:12.5,color:T.g400,minHeight:50,marginBottom:16}}>Add any notes for your AREP or DM…</div>
+
+      <div style={{padding:14,background:T.blue,borderRadius:12,textAlign:"center",cursor:"pointer"}}>
+        <div style={{color:"#fff",fontSize:15,fontWeight:700}}>✓ Submit Check-In</div>
+        <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>Visible to your AREP and Deployment Manager</div>
+      </div>
+
+      <div style={{fontSize:12,fontWeight:650,marginTop:16,marginBottom:8,color:T.g500}}>Previous Check-Ins</div>
+      {[
+        {date:"29 Mar",status:"Working",welfare:"😃",time:"07:45"},
+        {date:"28 Mar",status:"Working",welfare:"😃",time:"08:00"},
+        {date:"27 Mar",status:"Rest Day",welfare:"😃",time:"09:15"},
+      ].map((d,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 14px",background:"#fff",borderRadius:8,marginBottom:4,border:`1px solid ${T.g200}`,fontSize:12}}>
+        <span style={{fontWeight:600,width:50}}>{d.date}</span>
+        <Chip color={d.status==="Working"?"blue":"teal"}>{d.status}</Chip>
+        <span>{d.welfare}</span>
+        <span style={{marginLeft:"auto",color:T.g400,fontSize:11}}>{d.time}</span>
+      </div>)}
+    </div>
+  </div>;
+}
+
+/* ── I/I/I Self-Report (NDMS-031) ── */
+function IIISelfReport(){
+  return<div>
+    <div style={{background:"linear-gradient(135deg,#8B2020,#c0392b)",padding:"16px 20px 20px"}}>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>⚠ I/I/I Self-Report</div>
+      <div style={{color:"rgba(255,255,255,.6)",fontSize:12,marginTop:2}}>Illness / Injury / Incident</div>
+    </div>
+    <div style={{padding:16}}>
+      <div style={{padding:"12px 14px",background:T.coralL,borderRadius:10,border:`1px solid ${T.coral}40`,marginBottom:16}}>
+        <div style={{fontSize:12.5,fontWeight:600,color:T.coral}}>Your AREP and Deployment Manager will be notified immediately upon submission.</div>
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Report Type</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:16}}>
+        {[
+          {icon:"🩺",label:"Illness",selected:false},
+          {icon:"🤕",label:"Injury",selected:true},
+          {icon:"⚠️",label:"Incident",selected:false},
+        ].map((t,i)=><div key={i} style={{padding:"12px",background:t.selected?T.coralL:"#fff",borderRadius:10,border:`2px solid ${t.selected?T.coral:T.g200}`,textAlign:"center",cursor:"pointer"}}>
+          <div style={{fontSize:18}}>{t.icon}</div>
+          <div style={{fontSize:12,fontWeight:t.selected?700:500,color:t.selected?T.coral:T.g600,marginTop:4}}>{t.label}</div>
+        </div>)}
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Severity</div>
+      <div style={{display:"flex",gap:6,marginBottom:16}}>
+        {["Minor","Moderate","Serious","Critical"].map((s,i)=><div key={i} style={{flex:1,padding:"10px 6px",background:i===0?T.orangeL:"#fff",borderRadius:8,border:`2px solid ${i===0?T.orange:T.g200}`,textAlign:"center",cursor:"pointer"}}>
+          <div style={{fontSize:11.5,fontWeight:i===0?700:500,color:i===0?T.orange:T.g600}}>{s}</div>
+        </div>)}
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Location of Incident</div>
+      <div style={{padding:"12px 14px",background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,marginBottom:14,display:"flex",alignItems:"center",gap:10}}>
+        <span style={{fontSize:16}}>📍</span>
+        <div style={{flex:1}}>
+          <div style={{fontSize:13,fontWeight:550}}>Lismore SES HQ — Operations Area</div>
+          <div style={{fontSize:11,color:T.g500}}>GPS: -28.8149, 153.2794</div>
+        </div>
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Description</div>
+      <div style={{padding:"10px 14px",background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,fontSize:12.5,color:T.g400,minHeight:60,marginBottom:14}}>Describe what happened…</div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>First Aid Required?</div>
+      <div style={{display:"flex",gap:8,marginBottom:14}}>
+        {["No","Yes — self","Yes — by officer"].map((opt,i)=><div key={i} style={{flex:1,padding:"10px 6px",background:i===0?T.greenL:"#fff",borderRadius:8,border:`2px solid ${i===0?T.green:T.g200}`,textAlign:"center",cursor:"pointer"}}>
+          <div style={{fontSize:10.5,fontWeight:i===0?700:500,color:i===0?"#3a6a10":T.g600}}>{opt}</div>
+        </div>)}
+      </div>
+
+      <div style={{padding:14,background:T.coral,borderRadius:12,textAlign:"center",cursor:"pointer"}}>
+        <div style={{color:"#fff",fontSize:15,fontWeight:700}}>⚠ Submit I/I/I Report</div>
+        <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>AREP, DM, and Agency will be notified</div>
+      </div>
+
+      <div style={{marginTop:12,padding:"10px 14px",background:T.g100,borderRadius:8,fontSize:11,color:T.g500,textAlign:"center"}}>
+        For emergencies call 000. This form is for post-event recording only.
+      </div>
+    </div>
+  </div>;
+}
+
 export {
   MobileHome,
   OfflineQueue,
   FieldActions,
   MobileDash,
-  MobileApprovals
+  MobileApprovals,
+  DailyCheckIn,
+  IIISelfReport
 };

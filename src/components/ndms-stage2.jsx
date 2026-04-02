@@ -34,14 +34,14 @@ const SCREENS=[
 ];
 
 const DEPLOYED=[
-  {name:"Daniel Thornton",init:"DT",c:T.blue,role:"Crew Leader",agency:"NSW RFS",jur:"NSW",contingent:"CREW2",deployment:"NT Cyclone",location:"Darwin, NT",status:"Working",day:8,country:"AU"},
-  {name:"Rachel Kim",init:"RK",c:T.teal,role:"Deployment Manager",agency:"NSW RFS",jur:"NSW",contingent:"IMT1",deployment:"NT Cyclone",location:"Darwin, NT",status:"Working",day:12,country:"AU"},
-  {name:"Tom Briggs",init:"TB",c:T.orange,role:"Storm Damage Ops",agency:"NSW RFS",jur:"NSW",contingent:"CREW2",deployment:"NT Cyclone",location:"Darwin, NT",status:"Resting",day:8,country:"AU"},
+  {name:"Daniel Thornton",init:"DT",c:T.blue,role:"Crew Leader",agency:"NSW RFS",jur:"NSW",contingent:"CREW2",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Working",day:8,country:"AU"},
+  {name:"Rachel Kim",init:"RK",c:T.teal,role:"Deployment Manager",agency:"NSW RFS",jur:"NSW",contingent:"IMT1",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Working",day:12,country:"AU"},
+  {name:"Tom Briggs",init:"TB",c:T.orange,role:"Flood Ops",agency:"NSW RFS",jur:"NSW",contingent:"CREW2",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Resting",day:8,country:"AU"},
   {name:"Peter Nguyễn",init:"PN",c:T.green,role:"INLO",agency:"NSW RFS",jur:"NSW",contingent:"INLO1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
   {name:"Alice Nguyễn",init:"AN",c:T.green,role:"INLO Admin",agency:"NSW RFS",jur:"NSW",contingent:"INLO1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
   {name:"David Kang",init:"DK",c:T.coral,role:"IC Support",agency:"CFA",jur:"VIC",contingent:"IMT1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
   {name:"Mark Sullivan",init:"MS",c:T.navy,role:"Crew Leader",agency:"CFA",jur:"VIC",contingent:"CREW1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Resting",day:18,country:"CA"},
-  {name:"Peter O'Brien",init:"PO",c:T.g500,role:"Safety Officer",agency:"NSW RFS",jur:"NSW",contingent:"IMT1",deployment:"NT Cyclone",location:"Darwin, NT",status:"Demobilising",day:14,country:"AU"},
+  {name:"Peter O'Brien",init:"PO",c:T.g500,role:"Safety Officer",agency:"NSW RFS",jur:"NSW",contingent:"IMT1",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Demobilising",day:14,country:"AU"},
   {name:"Chris Adams",init:"CA",c:T.teal,role:"Crew Leader",agency:"SASES",jur:"SA",contingent:"CREW2",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
   {name:"Emma Walsh",init:"EW",c:T.coral,role:"Firefighter",agency:"FENZ",jur:"NZ",contingent:"CREW1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Travel",day:18,country:"CA"},
 ];
@@ -104,7 +104,7 @@ function C3LiveBoard(){
       </div>
     </div>
 
-    <FilterChips items={["All","Australia","International","NT Cyclone","Canada 2025","NSW RFS","CFA","SASES","FENZ"]} active={filter} onChange={setFilter}/>
+    <FilterChips items={["All","Australia","International","Northern Rivers Flood","Canada 2025","NSW RFS","CFA","SASES","FENZ"]} active={filter} onChange={setFilter}/>
 
     {/* Status summary strip */}
     <div style={{display:"flex",gap:10,marginBottom:18}}>
@@ -119,7 +119,7 @@ function C3LiveBoard(){
           <svg viewBox="0 0 600 340" style={{width:"100%",height:"100%",position:"absolute"}}>
             <path d="M220,70 Q245,45 280,60 Q315,38 350,55 L375,72 Q400,65 418,90 L425,125 Q438,150 425,180 L412,210 Q400,235 375,248 L350,252 Q325,265 300,258 L275,262 Q250,270 232,252 L215,228 Q198,205 205,180 L200,148 Q192,112 205,90 Z" fill="rgba(14,120,201,.05)" stroke="rgba(14,120,201,.12)" strokeWidth="1.5"/>
             {/* Australia markers */}
-            <circle cx="340" cy="72" r="8" fill={T.blue} stroke={T.white} strokeWidth="2.5"/><text x="354" y="70" fontSize="10" fill={T.navy} fontWeight="600">Darwin (64)</text>
+            <circle cx="340" cy="72" r="8" fill={T.blue} stroke={T.white} strokeWidth="2.5"/><text x="354" y="70" fontSize="10" fill={T.navy} fontWeight="600">Lismore (68)</text>
             <circle cx="380" cy="130" r="5" fill={T.green} stroke={T.white} strokeWidth="2"/><text x="392" y="133" fontSize="9" fill={T.g500}>QLD (38)</text>
             <circle cx="365" cy="180" r="5" fill={T.blue} stroke={T.white} strokeWidth="2"/><text x="378" y="183" fontSize="9" fill={T.g500}>NSW (48)</text>
             <circle cx="330" cy="210" r="4" fill={T.teal} stroke={T.white} strokeWidth="2"/><text x="340" y="213" fontSize="9" fill={T.g500}>VIC (42)</text>
@@ -189,8 +189,8 @@ function C3PersonDetail(){
         </Card>
         <Card title="Linked Manifest" s={{marginTop:16}}>
           <div style={{fontSize:12.5}}><strong>Manifest:</strong> MAN-0047-C2</div>
-          <div style={{fontSize:12.5,marginTop:4}}><strong>Flight:</strong> VA1417 SYD→DRW</div>
-          <div style={{fontSize:12.5,marginTop:4}}><strong>Accommodation:</strong> Hilton Darwin</div>
+          <div style={{fontSize:12.5,marginTop:4}}><strong>Flight:</strong> VA1417 BNE→LIS</div>
+          <div style={{fontSize:12.5,marginTop:4}}><strong>Accommodation:</strong> Lismore Gateway Motel</div>
           <div style={{marginTop:10}}><Btn v="sm">View full manifest →</Btn></div>
         </Card>
       </div>
@@ -271,7 +271,7 @@ function C3RoleChange(){
     <Tabs tabs={[{id:"pending",label:"Pending",count:3},{id:"approved",label:"Approved",count:8},{id:"declined",label:"Declined",count:1}]} active="pending" onChange={()=>{}}/>
 
     {[
-      {name:"Tom Briggs",init:"TB",c:T.orange,from:"Storm Damage Ops",to:"Crew Leader",deployment:"NT Cyclone",contingent:"CREW2",rationale:"Crew Leader vacancy due to demobilisation of P. O'Brien. T. Briggs has STL qualification and 8 days in-field experience on this deployment.",requested:"28 Mar 2026",by:"Rachel Kimura (DM)",status:"Pending Agency",color:"orange"},
+      {name:"Tom Briggs",init:"TB",c:T.orange,from:"Flood Ops",to:"Crew Leader",deployment:"Northern Rivers Flood",contingent:"CREW2",rationale:"Crew Leader vacancy due to demobilisation of P. O'Brien. T. Briggs has STL qualification and 8 days in-field experience on this deployment.",requested:"28 Mar 2026",by:"Rachel Kimura (DM)",status:"Pending Agency",color:"orange"},
       {name:"Emma Walsh",init:"EW",c:T.coral,from:"Firefighter",to:"Communications Operator",deployment:"Canada 2025",contingent:"CREW1",rationale:"Communications equipment operator needed. E. Walsh holds radio operator certification and has prior comms experience.",requested:"29 Mar 2026",by:"Mark Sullivan (AREP)",status:"Pending Agency",color:"orange"},
       {name:"Lisa Morton",init:"LM",c:T.teal,from:"Firefighter",to:"Safety Observer",deployment:"Canada 2025",contingent:"CREW2",rationale:"Additional safety coverage requested by IC Support. L. Morton completed safety observer module.",requested:"30 Mar 2026",by:"David Kang (IC Support)",status:"Pending DM",color:"blue"},
     ].map((r,i)=><Card key={i} title={<span>{r.name} <span style={{fontWeight:400,color:T.g500,fontSize:12}}>— {r.from} → {r.to}</span></span>} right={<Chip color={r.color}>{r.status}</Chip>} s={{marginBottom:14}}>
@@ -300,7 +300,7 @@ function C3RoleChange(){
 function C3FatigueLogs(){
   const[tab,setTab]=useState("fatigue");
   return<div style={{padding:"24px 32px"}}>
-    <div style={{marginBottom:20}}><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Fatigue & Contact Logs</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>NT Cyclone Response — CREW2 — Work/rest and welfare records</p></div>
+    <div style={{marginBottom:20}}><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Fatigue & Contact Logs</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Northern Rivers Flood Response — CREW2 — Work/rest and welfare records</p></div>
     <Tabs tabs={[{id:"fatigue",label:"Fatigue Tracker"},{id:"contact",label:"Contact Log",count:12}]} active={tab} onChange={setTab}/>
 
     {tab==="fatigue"?<div>
@@ -313,10 +313,10 @@ function C3FatigueLogs(){
           <tbody>
             {[
               {name:"Daniel Thornton",role:"Crew Leader",days:["W","W","R","W","W","R","W","W","W"],consec:3,alert:false},
-              {name:"Tom Briggs",role:"Storm Ops",days:["W","W","R","W","W","R","W","R","W"],consec:1,alert:false},
+              {name:"Tom Briggs",role:"Flood Ops",days:["W","W","R","W","W","R","W","R","W"],consec:1,alert:false},
               {name:"Rachel Kim",role:"DM",days:["W","W","W","W","R","W","W","W","W"],consec:4,alert:false},
-              {name:"Karen Wong",role:"Storm Ops",days:["W","W","W","W","W","W","W","W","W"],consec:9,alert:true},
-              {name:"Ben Taylor",role:"Storm Ops",days:["W","W","W","W","W","W","R","W","W"],consec:2,alert:false},
+              {name:"Karen Wong",role:"Flood Ops",days:["W","W","W","W","W","W","W","W","W"],consec:9,alert:true},
+              {name:"Ben Taylor",role:"Flood Ops",days:["W","W","W","W","W","W","R","W","W"],consec:2,alert:false},
             ].map((r,i)=><tr key={i}><TD s={{fontWeight:600,fontSize:12.5}}>{r.name}</TD><TD s={{fontSize:12}}>{r.role}</TD>
               {r.days.map((d,di)=><td key={di} style={{padding:4,textAlign:"center",borderBottom:`1px solid ${T.g100}`}}><div style={{width:24,height:22,borderRadius:3,background:d==="W"?T.blue:T.teal,color:T.white,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,margin:"0 auto"}}>{d}</div></td>)}
               <TD s={{fontWeight:700,color:r.consec>=5?T.coral:r.consec>=3?T.orange:T.navy}}>{r.consec}</TD>
@@ -361,10 +361,10 @@ function C3Rotation(){
         <table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><TH>Name</TH><TH>Role</TH><TH>Deployment</TH><TH>Demob Date</TH><TH>Replacement</TH></tr></thead>
           <tbody>
             {[
-              {name:"Peter O'Brien",role:"Safety Officer",deploy:"NT Cyclone",date:"31 Mar",replacement:"Sourced",rc:"green"},
-              {name:"Rachel Kim",role:"DM",deploy:"NT Cyclone",date:"1 Apr",replacement:"Required",rc:"coral"},
-              {name:"Karen Wong",role:"Storm Ops",deploy:"NT Cyclone",date:"1 Apr",replacement:"Required",rc:"coral"},
-              {name:"Tom Briggs",role:"Storm Ops",deploy:"NT Cyclone",date:"2 Apr",replacement:"Sourced",rc:"green"},
+              {name:"Peter O'Brien",role:"Safety Officer",deploy:"Northern Rivers Flood",date:"31 Mar",replacement:"Sourced",rc:"green"},
+              {name:"Rachel Kim",role:"DM",deploy:"Northern Rivers Flood",date:"1 Apr",replacement:"Required",rc:"coral"},
+              {name:"Karen Wong",role:"Flood Ops",deploy:"Northern Rivers Flood",date:"1 Apr",replacement:"Required",rc:"coral"},
+              {name:"Tom Briggs",role:"Flood Ops",deploy:"Northern Rivers Flood",date:"2 Apr",replacement:"Sourced",rc:"green"},
             ].map((r,i)=><tr key={i}><TD s={{fontWeight:600}}>{r.name}</TD><TD>{r.role}</TD><TD>{r.deploy}</TD><TD s={{fontWeight:600}}>{r.date}</TD><TD><Chip color={r.rc}>{r.replacement}</Chip></TD></tr>)}
           </tbody>
         </table>
@@ -375,8 +375,8 @@ function C3Rotation(){
           <tbody>
             {[
               {name:"Sam O'Connor",role:"Safety Officer",agency:"TFS",arrival:"31 Mar",replacing:"P. O'Brien"},
-              {name:"Jake Williams",role:"Storm Ops",agency:"CFA",arrival:"2 Apr",replacing:"T. Briggs"},
-              {name:"Nina Roberts",role:"Storm Ops",agency:"QFES",arrival:"3 Apr",replacing:"—"},
+              {name:"Jake Williams",role:"Flood Ops",agency:"CFA",arrival:"2 Apr",replacing:"T. Briggs"},
+              {name:"Nina Roberts",role:"Flood Ops",agency:"QFES",arrival:"3 Apr",replacing:"—"},
             ].map((r,i)=><tr key={i}><TD s={{fontWeight:600}}>{r.name}</TD><TD>{r.role}</TD><TD>{r.agency}</TD><TD s={{fontWeight:600}}>{r.arrival}</TD><TD>{r.replacing}</TD></tr>)}
           </tbody>
         </table>
@@ -385,8 +385,8 @@ function C3Rotation(){
 
     <Card title="Rotation Gaps — Action Required" right={<Chip color="coral">3 unfilled</Chip>} s={{marginTop:20}}>
       {[
-        {role:"Deployment Manager",deploy:"NT Cyclone",gap:"1 Apr — no replacement sourced",urgency:"Critical",c:"coral",action:"Source replacement"},
-        {role:"Storm Damage Ops",deploy:"NT Cyclone",gap:"1 Apr — no replacement sourced",urgency:"High",c:"orange",action:"Source replacement"},
+        {role:"Deployment Manager",deploy:"Northern Rivers Flood",gap:"1 Apr — no replacement sourced",urgency:"Critical",c:"coral",action:"Source replacement"},
+        {role:"Flood Ops",deploy:"Northern Rivers Flood",gap:"1 Apr — no replacement sourced",urgency:"High",c:"orange",action:"Source replacement"},
         {role:"INLO Admin",deploy:"Canada 2025",gap:"8 Apr — rotation due, extension pending",urgency:"Medium",c:"blue",action:"Confirm extension"},
       ].map((g,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 0",borderBottom:i<2?`1px solid ${T.g100}`:"none"}}>
         <Chip color={g.c}>{g.urgency}</Chip>
@@ -416,7 +416,7 @@ function C4AgencyDash(){
     <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:20}}>
       <div>
         <Card title="Our Contingents">
-          {[{name:"CREW2 — NT Cyclone",personnel:"6 deployed",status:"Active",day:"Day 8",c:"green"},{name:"INLO1 — Canada 2025",personnel:"2 deployed",status:"Active",day:"Day 18",c:"green"},{name:"IMT1 — NT Cyclone",personnel:"3 deployed (1 demob)",status:"Partial Demob",day:"Day 12–14",c:"orange"}].map((ct,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:i<2?`1px solid ${T.g100}`:"none"}}>
+          {[{name:"CREW2 — Northern Rivers Flood",personnel:"6 deployed",status:"Active",day:"Day 8",c:"green"},{name:"INLO1 — Canada 2025",personnel:"2 deployed",status:"Active",day:"Day 18",c:"green"},{name:"IMT1 — Northern Rivers Flood",personnel:"3 deployed (1 demob)",status:"Partial Demob",day:"Day 12–14",c:"orange"}].map((ct,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:i<2?`1px solid ${T.g100}`:"none"}}>
             <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600}}>{ct.name}</div><div style={{fontSize:11.5,color:T.g500}}>{ct.personnel} · {ct.day}</div></div>
             <Chip color={ct.c}>{ct.status}</Chip>
           </div>)}
@@ -512,7 +512,7 @@ function C4StateDash(){
         <div style={{textAlign:"center",padding:30,color:T.g400,fontSize:13}}>No inbound deployments to NSW this period</div>
       </Card>
       <Card title="NSW Contributing To">
-        {[{deploy:"NT Cyclone Response",personnel:32,roles:"IMT, Crew, DM, Safety",status:"Active"},{deploy:"Canada 2025",personnel:6,roles:"INLO, INLO Admin, Crew",status:"Active"},{deploy:"QLD Storm (pending)",personnel:0,roles:"Awaiting nomination",status:"Pending"}].map((d,i)=><div key={i} style={{padding:"10px 0",borderBottom:i<2?`1px solid ${T.g100}`:"none"}}>
+        {[{deploy:"Northern Rivers Flood Response",personnel:32,roles:"IMT, Crew, DM, Safety",status:"Active"},{deploy:"Canada 2025",personnel:6,roles:"INLO, INLO Admin, Crew",status:"Active"},{deploy:"QLD Storm (pending)",personnel:0,roles:"Awaiting nomination",status:"Pending"}].map((d,i)=><div key={i} style={{padding:"10px 0",borderBottom:i<2?`1px solid ${T.g100}`:"none"}}>
           <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontWeight:600,fontSize:13}}>{d.deploy}</span><Chip color={d.status==="Active"?"green":"orange"}>{d.status}</Chip></div>
           <div style={{fontSize:11.5,color:T.g500,marginTop:2}}>{d.personnel} personnel · {d.roles}</div>
         </div>)}
@@ -546,7 +546,7 @@ function C4ReportBuilder(){
       {/* Filters panel */}
       <Card title="Filters">
         <div style={{marginBottom:14}}><div style={{fontSize:11,color:T.g400,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>Deployment</div>
-          {["All Deployments","NT Cyclone Response","Canada 2025"].map((d,i)=><label key={i} style={{display:"flex",alignItems:"center",gap:8,fontSize:12.5,padding:"4px 0",cursor:"pointer"}}><div style={{width:16,height:16,borderRadius:4,border:`2px solid ${i===0?T.blue:T.g300}`,background:i===0?T.blueL:T.white,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:T.blue}}>{i===0?"✓":""}</div>{d}</label>)}
+          {["All Deployments","Northern Rivers Flood Response","Canada 2025"].map((d,i)=><label key={i} style={{display:"flex",alignItems:"center",gap:8,fontSize:12.5,padding:"4px 0",cursor:"pointer"}}><div style={{width:16,height:16,borderRadius:4,border:`2px solid ${i===0?T.blue:T.g300}`,background:i===0?T.blueL:T.white,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:T.blue}}>{i===0?"✓":""}</div>{d}</label>)}
         </div>
         <div style={{marginBottom:14}}><div style={{fontSize:11,color:T.g400,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>Status</div>
           {["Working","Resting","Travel","Briefing","Demobilising"].map((s,i)=><label key={i} style={{display:"flex",alignItems:"center",gap:8,fontSize:12.5,padding:"4px 0",cursor:"pointer"}}><div style={{width:16,height:16,borderRadius:4,border:`2px solid ${T.g300}`,background:T.white}}/>{s}</label>)}
@@ -581,7 +581,7 @@ function C4ReportBuilder(){
 function C4SitRep(){
   return<div style={{padding:"24px 32px"}}>
     <div style={{display:"flex",justifyContent:"space-between",marginBottom:20}}>
-      <div><h2 style={{fontSize:20,fontWeight:700,margin:0}}>SitRep Workspace</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>NT Cyclone Response — SitRep #9 (Draft)</p></div>
+      <div><h2 style={{fontSize:20,fontWeight:700,margin:0}}>SitRep Workspace</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Northern Rivers Flood Response — SitRep #9 (Draft)</p></div>
       <div style={{display:"flex",gap:8}}><Chip color="orange">Draft</Chip><Btn v="secondary">Save Draft</Btn><Btn v="primary">Submit SitRep</Btn></div>
     </div>
 
@@ -589,7 +589,7 @@ function C4SitRep(){
       <div>
         {/* Auto-populated sections */}
         {[
-          {title:"1. Situation Overview",auto:true,content:"NT Cyclone Response continues with 64 personnel deployed across 3 contingents in Darwin, NT. Operations focus on storm damage clearance and community recovery support. Deployment is in Day 8–14 with first rotation commencing 31 Mar."},
+          {title:"1. Situation Overview",auto:true,content:"Northern Rivers Flood Response continues with 64 personnel deployed across 3 contingents in Lismore, NSW. Operations focus on storm damage clearance and community recovery support. Deployment is in Day 8–14 with first rotation commencing 31 Mar."},
           {title:"2. Deployment Summary",auto:true,content:null,table:[["Contingent","Personnel","Status","Day"],["IMT1","3","Active (1 demob)","12–14"],["CREW1","6","Active","8"],["CREW2","6","Active","8"],["Overhead","4","Active","8–12"]]},
           {title:"3. Weather & Fire Context",auto:false,content:"Post-cyclone conditions: temperatures 32–35°C, humidity 75–85%, scattered thunderstorms forecast for 31 Mar–2 Apr. Wind gusts to 60km/h possible. Category 2 cyclone remnants have weakened to a tropical low."},
           {title:"4. Issues & Risks",auto:true,content:null,items:["I/I/I Report filed for Canada 2025 (IMT1) — investigation commenced","Fatigue threshold warning: 3 personnel at 12+ consecutive days","Rotation gap: 2 DM replacements required by 4 Apr","7 expense claims past 14-day agency review window"]},
@@ -604,7 +604,7 @@ function C4SitRep(){
 
       <div>
         <Card title="SitRep Details">
-          {[["Report ID","SITREP-NT-2025-009"],["Deployment","NT Cyclone Response"],["Period","29–30 Mar 2026"],["Author","Jessica Walsh"],["Status","Draft"],["Previous","SitRep #8 (Submitted 29 Mar)"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",fontSize:12.5,borderBottom:`1px solid ${T.g50}`}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550}}>{v}</span></div>)}
+          {[["Report ID","SITREP-NT-2025-009"],["Deployment","Northern Rivers Flood Response"],["Period","29–30 Mar 2026"],["Author","Jessica Walsh"],["Status","Draft"],["Previous","SitRep #8 (Submitted 29 Mar)"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",fontSize:12.5,borderBottom:`1px solid ${T.g50}`}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550}}>{v}</span></div>)}
         </Card>
 
         <Card title="Attachments" s={{marginTop:16}}>

@@ -56,7 +56,7 @@ export default function C5Finance(){
 function MyClaims(){
   return<div style={{padding:"24px 32px"}}>
     <div style={{display:"flex",justifyContent:"space-between",marginBottom:20}}>
-      <div><h2 style={{fontSize:20,fontWeight:700,margin:0}}>My Claims</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Daniel Thornton · NT Cyclone Response · CREW2</p></div>
+      <div><h2 style={{fontSize:20,fontWeight:700,margin:0}}>My Claims</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Daniel Thornton · Northern Rivers Flood Response · CREW2</p></div>
       <Btn v="primary">+ New Claim</Btn>
     </div>
 
@@ -69,12 +69,12 @@ function MyClaims(){
       <table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><TH>Claim ID</TH><TH>Date</TH><TH>Category</TH><TH>Description</TH><TH>Currency</TH><TH>Amount</TH><TH>Status</TH><TH>Receipt</TH></tr></thead>
         <tbody>
           {[
-            {id:"CLM-2025-0891",date:"29 Mar",cat:"Meal",desc:"Dinner — Darwin CBD",cur:"AUD",amt:"$52.40",status:"Pending",color:"orange",receipt:true},
+            {id:"CLM-2025-0891",date:"29 Mar",cat:"Meal",desc:"Dinner — Lismore CBD",cur:"AUD",amt:"$52.40",status:"Pending",color:"orange",receipt:true},
             {id:"CLM-2025-0885",date:"28 Mar",cat:"Transport",desc:"Taxi to staging area",cur:"AUD",amt:"$34.00",status:"Pending",color:"orange",receipt:true},
             {id:"CLM-2025-0878",date:"27 Mar",cat:"Sundries",desc:"Sunscreen, batteries",cur:"AUD",amt:"$28.90",status:"Pending",color:"orange",receipt:true},
             {id:"CLM-2025-0862",date:"25 Mar",cat:"Meal",desc:"Lunch — team meal (shared)",cur:"AUD",amt:"$47.50",status:"Approved",color:"green",receipt:true},
             {id:"CLM-2025-0855",date:"24 Mar",cat:"Meal",desc:"Dinner — hotel restaurant",cur:"AUD",amt:"$68.00",status:"Approved",color:"green",receipt:true},
-            {id:"CLM-2025-0841",date:"23 Mar",cat:"Transport",desc:"Airport shuttle SYD–DRW",cur:"AUD",amt:"$124.00",status:"Approved",color:"green",receipt:true},
+            {id:"CLM-2025-0841",date:"23 Mar",cat:"Transport",desc:"Shuttle BNE–LIS",cur:"AUD",amt:"$124.00",status:"Approved",color:"green",receipt:true},
             {id:"CLM-2025-0838",date:"23 Mar",cat:"Meal",desc:"Breakfast — airport",cur:"AUD",amt:"$73.00",status:"Approved",color:"green",receipt:true},
             {id:"CLM-2025-0820",date:"22 Mar",cat:"Accommodation",desc:"Hotel incidentals — minibar",cur:"AUD",amt:"$65.00",status:"Rejected",color:"coral",receipt:false},
           ].map((r,i)=><tr key={i} style={{cursor:"pointer"}}>
@@ -107,7 +107,7 @@ function MyClaims(){
 function ClaimSubmit(){
   const[step,setStep]=useState(1);
   return<div style={{padding:"24px 32px",maxWidth:860,margin:"0 auto"}}>
-    <div style={{marginBottom:24}}><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Submit Expense Claim</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>NT Cyclone Response · Deployment phase: In Field</p></div>
+    <div style={{marginBottom:24}}><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Submit Expense Claim</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Northern Rivers Flood Response · Deployment phase: In Field</p></div>
 
     {/* Progress */}
     <div style={{display:"flex",alignItems:"center",marginBottom:28}}>
@@ -147,7 +147,7 @@ function ClaimSubmit(){
             <div style={{padding:"9px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:6,fontSize:13}}>29 March 2026</div>
           </div>
           <div style={{gridColumn:"1/3"}}><label style={{fontSize:12,fontWeight:550,color:T.g600,display:"block",marginBottom:4}}>Description</label>
-            <div style={{padding:"9px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:6,fontSize:13}}>Dinner — Darwin CBD restaurant, team dinner after operations</div>
+            <div style={{padding:"9px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:6,fontSize:13}}>Dinner — Lismore CBD restaurant, team dinner after operations</div>
           </div>
         </div>
         <div style={{marginTop:14,padding:"10px 14px",background:T.greenL,borderRadius:6,fontSize:12,color:"#4a7a12"}}>
@@ -194,7 +194,7 @@ function ClaimSubmit(){
       {step===5&&<div>
         <h3 style={{fontSize:16,fontWeight:650,marginBottom:12}}>Review & Submit</h3>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px 24px",fontSize:13,marginBottom:16}}>
-          {[["Phase","In Field"],["Category","Meal"],["Amount","$52.40 AUD"],["Date","29 March 2026"],["Description","Dinner — Darwin CBD"],["Receipt","receipt_dinner_29mar.jpg ✓"],["Allocation","Self only (100%)"],["Deployment","NT Cyclone Response"]].map(([k,v],i)=><div key={i}><div style={{fontSize:11,color:T.g400,fontWeight:550}}>{k}</div><div style={{fontWeight:550,marginTop:2}}>{v}</div></div>)}
+          {[["Phase","In Field"],["Category","Meal"],["Amount","$52.40 AUD"],["Date","29 March 2026"],["Description","Dinner — Lismore CBD"],["Receipt","receipt_dinner_29mar.jpg ✓"],["Allocation","Self only (100%)"],["Deployment","Northern Rivers Flood Response"]].map(([k,v],i)=><div key={i}><div style={{fontSize:11,color:T.g400,fontWeight:550}}>{k}</div><div style={{fontWeight:550,marginTop:2}}>{v}</div></div>)}
         </div>
         <div style={{padding:"10px 14px",background:T.blueL,borderRadius:6,fontSize:12,color:T.blue}}>
           This claim will be submitted to NSW RFS for agency review. You will be notified when the status changes.
@@ -214,10 +214,10 @@ function AgencyReview(){
   const[selected,setSelected]=useState([]);
   const toggle=id=>setSelected(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
   const claims=[
-    {id:"CLM-2025-0891",person:"Daniel Thornton",init:"DT",c:T.blue,cat:"Meal",date:"29 Mar",amt:"$52.40",cur:"AUD",deploy:"NT Cyclone",status:"Pending",reviewer:"Unassigned"},
-    {id:"CLM-2025-0885",person:"Daniel Thornton",init:"DT",c:T.blue,cat:"Transport",date:"28 Mar",amt:"$34.00",cur:"AUD",deploy:"NT Cyclone",status:"Pending",reviewer:"Unassigned"},
-    {id:"CLM-2025-0892",person:"Tom Briggs",init:"TB",c:T.orange,cat:"Sundries",date:"29 Mar",amt:"$31.90",cur:"AUD",deploy:"NT Cyclone",status:"Pending",reviewer:"Unassigned"},
-    {id:"CLM-2025-0887",person:"Rachel Kim",init:"RK",c:T.teal,cat:"Transport",date:"28 Mar",amt:"$124.00",cur:"AUD",deploy:"NT Cyclone",status:"Pending",reviewer:"Unassigned"},
+    {id:"CLM-2025-0891",person:"Daniel Thornton",init:"DT",c:T.blue,cat:"Meal",date:"29 Mar",amt:"$52.40",cur:"AUD",deploy:"Northern Rivers Flood",status:"Pending",reviewer:"Unassigned"},
+    {id:"CLM-2025-0885",person:"Daniel Thornton",init:"DT",c:T.blue,cat:"Transport",date:"28 Mar",amt:"$34.00",cur:"AUD",deploy:"Northern Rivers Flood",status:"Pending",reviewer:"Unassigned"},
+    {id:"CLM-2025-0892",person:"Tom Briggs",init:"TB",c:T.orange,cat:"Sundries",date:"29 Mar",amt:"$31.90",cur:"AUD",deploy:"Northern Rivers Flood",status:"Pending",reviewer:"Unassigned"},
+    {id:"CLM-2025-0887",person:"Rachel Kim",init:"RK",c:T.teal,cat:"Transport",date:"28 Mar",amt:"$124.00",cur:"AUD",deploy:"Northern Rivers Flood",status:"Pending",reviewer:"Unassigned"},
     {id:"CLM-2025-0889",person:"Alice Nguyễn",init:"AN",c:T.green,cat:"Meal",date:"27 Mar",amt:"C$62.30",cur:"CAD",deploy:"Canada 2025",status:"Pending",reviewer:"Unassigned"},
     {id:"CLM-2025-0893",person:"Alice Nguyễn",init:"AN",c:T.green,cat:"Meal",date:"28 Mar",amt:"C$58.70",cur:"CAD",deploy:"Canada 2025",status:"Pending",reviewer:"Unassigned"},
     {id:"CLM-2025-0880",person:"Peter Nguyễn",init:"PN",c:T.green,cat:"Accommodation",date:"26 Mar",amt:"C$189.00",cur:"CAD",deploy:"Canada 2025",status:"Pending",reviewer:"Unassigned"},
@@ -273,9 +273,9 @@ function AgencyReview(){
 function NRSCAudit(){
   const[drawer,setDrawer]=useState(null);
   const claims=[
-    {id:"CLM-2025-0862",person:"Daniel Thornton",agency:"NSW RFS",cat:"Meal",amt:"$47.50",cur:"AUD",deploy:"NT Cyclone",agApproved:"27 Mar",auditor:"—",status:"Awaiting Audit"},
-    {id:"CLM-2025-0855",person:"Daniel Thornton",agency:"NSW RFS",cat:"Meal",amt:"$68.00",cur:"AUD",deploy:"NT Cyclone",agApproved:"26 Mar",auditor:"—",status:"Awaiting Audit"},
-    {id:"CLM-2025-0841",person:"Daniel Thornton",agency:"NSW RFS",cat:"Transport",amt:"$124.00",cur:"AUD",deploy:"NT Cyclone",agApproved:"26 Mar",auditor:"J. Walsh",status:"Under Review"},
+    {id:"CLM-2025-0862",person:"Daniel Thornton",agency:"NSW RFS",cat:"Meal",amt:"$47.50",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"27 Mar",auditor:"—",status:"Awaiting Audit"},
+    {id:"CLM-2025-0855",person:"Daniel Thornton",agency:"NSW RFS",cat:"Meal",amt:"$68.00",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"26 Mar",auditor:"—",status:"Awaiting Audit"},
+    {id:"CLM-2025-0841",person:"Daniel Thornton",agency:"NSW RFS",cat:"Transport",amt:"$124.00",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"26 Mar",auditor:"J. Walsh",status:"Under Review"},
     {id:"CLM-2025-0810",person:"Mark Sullivan",agency:"CFA",cat:"Meal",amt:"C$55.00",cur:"CAD",deploy:"Canada 2025",agApproved:"24 Mar",auditor:"J. Walsh",status:"Returned for Info"},
   ];
 
@@ -318,7 +318,7 @@ function NRSCAudit(){
 function Reconciliation(){
   return<div style={{padding:"24px 32px"}}>
     <div style={{display:"flex",justifyContent:"space-between",marginBottom:20}}>
-      <div><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Reconciliation Workspace</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>NT Cyclone Response — Deployment-level financial summary</p></div>
+      <div><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Reconciliation Workspace</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Northern Rivers Flood Response — Deployment-level financial summary</p></div>
       <div style={{display:"flex",gap:8}}><Btn v="secondary">Export Invoice Pack</Btn><Btn v="primary">Generate Reconciliation</Btn></div>
     </div>
 
