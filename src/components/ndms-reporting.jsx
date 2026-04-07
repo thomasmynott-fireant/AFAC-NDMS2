@@ -1,83 +1,406 @@
-import { useState } from "react";
-import { C4AgencyDash, C4NationalDash, C4StateDash, C4ReportBuilder, C4SitRep } from "./ndms-stage2";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap } from "react-leaflet";
+import L from "leaflet";
+
+/* Fix default marker icons in bundled environments */
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 const T={blue:"#0E78C9",blueL:"#E8F4FC",teal:"#1FB6C9",tealL:"#E6F8FA",coral:"#E65A46",coralL:"#FDEEEC",orange:"#F08A27",orangeL:"#FEF3E6",green:"#8CC43C",greenL:"#F0F9E6",navy:"#23344A",g50:"#F8F9FA",g100:"#F1F3F5",g200:"#E5E8EB",g300:"#CED4DA",g400:"#ADB5BD",g500:"#868E96",g600:"#6C757D",g700:"#495057",white:"#FFFFFF"};
-const TabBar=({tabs,active,onChange})=><div style={{display:"flex",gap:0,borderBottom:`2px solid ${T.g200}`,marginBottom:0}}>{tabs.map(t=><button key={t} onClick={()=>onChange(t)} style={{padding:"10px 20px",fontSize:13,fontWeight:active===t?650:500,color:active===t?T.blue:T.g500,borderBottom:active===t?`2px solid ${T.blue}`:"2px solid transparent",marginBottom:-2,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>{t}</button>)}</div>;
+const Chip=({color,children})=>{const c={blue:{bg:T.blueL,fg:T.blue},teal:{bg:T.tealL,fg:"#148895"},coral:{bg:T.coralL,fg:T.coral},orange:{bg:T.orangeL,fg:"#c06e15"},green:{bg:T.greenL,fg:"#5a8a1f"},gray:{bg:T.g100,fg:T.g600},purple:{bg:"#F3F0FF",fg:"#6C5CE7"}}[color]||{bg:T.g100,fg:T.g600};return<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"2px 10px",borderRadius:20,fontSize:11,fontWeight:550,background:c.bg,color:c.fg}}><span style={{width:6,height:6,borderRadius:"50%",background:c.fg}}/>{children}</span>};
 
 /* ═══════════════════════════════════════════════
-   REPORTING WORKSPACE — tabbed module
-   Consolidates dashboards, report builder,
-   sitreps, and performance
-   scope: "national" | "agency" | "state" | "executive"
+   CUSTOM MARKER ICONS
    ═══════════════════════════════════════════════ */
-export default function ReportingWorkspace({ scope = "national" }) {
-  const tabs = ["Dashboards", "Report Builder", "SitReps", "Performance"];
-  const defaultTab = scope === "agency" ? "Dashboards" : "Dashboards";
-  const [tab, setTab] = useState(defaultTab);
-
-  const DashComponent = scope === "agency" ? C4AgencyDash : scope === "state" ? C4StateDash : C4NationalDash;
-
-  return <div>
-    <div style={{ padding: "24px 32px 0" }}>
-      <div style={{ marginBottom: 4 }}>
-        <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Reporting</h2>
-        <p style={{ color: T.g500, fontSize: 13, margin: "4px 0 0" }}>
-          {scope === "agency" ? "Agency dashboards, reports, and situational awareness" : scope === "state" ? "State/territory oversight and trend reporting" : "National intelligence, dashboards, and reporting"}
-        </p>
-      </div>
-      <TabBar tabs={tabs} active={tab} onChange={setTab} />
-    </div>
-    <div>
-      {tab === "Dashboards" && <DashComponent />}
-      {tab === "Report Builder" && <C4ReportBuilder />}
-      {tab === "SitReps" && <C4SitRep />}
-      {tab === "Performance" && <PerformanceTab />}
-    </div>
-  </div>;
+function createIcon(color, size = 12, shape = "circle") {
+  const svg = shape === "diamond"
+    ? `<svg xmlns="http://www.w3.org/2000/svg" width="${size*2}" height="${size*2}" viewBox="0 0 24 24"><polygon points="12,2 22,12 12,22 2,12" fill="${color}" stroke="white" stroke-width="2"/></svg>`
+    : shape === "triangle"
+    ? `<svg xmlns="http://www.w3.org/2000/svg" width="${size*2}" height="${size*2}" viewBox="0 0 24 24"><polygon points="12,3 23,21 1,21" fill="${color}" stroke="white" stroke-width="2"/></svg>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" width="${size*2}" height="${size*2}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${color}" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="white" opacity="0.8"/></svg>`;
+  return L.divIcon({
+    html: svg,
+    iconSize: [size * 2, size * 2],
+    iconAnchor: [size, size],
+    popupAnchor: [0, -size],
+    className: "",
+  });
 }
 
-function PerformanceTab() {
-  const Card=({title,right,children,s})=><div style={{background:T.white,border:`1px solid ${T.g200}`,borderRadius:8,overflow:"hidden",...s}}>{title&&<div style={{padding:"13px 18px",borderBottom:`1px solid ${T.g200}`,display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}><span style={{fontSize:14,fontWeight:650}}>{title}</span>{right}</div>}<div style={{padding:"14px 18px"}}>{children}</div></div>;
-  const Chip=({color,children})=>{const c={blue:{bg:T.blueL,fg:T.blue},green:{bg:T.greenL,fg:"#5a8a1f"},orange:{bg:T.orangeL,fg:"#c06e15"},coral:{bg:T.coralL,fg:T.coral}}[color]||{bg:T.g100,fg:T.g600};return<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"2px 10px",borderRadius:20,fontSize:11,fontWeight:550,background:c.bg,color:c.fg}}><span style={{width:6,height:6,borderRadius:"50%",background:c.fg}}/>{children}</span>};
+function createPersonIcon(color, initials) {
+  const html = `<div style="width:28px;height:28px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;color:white;font-size:9px;font-weight:700;font-family:system-ui;">${initials}</div>`;
+  return L.divIcon({ html, iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14], className: "" });
+}
 
-  return <div style={{ padding: "20px 32px" }}>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 20 }}>
-      {[
-        { label: "Season Deployments", value: "14", trend: "+3 vs last season", c: T.blue },
-        { label: "Avg Mobilisation Time", value: "38h", trend: "↓12% improvement", c: T.green },
-        { label: "Personnel Deployed", value: "247", trend: "Across 6 jurisdictions", c: T.navy },
-        { label: "Claims Processed", value: "$1.2M", trend: "94% within SLA", c: T.orange },
-      ].map((m, i) => <div key={i} style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, padding: "16px 20px" }}>
-        <div style={{ fontSize: 11, color: T.g500, marginBottom: 6 }}>{m.label}</div>
-        <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 3 }}>{m.value}</div>
-        <div style={{ fontSize: 11, fontWeight: 550, color: m.c }}>{m.trend}</div>
-      </div>)}
-    </div>
+function createFlightIcon() {
+  const html = `<div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:20px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">✈️</div>`;
+  return L.divIcon({ html, iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -15], className: "" });
+}
 
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-      <Card title="Deployment Trend — Season 2025/26">
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 8 }}>
-          {[{ w: "Oct", v: 12 }, { w: "Nov", v: 28 }, { w: "Dec", v: 45 }, { w: "Jan", v: 82 }, { w: "Feb", v: 120 }, { w: "Mar", v: 247 }, { w: "Apr", v: 0 }, { w: "May", v: 0 }].map((w, i) => <div key={i} style={{ textAlign: "center" }}>
-            <div style={{ height: 80, display: "flex", alignItems: "flex-end", justifyContent: "center", marginBottom: 4 }}><div style={{ width: 24, height: `${Math.max((w.v / 247) * 70, 2)}px`, background: w.v > 0 ? T.blue : T.g200, borderRadius: "3px 3px 0 0" }} /></div>
-            <div style={{ fontSize: 11, fontWeight: w.v > 0 ? 600 : 400 }}>{w.v || "—"}</div>
-            <div style={{ fontSize: 10, color: T.g400 }}>{w.w}</div>
-          </div>)}
+function createIncidentIcon() {
+  const html = `<div style="width:26px;height:26px;border-radius:4px;background:${T.coral};border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;">!</div>`;
+  return L.divIcon({ html, iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -13], className: "" });
+}
+
+/* ═══════════════════════════════════════════════
+   MAP DATA — Deployment sites, personnel, flights, incidents
+   ═══════════════════════════════════════════════ */
+
+/* Deployment zones */
+const DEPLOYMENT_ZONES = [
+  { id: "DEP-NR", name: "Northern Rivers Flood Response", lat: -28.811, lng: 153.278, radius: 25000, color: T.blue, status: "Active", personnel: 68, assets: 12, commander: "J. Walsh" },
+  { id: "DEP-CAN", name: "Canada 2025 Wildfire Season", lat: 50.6745, lng: -120.3273, radius: 40000, color: T.teal, status: "Active", personnel: 33, assets: 3, commander: "M. Sullivan" },
+  { id: "DEP-GIP", name: "Gippsland Bushfire Support", lat: -37.8226, lng: 147.6127, radius: 20000, color: T.orange, status: "Mobilising", personnel: 0, assets: 0, commander: "R. Kimura" },
+];
+
+/* Personnel — GPS positions (simulated live tracking) */
+const DEPLOYED_PERSONNEL = [
+  // Northern Rivers crew
+  { name: "Daniel Thornton", role: "Crew Leader", agency: "QLD QFES", lat: -28.795, lng: 153.275, deployment: "DEP-NR", init: "DT", status: "On Duty" },
+  { name: "Tom Briggs", role: "Flood Ops", agency: "QLD QFES", lat: -28.820, lng: 153.290, deployment: "DEP-NR", init: "TB", status: "On Duty" },
+  { name: "Karen Wong", role: "Flood Ops", agency: "QLD QFES", lat: -28.803, lng: 153.260, deployment: "DEP-NR", init: "KW", status: "On Duty" },
+  { name: "Sarah Patel", role: "Ops Officer", agency: "QLD QFES", lat: -28.810, lng: 153.285, deployment: "DEP-NR", init: "SP", status: "On Duty" },
+  { name: "Ben Harper", role: "Mgmt Support", agency: "VIC CFA", lat: -28.815, lng: 153.270, deployment: "DEP-NR", init: "BH", status: "Rest" },
+  { name: "Rachel Kimura", role: "Deployment Mgr", agency: "VIC CFA", lat: -28.808, lng: 153.282, deployment: "DEP-NR", init: "RK", status: "On Duty" },
+  { name: "Sam O'Connor", role: "Safety Officer", agency: "TAS TFS", lat: -28.818, lng: 153.265, deployment: "DEP-NR", init: "SO", status: "On Duty" },
+  { name: "Jake Williams", role: "Crew Member", agency: "VIC CFA", lat: -28.825, lng: 153.295, deployment: "DEP-NR", init: "JW", status: "Flagged" },
+  { name: "Linda Brooks", role: "Coordinator", agency: "NSW RFS", lat: -28.812, lng: 153.278, deployment: "DEP-NR", init: "LB", status: "HQ" },
+  { name: "Chris Adams", role: "Crew Leader", agency: "SA SASES", lat: -28.801, lng: 153.250, deployment: "DEP-NR", init: "CA", status: "On Duty" },
+  // Canada crew (sample)
+  { name: "Mike Sullivan", role: "Team Leader", agency: "SA CFS", lat: 50.680, lng: -120.330, deployment: "DEP-CAN", init: "MS", status: "On Duty" },
+  { name: "Lisa Morton", role: "Ops Specialist", agency: "NSW RFS", lat: 50.670, lng: -120.310, deployment: "DEP-CAN", init: "LM", status: "On Duty" },
+  { name: "Fiona Grant", role: "Safety", agency: "NSW RFS", lat: 50.685, lng: -120.340, deployment: "DEP-CAN", init: "FG", status: "Rest" },
+  { name: "Dave Kowalski", role: "Crew Member", agency: "TAS TFS", lat: 50.665, lng: -120.350, deployment: "DEP-CAN", init: "DK", status: "On Duty" },
+];
+
+/* In-transit flights */
+const FLIGHTS = [
+  {
+    id: "QF2120",
+    type: "Deployment",
+    pax: 6,
+    from: { name: "Melbourne (MEL)", lat: -37.6733, lng: 144.8433 },
+    to: { name: "Lismore (LSY)", lat: -28.830, lng: 153.260 },
+    currentLat: -33.2,
+    currentLng: 149.5,
+    alt: "FL350",
+    eta: "14:30 AEST",
+    status: "In Flight",
+    passengers: ["R2 Crew — VIC CFA relief rotation"],
+  },
+  {
+    id: "AC0087",
+    type: "International",
+    pax: 8,
+    from: { name: "Sydney (SYD)", lat: -33.9461, lng: 151.1772 },
+    to: { name: "Vancouver (YVR)", lat: 49.1947, lng: -123.1789 },
+    currentLat: 15.0,
+    currentLng: -170.0,
+    alt: "FL390",
+    eta: "06:00 PDT",
+    status: "In Flight",
+    passengers: ["R2 Advance — Canada wildfire rotation"],
+  },
+];
+
+/* Incidents / OPS log markers */
+const INCIDENTS = [
+  { id: "INC-001", title: "Levee breach — Wyrallah Rd", lat: -28.835, lng: 153.300, severity: "High", deployment: "DEP-NR", time: "29 Mar 09:15", sitrep: "SR-003", description: "Minor levee breach requiring additional pump deployment" },
+  { id: "INC-002", title: "Fatigue flag — Jake Williams", lat: -28.825, lng: 153.295, severity: "High", deployment: "DEP-NR", time: "30 Mar 14:30", sitrep: "OPS-LOG", description: "Extended shift without adequate break — 14h continuous" },
+  { id: "INC-003", title: "Accommodation relocation", lat: -28.815, lng: 153.270, severity: "Low", deployment: "DEP-NR", time: "28 Mar 18:00", sitrep: "SR-002", description: "All personnel relocated to new site — capacity increase" },
+  { id: "INC-004", title: "Fire behaviour change — NE sector", lat: 50.710, lng: -120.280, severity: "Medium", deployment: "DEP-CAN", time: "30 Mar 12:00", sitrep: "SR-012", description: "Fire behaviour increasing in NE sector — additional crews requested" },
+  { id: "INC-005", title: "Road closure — Bruxner Hwy", lat: -28.800, lng: 153.240, severity: "Medium", deployment: "DEP-NR", time: "30 Mar 08:00", sitrep: "OPS-LOG", description: "Bruxner Highway closed between Lismore and Casino due to flooding" },
+];
+
+/* ═══════════════════════════════════════════════
+   FLYTO COMPONENT — animate map to location
+   ═══════════════════════════════════════════════ */
+function FlyTo({ center, zoom }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center) map.flyTo(center, zoom, { duration: 1.5 });
+  }, [center, zoom, map]);
+  return null;
+}
+
+
+/* ═══════════════════════════════════════════════
+   MAP WORKSPACE — Common Operating Picture
+   ═══════════════════════════════════════════════ */
+export default function MapWorkspace() {
+  const [layers, setLayers] = useState({
+    deploymentZones: true,
+    personnel: true,
+    flights: true,
+    incidents: true,
+    flightPaths: true,
+  });
+  const [flyTarget, setFlyTarget] = useState(null);
+  const [flyZoom, setFlyZoom] = useState(4);
+  const [selectedDeployment, setSelectedDeployment] = useState("All");
+
+  const toggleLayer = (key) => setLayers(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const filteredPersonnel = useMemo(() => {
+    if (selectedDeployment === "All") return DEPLOYED_PERSONNEL;
+    return DEPLOYED_PERSONNEL.filter(p => p.deployment === selectedDeployment);
+  }, [selectedDeployment]);
+
+  const filteredIncidents = useMemo(() => {
+    if (selectedDeployment === "All") return INCIDENTS;
+    return INCIDENTS.filter(inc => inc.deployment === selectedDeployment);
+  }, [selectedDeployment]);
+
+  const statusColor = (s) => s === "On Duty" ? T.green : s === "Rest" ? T.blue : s === "HQ" ? "#6C5CE7" : T.coral;
+
+  return (
+    <div style={{ display: "flex", height: "calc(100vh - 64px)", position: "relative" }}>
+      {/* ═══ SIDEBAR: Layer Controls ═══ */}
+      <div style={{
+        width: 280, background: T.white, borderRight: `1px solid ${T.g200}`,
+        display: "flex", flexDirection: "column", zIndex: 500, flexShrink: 0,
+        boxShadow: "2px 0 12px rgba(0,0,0,.05)",
+      }}>
+        {/* Header */}
+        <div style={{ padding: "16px 18px", borderBottom: `1px solid ${T.g200}` }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: T.navy }}>Common Operating Picture</div>
+          <div style={{ fontSize: 11.5, color: T.g500, marginTop: 2 }}>Live deployment tracking & situational awareness</div>
         </div>
-      </Card>
-      <Card title="Key Performance Indicators">
-        {[
-          { kpi: "Request-to-deployment time", target: "< 48h", actual: "38h", status: "Met", c: "green" },
-          { kpi: "Contingent fill rate", target: "> 90%", actual: "94%", status: "Met", c: "green" },
-          { kpi: "Claims within SLA", target: "> 85%", actual: "94%", status: "Met", c: "green" },
-          { kpi: "Welfare contact compliance", target: "100%", actual: "92%", status: "Near", c: "orange" },
-          { kpi: "I/I/I report time", target: "< 4h", actual: "2.5h", status: "Met", c: "green" },
-        ].map((k, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: i < 4 ? `1px solid ${T.g100}` : "none" }}>
-          <div style={{ flex: 1, fontSize: 13 }}>{k.kpi}</div>
-          <span style={{ fontSize: 12, color: T.g500, width: 50 }}>{k.target}</span>
-          <span style={{ fontSize: 12, fontWeight: 650, width: 40, textAlign: "right" }}>{k.actual}</span>
-          <Chip color={k.c}>{k.status}</Chip>
-        </div>)}
-      </Card>
+
+        {/* Quick zoom */}
+        <div style={{ padding: "12px 18px", borderBottom: `1px solid ${T.g200}` }}>
+          <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g500, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Quick Zoom</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <button onClick={() => { setFlyTarget([-25, 135]); setFlyZoom(4); setSelectedDeployment("All"); }} style={qzStyle(selectedDeployment === "All")}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.navy }} />
+              Global Overview
+            </button>
+            {DEPLOYMENT_ZONES.map(dz => (
+              <button key={dz.id} onClick={() => { setFlyTarget([dz.lat, dz.lng]); setFlyZoom(dz.id === "DEP-CAN" ? 10 : 12); setSelectedDeployment(dz.id); }} style={qzStyle(selectedDeployment === dz.id)}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: dz.color }} />
+                <span style={{ flex: 1, textAlign: "left" }}>{dz.name.split(" ").slice(0, 3).join(" ")}</span>
+                <Chip color={dz.status === "Active" ? "green" : "orange"}>{dz.status}</Chip>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Data Layers */}
+        <div style={{ padding: "12px 18px", borderBottom: `1px solid ${T.g200}`, flex: 1, overflowY: "auto" }}>
+          <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g500, textTransform: "uppercase", letterSpacing: .5, marginBottom: 10 }}>Data Layers</div>
+          {[
+            { key: "deploymentZones", label: "Deployment Zones", desc: "Area of operations circles", color: T.blue, icon: "◉" },
+            { key: "personnel", label: "Personnel GPS", desc: "Live member positions", color: T.green, icon: "👤" },
+            { key: "flights", label: "Flight Tracking", desc: "In-transit aircraft", color: T.orange, icon: "✈️" },
+            { key: "flightPaths", label: "Flight Paths", desc: "Origin → destination routes", color: T.g400, icon: "- -" },
+            { key: "incidents", label: "Incidents & SitReps", desc: "Reported events on map", color: T.coral, icon: "⚠" },
+          ].map(layer => (
+            <label key={layer.key} style={{
+              display: "flex", alignItems: "flex-start", gap: 8, padding: "8px 10px",
+              borderRadius: 6, cursor: "pointer", marginBottom: 2,
+              background: layers[layer.key] ? `${layer.color}10` : "transparent",
+              border: `1px solid ${layers[layer.key] ? `${layer.color}30` : "transparent"}`,
+              transition: "all .12s",
+            }}>
+              <input type="checkbox" checked={layers[layer.key]} onChange={() => toggleLayer(layer.key)} style={{ accentColor: layer.color, marginTop: 2 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: layers[layer.key] ? T.navy : T.g500 }}>
+                  <span style={{ marginRight: 4 }}>{layer.icon}</span>{layer.label}
+                </div>
+                <div style={{ fontSize: 10.5, color: T.g400, marginTop: 1 }}>{layer.desc}</div>
+              </div>
+            </label>
+          ))}
+        </div>
+
+        {/* Legend */}
+        <div style={{ padding: "12px 18px", borderTop: `1px solid ${T.g200}` }}>
+          <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g500, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Personnel Status</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {[
+              { l: "On Duty", c: T.green },
+              { l: "Rest", c: T.blue },
+              { l: "HQ", c: "#6C5CE7" },
+              { l: "Flagged", c: T.coral },
+            ].map(s => (
+              <div key={s.l} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, color: T.g600 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: s.c }} />{s.l}
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g500, textTransform: "uppercase", letterSpacing: .5, marginBottom: 6, marginTop: 10 }}>Incident Severity</div>
+          <div style={{ display: "flex", gap: 6 }}>
+            {[
+              { l: "High", c: T.coral },
+              { l: "Medium", c: T.orange },
+              { l: "Low", c: T.g400 },
+            ].map(s => (
+              <div key={s.l} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, color: T.g600 }}>
+                <span style={{ width: 8, height: 8, borderRadius: 2, background: s.c }} />{s.l}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ MAP ═══ */}
+      <div style={{ flex: 1, position: "relative" }}>
+        {/* Live status bar */}
+        <div style={{
+          position: "absolute", top: 12, left: 12, right: 12, zIndex: 1000,
+          display: "flex", gap: 8, pointerEvents: "none",
+        }}>
+          {[
+            { l: "Active Deployments", v: DEPLOYMENT_ZONES.filter(d => d.status === "Active").length, c: T.green },
+            { l: "Personnel Tracked", v: filteredPersonnel.length, c: T.blue },
+            { l: "Flights In Transit", v: FLIGHTS.length, c: T.orange },
+            { l: "Active Incidents", v: filteredIncidents.filter(i => i.severity === "High").length, c: T.coral },
+          ].map((s, i) => (
+            <div key={i} style={{
+              display: "flex", alignItems: "center", gap: 6, padding: "6px 14px",
+              background: "rgba(255,255,255,.92)", backdropFilter: "blur(8px)",
+              borderRadius: 6, border: `1px solid ${T.g200}`,
+              boxShadow: "0 2px 8px rgba(0,0,0,.08)", pointerEvents: "auto",
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.c }} />
+              <span style={{ fontSize: 11, color: T.g600 }}>{s.l}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>{s.v}</span>
+            </div>
+          ))}
+        </div>
+
+        <MapContainer
+          center={[-25, 135]}
+          zoom={4}
+          style={{ height: "100%", width: "100%" }}
+          zoomControl={false}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+
+          {flyTarget && <FlyTo center={flyTarget} zoom={flyZoom} />}
+
+          {/* Deployment zones */}
+          {layers.deploymentZones && DEPLOYMENT_ZONES.map(dz => (
+            <Circle
+              key={dz.id}
+              center={[dz.lat, dz.lng]}
+              radius={dz.radius}
+              pathOptions={{
+                color: dz.color,
+                fillColor: dz.color,
+                fillOpacity: 0.12,
+                weight: 2,
+                dashArray: dz.status === "Mobilising" ? "8 4" : undefined,
+              }}
+            >
+              <Popup>
+                <div style={{ minWidth: 200 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{dz.name}</div>
+                  <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+                    <Chip color={dz.status === "Active" ? "green" : "orange"}>{dz.status}</Chip>
+                  </div>
+                  <div style={{ fontSize: 12, color: "#555" }}>
+                    <div><strong>{dz.personnel}</strong> personnel · <strong>{dz.assets}</strong> assets</div>
+                    <div style={{ marginTop: 4 }}>Commander: {dz.commander}</div>
+                  </div>
+                </div>
+              </Popup>
+            </Circle>
+          ))}
+
+          {/* Deployment centre markers */}
+          {layers.deploymentZones && DEPLOYMENT_ZONES.map(dz => (
+            <Marker key={`m-${dz.id}`} position={[dz.lat, dz.lng]} icon={createIcon(dz.color, 10)}>
+              <Popup>
+                <div style={{ fontWeight: 700, fontSize: 13 }}>{dz.name}</div>
+                <div style={{ fontSize: 11, color: "#666" }}>Deployment HQ</div>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* Personnel markers */}
+          {layers.personnel && filteredPersonnel.map((p, i) => (
+            <Marker key={`p-${i}`} position={[p.lat, p.lng]} icon={createPersonIcon(statusColor(p.status), p.init)}>
+              <Popup>
+                <div style={{ minWidth: 180 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{p.name}</div>
+                  <div style={{ fontSize: 11, color: "#666", marginBottom: 4 }}>{p.role} · {p.agency}</div>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    <Chip color={p.status === "On Duty" ? "green" : p.status === "Flagged" ? "coral" : p.status === "HQ" ? "purple" : "blue"}>{p.status}</Chip>
+                  </div>
+                  <div style={{ fontSize: 10, color: "#888", marginTop: 4 }}>
+                    GPS: {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* Flight paths */}
+          {layers.flightPaths && FLIGHTS.map((f, i) => (
+            <Polyline
+              key={`fp-${i}`}
+              positions={[[f.from.lat, f.from.lng], [f.currentLat, f.currentLng], [f.to.lat, f.to.lng]]}
+              pathOptions={{ color: T.orange, weight: 2, dashArray: "6 4", opacity: 0.6 }}
+            />
+          ))}
+
+          {/* Flight markers */}
+          {layers.flights && FLIGHTS.map((f, i) => (
+            <Marker key={`fl-${i}`} position={[f.currentLat, f.currentLng]} icon={createFlightIcon()}>
+              <Popup>
+                <div style={{ minWidth: 220 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>✈️ {f.id}</div>
+                  <div style={{ fontSize: 11, color: "#666", marginBottom: 6 }}>{f.from.name} → {f.to.name}</div>
+                  <div style={{ display: "flex", gap: 4, marginBottom: 6 }}>
+                    <Chip color="orange">{f.status}</Chip>
+                    <Chip color="blue">{f.type}</Chip>
+                  </div>
+                  <div style={{ fontSize: 12, lineHeight: 1.6 }}>
+                    <div><strong>Pax:</strong> {f.pax} · <strong>Alt:</strong> {f.alt}</div>
+                    <div><strong>ETA:</strong> {f.eta}</div>
+                    <div style={{ fontSize: 11, fontStyle: "italic", color: "#888", marginTop: 2 }}>{f.passengers[0]}</div>
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* Incident markers */}
+          {layers.incidents && filteredIncidents.map((inc, i) => (
+            <Marker key={`inc-${i}`} position={[inc.lat, inc.lng]} icon={createIncidentIcon()}>
+              <Popup>
+                <div style={{ minWidth: 220 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{inc.title}</div>
+                  <div style={{ display: "flex", gap: 4, marginBottom: 6 }}>
+                    <Chip color={inc.severity === "High" ? "coral" : inc.severity === "Medium" ? "orange" : "gray"}>{inc.severity}</Chip>
+                    <span style={{ fontSize: 11, color: "#888" }}>{inc.time}</span>
+                  </div>
+                  <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>{inc.description}</div>
+                  <div style={{ fontSize: 10, color: "#999" }}>Ref: {inc.sitrep}</div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </div>
     </div>
-  </div>;
+  );
 }
+
+/* ═══════════════════════════════════════════════ */
+const qzStyle = (active) => ({
+  display: "flex", alignItems: "center", gap: 8, padding: "6px 10px",
+  borderRadius: 6, fontSize: 12, fontWeight: active ? 600 : 500,
+  cursor: "pointer", border: `1px solid ${active ? T.blue : T.g200}`,
+  background: active ? T.blueL : "transparent",
+  color: active ? T.blue : T.navy,
+  fontFamily: "inherit", textAlign: "left", width: "100%",
+});

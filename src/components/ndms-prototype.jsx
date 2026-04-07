@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import PeopleWorkspace from "./ndms-people";
 import RequestsWorkspace, { RequestWizard } from "./ndms-requests";
 import DeploymentsWorkspace from "./ndms-deployments";
-import ReportingWorkspace from "./ndms-reporting";
+import MapWorkspace from "./ndms-reporting";
 import { MyClaims, ClaimSubmit, AgencyReview, NRSCAudit, Reconciliation } from "./ndms-c5-finance";
 import { NAAForm, NAARegister, AssetBoard, ApprovalPanel, Performance, DemoRoute } from "./ndms-stage4-aviation";
 import { TaskCentre, Deployment360, ApprovalTimeline } from "./ndms-task-centre";
@@ -48,6 +48,7 @@ const Icons = {
   check: <Icon size={14} sw={2.5}><polyline points="20 6 9 17 4 12"/></Icon>,
   x: <Icon size={14} sw={2.5}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>,
   alert: <Icon size={16} sw={2}><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></Icon>,
+  globe: <Icon><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></Icon>,
   user: <Icon size={14}><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0113 0"/></Icon>,
   download: <Icon size={14} sw={2}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></Icon>,
   clock: <Icon size={14}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>,
@@ -127,7 +128,7 @@ const getNavItems = (role) => {
       { icon: "people", label: shell === "team" ? "My Record" : "People", id: "people", badge: shell === "agency" ? "5" : null },
       { icon: "doc", label: "Requests", id: "requests", badge: shell === "nrsc" ? "3" : null },
       { icon: "mapPin", label: "Deployments", id: "deployments", badge: shell === "nrsc" ? "!" : null },
-      { icon: "grid", label: "Reporting", id: "reporting" },
+      { icon: "globe", label: "Map", id: "map" },
     ]},
   ];
 
@@ -187,11 +188,8 @@ export default function NDMSPrototype() {
         return <RequestsWorkspace onOpenWizard={() => setWizardOpen(true)} />;
       case "deployments":
         return <DeploymentsWorkspace />;
-      case "reporting":
-        if (shell === "agency") return <ReportingWorkspace scope="agency" />;
-        if (role === "rmg") return <ReportingWorkspace scope="state" />;
-        if (role === "exec") return <ReportingWorkspace scope="executive" />;
-        return <ReportingWorkspace scope="national" />;
+      case "map":
+        return <MapWorkspace />;
       case "finance":
         if (shell === "team") return <MyClaims />;
         if (shell === "agency") return <AgencyReview />;

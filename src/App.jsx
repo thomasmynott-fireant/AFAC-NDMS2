@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import NDMSPrototype from './components/ndms-prototype'
+import 'leaflet/dist/leaflet.css'
 import './App.css'
 
 function App() {
