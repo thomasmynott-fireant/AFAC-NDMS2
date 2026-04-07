@@ -4,6 +4,7 @@ import RequestsWorkspace, { RequestWizard } from "./ndms-requests";
 import DeploymentsWorkspace from "./ndms-deployments";
 import MapWorkspace from "./ndms-reporting";
 import FinanceWorkspace from "./ndms-c5-finance";
+import NAAWorkspace from "./ndms-naa-core";
 import { NAAForm, NAARegister, AssetBoard, ApprovalPanel, Performance, DemoRoute } from "./ndms-stage4-aviation";
 import { TaskCentre, Deployment360, ApprovalTimeline } from "./ndms-task-centre";
 import AdminWorkspace from "./ndms-admin";
@@ -182,7 +183,7 @@ export default function NDMSPrototype() {
         if (shell === "agency") return <FinanceWorkspace scope="agency" />;
         return <FinanceWorkspace scope="national" />;
       case "aviation":
-        return <AssetBoard />;
+        return <NAAWorkspace />;
       case "admin":
         return <AdminWorkspace />;
       default:
