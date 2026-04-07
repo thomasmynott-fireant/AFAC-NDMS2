@@ -70,38 +70,145 @@ export default function PeopleWorkspace({ scope = "national" }) {
 }
 
 function DirectoryTab({ people, search, setSearch, scope }) {
+  const [filters, setFilters] = useState({});
+  const [openFilter, setOpenFilter] = useState(null);
+  const [collapsed, setCollapsed] = useState({});
+
+  const toggleFilter = (col, val) => {
+    setFilters(prev => {
+      const cur = prev[col] || [];
+      return { ...prev, [col]: cur.includes(val) ? cur.filter(v => v !== val) : [...cur, val] };
+    });
+  };
+  const clearFilter = (col) => setFilters(prev => { const n = { ...prev }; delete n[col]; return n; });
+  const activeFilterCount = Object.values(filters).filter(v => v && v.length > 0).length;
+
+  /* Build unique values for each filterable column */
+  const uniqueVals = (key) => [...new Set(people.map(p => p[key]))].sort();
+  const filterCols = [
+    { key: "agency", label: "Agency" },
+    { key: "jurisdiction", label: "Jurisdiction" },
+    { key: "role", label: "Role" },
+    { key: "deployability", label: "Deployability" },
+    { key: "deployment", label: "Current Deployment" },
+  ];
+
+  /* Apply filters */
+  const filtered = people.filter(p => {
+    for (const col of filterCols) {
+      const vals = filters[col.key];
+      if (vals && vals.length > 0 && !vals.includes(p[col.key])) return false;
+    }
+    return true;
+  });
+
+  /* Group by agency */
+  const agencies = [...new Set(filtered.map(p => p.agency))].sort();
+  const grouped = agencies.map(ag => ({ agency: ag, people: filtered.filter(p => p.agency === ag) }));
+
+  const FilterHeader = ({ col }) => {
+    const active = filters[col.key] && filters[col.key].length > 0;
+    const isOpen = openFilter === col.key;
+    return (
+      <th style={{
+        textAlign: "left", padding: "8px 10px", fontWeight: 550, color: active ? T.blue : T.g500,
+        fontSize: 10.5, textTransform: "uppercase", letterSpacing: .5,
+        borderBottom: `2px solid ${T.g200}`, whiteSpace: "nowrap", position: "relative", cursor: "pointer",
+        userSelect: "none",
+      }} onClick={(e) => { e.stopPropagation(); setOpenFilter(isOpen ? null : col.key); }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+          {col.label}
+          <span style={{ fontSize: 8, opacity: isOpen ? 1 : .5, transition: "transform .15s", transform: isOpen ? "rotate(180deg)" : "none" }}>▼</span>
+          {active && <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.blue, display: "inline-block" }} />}
+        </span>
+        {isOpen && (
+          <div onClick={e => e.stopPropagation()} style={{
+            position: "absolute", top: "100%", left: 0, zIndex: 100, minWidth: 200, maxHeight: 260, overflowY: "auto",
+            background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8,
+            boxShadow: "0 8px 24px rgba(35,52,74,.12)", padding: "6px 0", marginTop: 2,
+          }}>
+            {active && <div onClick={() => clearFilter(col.key)} style={{ padding: "6px 14px", fontSize: 11, color: T.coral, cursor: "pointer", fontWeight: 600, borderBottom: `1px solid ${T.g100}` }}>Clear filter</div>}
+            {uniqueVals(col.key).map(val => {
+              const checked = (filters[col.key] || []).includes(val);
+              return (
+                <label key={val} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 14px", fontSize: 12, cursor: "pointer", background: checked ? T.blueL : "transparent", fontWeight: checked ? 600 : 400, color: T.navy }}>
+                  <input type="checkbox" checked={checked} onChange={() => toggleFilter(col.key, val)} style={{ accentColor: T.blue }} />
+                  {val}
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </th>
+    );
+  };
+
   return <>
     {/* Search & filters */}
-    <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+    <div style={{ display: "flex", gap: 10, marginBottom: 12 }} onClick={() => setOpenFilter(null)}>
       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", background: T.white, border: `1px solid ${T.g300}`, borderRadius: 6, fontSize: 13 }}>
         <span style={{ color: T.g400 }}>🔍</span>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, agency, role, jurisdiction…" style={{ border: "none", outline: "none", flex: 1, fontSize: 13, fontFamily: "inherit", background: "transparent" }} />
       </div>
-      {["All", "Deployed", "Available", "Pending"].map(f => <span key={f} style={{ padding: "7px 14px", borderRadius: 6, fontSize: 12, fontWeight: 550, border: `1px solid ${T.g300}`, background: f === "All" ? T.blue : T.white, color: f === "All" ? T.white : T.g600, cursor: "pointer" }}>{f}</span>)}
+      {activeFilterCount > 0 && <span onClick={() => setFilters({})} style={{ padding: "7px 14px", borderRadius: 6, fontSize: 12, fontWeight: 550, border: `1px solid ${T.coral}`, background: T.coralL, color: T.coral, cursor: "pointer" }}>Clear all filters ({activeFilterCount})</span>}
     </div>
+
+    {/* Active filter chips */}
+    {activeFilterCount > 0 && <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+      {Object.entries(filters).filter(([,v]) => v && v.length).map(([col, vals]) =>
+        vals.map(val => <span key={`${col}-${val}`} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", background: T.blueL, borderRadius: 20, fontSize: 11, fontWeight: 550, color: T.blue }}>
+          {filterCols.find(c => c.key === col)?.label}: {val}
+          <span onClick={() => toggleFilter(col, val)} style={{ cursor: "pointer", fontSize: 13, lineHeight: 1 }}>✕</span>
+        </span>)
+      )}
+    </div>}
 
     {/* Stats strip */}
     <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-      {[{ l: "Total", v: people.length, c: T.navy }, { l: "Deployed", v: people.filter(p => p.deployment !== "—").length, c: T.blue }, { l: "Available", v: people.filter(p => p.deployment === "—" && p.readiness >= 70).length, c: T.green }, { l: "Exceptions", v: people.filter(p => p.expiry).length, c: T.coral }].map((s, i) => <div key={i} style={{ flex: 1, background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+      {[{ l: "Total", v: filtered.length, c: T.navy }, { l: "Deployed", v: filtered.filter(p => p.deployment !== "—").length, c: T.blue }, { l: "Available", v: filtered.filter(p => p.deployment === "—" && p.readiness >= 70).length, c: T.green }, { l: "Exceptions", v: filtered.filter(p => p.expiry).length, c: T.coral }].map((s, i) => <div key={i} style={{ flex: 1, background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ width: 8, height: 8, borderRadius: "50%", background: s.c }} /><span style={{ fontSize: 12, color: T.g600 }}>{s.l}</span><span style={{ marginLeft: "auto", fontWeight: 700, fontSize: 16 }}>{s.v}</span>
       </div>)}
     </div>
 
-    {/* Table */}
+    {/* Table grouped by agency */}
     <Card>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead><tr><TH w={200}>Name</TH><TH>Agency</TH><TH>Jurisdiction</TH><TH>Role</TH><TH>Deployability</TH><TH>Current Deployment</TH><TH>Readiness</TH><TH w={50}></TH></tr></thead>
+        <thead><tr>
+          <TH w={200}>Name</TH>
+          {filterCols.map(col => <FilterHeader key={col.key} col={col} />)}
+          <th style={{ textAlign: "left", padding: "8px 10px", fontWeight: 550, color: T.g500, fontSize: 10.5, textTransform: "uppercase", letterSpacing: .5, borderBottom: `2px solid ${T.g200}`, whiteSpace: "nowrap" }}>Readiness</th>
+          <TH w={50}></TH>
+        </tr></thead>
         <tbody>
-          {people.map((p, i) => <tr key={i} style={{ cursor: "pointer" }}>
-            <TD fw={600}><div style={{ display: "flex", alignItems: "center", gap: 8 }}><Avatar i={p.initials} c={p.color} s={26} />{p.name}</div></TD>
-            <TD>{p.agency}</TD>
-            <TD>{p.jurisdiction}</TD>
-            <TD>{p.role}</TD>
-            <TD><Chip color={p.deployability.includes("Ready") ? "green" : p.deployability.includes("Pending") ? "orange" : p.deployability === "On Hold" ? "coral" : "gray"}>{p.deployability}</Chip></TD>
-            <TD s={{ color: p.deployment === "—" ? T.g400 : T.navy, fontWeight: p.deployment === "—" ? 400 : 550 }}>{p.deployment}</TD>
-            <TD><div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 40, height: 6, background: T.g200, borderRadius: 3, overflow: "hidden" }}><div style={{ width: `${p.readiness}%`, height: "100%", background: p.readiness >= 80 ? T.green : p.readiness >= 60 ? T.orange : T.coral, borderRadius: 3 }} /></div><span style={{ fontSize: 11, color: T.g500 }}>{p.readiness}%</span></div></TD>
-            <TD><span style={{ color: T.g400 }}>›</span></TD>
-          </tr>)}
+          {grouped.map((group) => {
+            const isCollapsed = collapsed[group.agency];
+            return [
+              <tr key={`header-${group.agency}`}
+                onClick={() => setCollapsed(prev => ({ ...prev, [group.agency]: !prev[group.agency] }))}
+                style={{ cursor: "pointer", background: T.g50 }}>
+                <td colSpan={8} style={{ padding: "10px 10px", borderBottom: `1px solid ${T.g200}` }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 10, color: T.g400, transition: "transform .15s", transform: isCollapsed ? "rotate(-90deg)" : "rotate(0deg)", display: "inline-block" }}>▼</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>{group.agency}</span>
+                    <span style={{ fontSize: 11, color: T.g500 }}>({group.people.length} {group.people.length === 1 ? "person" : "people"})</span>
+                    <span style={{ marginLeft: 8 }}><Chip color="green">{group.people.filter(p => p.deployment !== "—").length} deployed</Chip></span>
+                  </div>
+                </td>
+              </tr>,
+              ...(!isCollapsed ? group.people.map((p, i) => (
+                <tr key={`${group.agency}-${i}`} style={{ cursor: "pointer" }}>
+                  <TD fw={600}><div style={{ display: "flex", alignItems: "center", gap: 8, paddingLeft: 16 }}><Avatar i={p.initials} c={p.color} s={26} />{p.name}</div></TD>
+                  <TD>{p.agency}</TD>
+                  <TD>{p.jurisdiction}</TD>
+                  <TD>{p.role}</TD>
+                  <TD><Chip color={p.deployability.includes("Ready") ? "green" : p.deployability.includes("Pending") ? "orange" : p.deployability === "On Hold" ? "coral" : "gray"}>{p.deployability}</Chip></TD>
+                  <TD s={{ color: p.deployment === "—" ? T.g400 : T.navy, fontWeight: p.deployment === "—" ? 400 : 550 }}>{p.deployment}</TD>
+                  <TD><div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 40, height: 6, background: T.g200, borderRadius: 3, overflow: "hidden" }}><div style={{ width: `${p.readiness}%`, height: "100%", background: p.readiness >= 80 ? T.green : p.readiness >= 60 ? T.orange : T.coral, borderRadius: 3 }} /></div><span style={{ fontSize: 11, color: T.g500 }}>{p.readiness}%</span></div></TD>
+                  <TD><span style={{ color: T.g400 }}>›</span></TD>
+                </tr>
+              )) : [])
+            ];
+          })}
         </tbody>
       </table>
     </Card>
