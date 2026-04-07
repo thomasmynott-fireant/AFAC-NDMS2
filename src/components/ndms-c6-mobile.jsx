@@ -14,7 +14,7 @@ const SCREENS=[
   {id:"approvals",label:"Approvals",icon:"✓"},
 ];
 
-export default function C6Mobile(){
+export default function C6Mobile({onBackToDesktop}){
   const[screen,setScreen]=useState("home");
   const[m,setM]=useState(false);
   useEffect(()=>setM(true),[]);
@@ -36,6 +36,7 @@ export default function C6Mobile(){
           <div style={{fontSize:13,fontWeight:600}}>Daniel Thornton</div>
           <div style={{fontSize:11.5,color:T.g500}}>Team Member · QLD QFES</div>
         </div>
+        {onBackToDesktop && <button onClick={onBackToDesktop} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,width:"100%",marginTop:12,padding:"9px 14px",background:T.navy,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}><span style={{fontSize:14}}>🖥</span> Back to Desktop</button>}
       </div>
 
       {/* Phone frame */}

@@ -193,11 +193,11 @@ export default function MapWorkspace() {
         <div style={{ padding: "12px 18px", borderBottom: `1px solid ${T.g200}`, flex: 1, overflowY: "auto" }}>
           <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g500, textTransform: "uppercase", letterSpacing: .5, marginBottom: 10 }}>Data Layers</div>
           {[
-            { key: "deploymentZones", label: "Deployment Zones", desc: "Area of operations circles", color: T.blue, icon: "◉" },
-            { key: "personnel", label: "Personnel GPS", desc: "Live member positions", color: T.green, icon: "👤" },
-            { key: "flights", label: "Flight Tracking", desc: "In-transit aircraft", color: T.orange, icon: "✈️" },
-            { key: "flightPaths", label: "Flight Paths", desc: "Origin → destination routes", color: T.g400, icon: "- -" },
-            { key: "incidents", label: "Incidents & SitReps", desc: "Reported events on map", color: T.coral, icon: "⚠" },
+            { key: "deploymentZones", label: "Deployment Zones", desc: "Area of operations circles", color: T.blue },
+            { key: "personnel", label: "Personnel GPS", desc: "Live member positions", color: T.green },
+            { key: "flights", label: "Flight Tracking", desc: "In-transit aircraft", color: T.orange },
+            { key: "flightPaths", label: "Flight Paths", desc: "Origin → destination routes", color: T.g400 },
+            { key: "incidents", label: "Incidents & SitReps", desc: "Reported events on map", color: T.coral },
           ].map(layer => (
             <label key={layer.key} style={{
               display: "flex", alignItems: "flex-start", gap: 8, padding: "8px 10px",
@@ -209,7 +209,7 @@ export default function MapWorkspace() {
               <input type="checkbox" checked={layers[layer.key]} onChange={() => toggleLayer(layer.key)} style={{ accentColor: layer.color, marginTop: 2 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 12.5, fontWeight: 600, color: layers[layer.key] ? T.navy : T.g500 }}>
-                  <span style={{ marginRight: 4 }}>{layer.icon}</span>{layer.label}
+                  {layer.label}
                 </div>
                 <div style={{ fontSize: 10.5, color: T.g400, marginTop: 1 }}>{layer.desc}</div>
               </div>

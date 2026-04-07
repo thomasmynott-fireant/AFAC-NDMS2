@@ -143,7 +143,7 @@ const getNavItems = (role) => {
 };
 
 /* ─── Main App ─── */
-export default function NDMSPrototype() {
+export default function NDMSPrototype({ onOpenMobile }) {
   const [role, setRole] = useState("nrsc");
   const [activeNav, setActiveNav] = useState("home");
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
@@ -325,6 +325,17 @@ export default function NDMSPrototype() {
               {currentRole.deployRole && <div style={{ color: T.teal, fontSize: 10, fontWeight: 550, marginTop: 1 }}>⬦ {currentRole.deployRole}</div>}
             </div>
           </div>
+          {role === "team" && onOpenMobile && (
+            <button onClick={onOpenMobile} style={{
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              width: "100%", marginTop: 10, padding: "9px 12px",
+              background: "rgba(14,120,201,.15)", border: "1px solid rgba(14,120,201,.3)",
+              borderRadius: 6, color: T.blueL, fontSize: 12, fontWeight: 600,
+              cursor: "pointer", fontFamily: "inherit", transition: "all .15s",
+            }}>
+              <span style={{ fontSize: 15 }}>📱</span> Switch to Mobile App
+            </button>
+          )}
         </div>
       </nav>
 
