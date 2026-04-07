@@ -25,12 +25,62 @@ const PEOPLE = [
 ];
 
 /* ═══════════════════════════════════════════════
-   PEOPLE WORKSPACE — tabbed module
+   EOI KANBAN DATA
+   ═══════════════════════════════════════════════ */
+const INTERSTATE_STEPS = [
+  "EOI Submitted",
+  "Agency Review",
+  "NRSC Validation",
+  "Pre-Deploy Checks",
+  "Nomination Confirmed",
+  "Mobilisation Ready",
+];
+
+const INTERNATIONAL_STEPS = [
+  "EOI Submitted",
+  "Agency Review",
+  "NRSC Validation",
+  "International Clearance",
+  "Visa / eTA",
+  "Pre-Deploy Checks",
+  "Nomination Confirmed",
+  "Mobilisation Ready",
+];
+
+const EOI_ITEMS = [
+  { id: 1, name: "Ben Harper", agency: "VIC CFA", role: "Management Support Officer", type: "Interstate", request: "2025_26_008NSW_VIC001", step: "Agency Review", assignee: "S. Patel", assigneeInit: "SP", dueDate: "2 Apr", priority: "Medium", initials: "BH", color: T.orange },
+  { id: 2, name: "Nina Roberts", agency: "QLD QFES", role: "Flood Ops", type: "Interstate", request: "2025_26_007NSW_QLD001", step: "NRSC Validation", assignee: "J. Walsh", assigneeInit: "JW", dueDate: "1 Apr", priority: "High", initials: "NR", color: T.blue },
+  { id: 3, name: "Sam O'Connor", agency: "TAS TFS", role: "Safety Officer", type: "Interstate", request: "2025_26_007NSW_QLD001", step: "Nomination Confirmed", assignee: "J. Walsh", assigneeInit: "JW", dueDate: "—", priority: "Low", initials: "SO", color: T.green },
+  { id: 4, name: "Lisa Morton", agency: "SA CFS", role: "Crew Member", type: "International", request: "2025_26_INT_CAN_001", step: "Visa / eTA", assignee: "M. Sullivan", assigneeInit: "MS", dueDate: "5 Apr", priority: "High", initials: "LM", color: T.coral },
+  { id: 5, name: "Chris Adams", agency: "SA SASES", role: "Crew Leader", type: "International", request: "2025_26_INT_CAN_001", step: "Mobilisation Ready", assignee: "M. Sullivan", assigneeInit: "MS", dueDate: "—", priority: "Low", initials: "CA", color: T.teal },
+  { id: 6, name: "Jake Williams", agency: "VIC CFA", role: "Crew Member", type: "Interstate", request: "2025_26_008NSW_VIC001", step: "EOI Submitted", assignee: "Unassigned", assigneeInit: "—", dueDate: "3 Apr", priority: "Medium", initials: "JW", color: T.teal },
+  { id: 7, name: "Tom Briggs", agency: "QLD QFES", role: "Flood Ops", type: "Interstate", request: "2025_26_007NSW_QLD001", step: "Pre-Deploy Checks", assignee: "R. Kimura", assigneeInit: "RK", dueDate: "31 Mar", priority: "High", initials: "TB", color: T.blue },
+  { id: 8, name: "Alice Nguyễn", agency: "VIC CFA", role: "INLO Admin", type: "International", request: "2025_26_INT_CAN_001", step: "International Clearance", assignee: "J. Walsh", assigneeInit: "JW", dueDate: "4 Apr", priority: "Medium", initials: "AN", color: T.blue },
+];
+
+/* ═══════════════════════════════════════════════
+   TASKS DATA
+   ═══════════════════════════════════════════════ */
+const TASKS = [
+  { id: "T-001", task: "Review EOI — Ben Harper", type: "EOI Review", eoi: "Ben Harper", assignee: "S. Patel", agency: "QLD QFES", status: "In Progress", priority: "Medium", due: "2 Apr 2026", request: "2025_26_008NSW_VIC001" },
+  { id: "T-002", task: "Validate credentials — Nina Roberts", type: "Pre-Deploy Check", eoi: "Nina Roberts", assignee: "J. Walsh", agency: "NRSC", status: "Pending", priority: "High", due: "1 Apr 2026", request: "2025_26_007NSW_QLD001" },
+  { id: "T-003", task: "Confirm nomination — Sam O'Connor", type: "Nomination", eoi: "Sam O'Connor", assignee: "J. Walsh", agency: "NRSC", status: "Complete", priority: "Low", due: "30 Mar 2026", request: "2025_26_007NSW_QLD001" },
+  { id: "T-004", task: "Chase eTA application — Lisa Morton", type: "International Docs", eoi: "Lisa Morton", assignee: "M. Sullivan", agency: "SA CFS", status: "In Progress", priority: "High", due: "5 Apr 2026", request: "2025_26_INT_CAN_001" },
+  { id: "T-005", task: "Run pre-deploy checks — Tom Briggs", type: "Pre-Deploy Check", eoi: "Tom Briggs", assignee: "R. Kimura", agency: "VIC CFA", status: "Overdue", priority: "High", due: "31 Mar 2026", request: "2025_26_007NSW_QLD001" },
+  { id: "T-006", task: "Assign case officer — Jake Williams", type: "EOI Triage", eoi: "Jake Williams", assignee: "J. Walsh", agency: "NRSC", status: "Pending", priority: "Medium", due: "3 Apr 2026", request: "2025_26_008NSW_VIC001" },
+  { id: "T-007", task: "Medical clearance review — Alice Nguyễn", type: "International Docs", eoi: "Alice Nguyễn", assignee: "J. Walsh", agency: "NRSC", status: "In Progress", priority: "Medium", due: "4 Apr 2026", request: "2025_26_INT_CAN_001" },
+  { id: "T-008", task: "Agency sign-off — Chris Adams", type: "Agency Approval", eoi: "Chris Adams", assignee: "M. Sullivan", agency: "SA CFS", status: "Complete", priority: "Low", due: "28 Mar 2026", request: "2025_26_INT_CAN_001" },
+  { id: "T-009", task: "Fatigue review — Karen Wong", type: "Welfare Check", eoi: "Karen Wong", assignee: "R. Kimura", agency: "VIC CFA", status: "In Progress", priority: "High", due: "30 Mar 2026", request: "2025_26_007NSW_QLD001" },
+  { id: "T-010", task: "WWCC renewal reminder — Linda Brooks", type: "Credential Expiry", eoi: "Linda Brooks", assignee: "S. Patel", agency: "QLD QFES", status: "Overdue", priority: "High", due: "12 Jan 2026", request: "—" },
+];
+
+/* ═══════════════════════════════════════════════
+   PEOPLE WORKSPACE — 3 tabs
    scope: "national" | "agency" | "personal"
    ═══════════════════════════════════════════════ */
 export default function PeopleWorkspace({ scope = "national" }) {
-  const personalTabs = ["My Profile", "Readiness", "Roles & Evidence", "Approvals History"];
-  const orgTabs = ["Directory", "Readiness", "Roles & Evidence", "Exceptions", "Expiring Credentials", "EOI Queue"];
+  const personalTabs = ["My Profile", "My EOIs", "My Tasks"];
+  const orgTabs = ["Directory", "EOI Management", "Tasks"];
   const tabs = scope === "personal" ? personalTabs : orgTabs;
   const [tab, setTab] = useState(tabs[0]);
   const [search, setSearch] = useState("");
@@ -40,7 +90,7 @@ export default function PeopleWorkspace({ scope = "national" }) {
     return true;
   }).filter(p => !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.agency.toLowerCase().includes(search.toLowerCase()) || p.role.toLowerCase().includes(search.toLowerCase()));
 
-  if (scope === "personal") return <PersonalRecord tab={tab} setTab={setTab} tabs={tabs} />;
+  if (scope === "personal") return <PersonalRecord tab={tab} setTab={setTab} tabs={personalTabs} />;
 
   return (
     <div style={{ padding: "24px 32px" }}>
@@ -48,7 +98,7 @@ export default function PeopleWorkspace({ scope = "national" }) {
         <div>
           <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>People</h2>
           <p style={{ color: T.g500, fontSize: 13, margin: "4px 0 0" }}>
-            {scope === "agency" ? "QLD QFES personnel — readiness, qualifications, and deployability" : "National personnel directory — all registered NDMS team members"}
+            {scope === "agency" ? "QLD QFES personnel — EOI management and task tracking" : "National personnel directory — EOI management and task tracking"}
           </p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
@@ -60,15 +110,15 @@ export default function PeopleWorkspace({ scope = "national" }) {
       <TabBar tabs={tabs} active={tab} onChange={setTab} />
 
       {tab === "Directory" && <DirectoryTab people={filtered} search={search} setSearch={setSearch} scope={scope} />}
-      {tab === "Readiness" && <ReadinessTab people={filtered} scope={scope} />}
-      {tab === "Roles & Evidence" && <RolesEvidenceTab people={filtered} />}
-      {tab === "Exceptions" && <ExceptionsTab people={filtered} />}
-      {tab === "Expiring Credentials" && <ExpiringCredentialsTab />}
-      {tab === "EOI Queue" && <EOIQueueTab />}
+      {tab === "EOI Management" && <EOIKanbanTab scope={scope} />}
+      {tab === "Tasks" && <TasksTab scope={scope} />}
     </div>
   );
 }
 
+/* ═══════════════════════════════════════════════
+   DIRECTORY TAB — grouped by agency + column filters
+   ═══════════════════════════════════════════════ */
 function DirectoryTab({ people, search, setSearch, scope }) {
   const [filters, setFilters] = useState({});
   const [openFilter, setOpenFilter] = useState(null);
@@ -83,7 +133,6 @@ function DirectoryTab({ people, search, setSearch, scope }) {
   const clearFilter = (col) => setFilters(prev => { const n = { ...prev }; delete n[col]; return n; });
   const activeFilterCount = Object.values(filters).filter(v => v && v.length > 0).length;
 
-  /* Build unique values for each filterable column */
   const uniqueVals = (key) => [...new Set(people.map(p => p[key]))].sort();
   const filterCols = [
     { key: "agency", label: "Agency" },
@@ -93,7 +142,6 @@ function DirectoryTab({ people, search, setSearch, scope }) {
     { key: "deployment", label: "Current Deployment" },
   ];
 
-  /* Apply filters */
   const filtered = people.filter(p => {
     for (const col of filterCols) {
       const vals = filters[col.key];
@@ -102,7 +150,6 @@ function DirectoryTab({ people, search, setSearch, scope }) {
     return true;
   });
 
-  /* Group by agency */
   const agencies = [...new Set(filtered.map(p => p.agency))].sort();
   const grouped = agencies.map(ag => ({ agency: ag, people: filtered.filter(p => p.agency === ag) }));
 
@@ -144,7 +191,6 @@ function DirectoryTab({ people, search, setSearch, scope }) {
   };
 
   return <>
-    {/* Search & filters */}
     <div style={{ display: "flex", gap: 10, marginBottom: 12 }} onClick={() => setOpenFilter(null)}>
       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", background: T.white, border: `1px solid ${T.g300}`, borderRadius: 6, fontSize: 13 }}>
         <span style={{ color: T.g400 }}>🔍</span>
@@ -153,7 +199,6 @@ function DirectoryTab({ people, search, setSearch, scope }) {
       {activeFilterCount > 0 && <span onClick={() => setFilters({})} style={{ padding: "7px 14px", borderRadius: 6, fontSize: 12, fontWeight: 550, border: `1px solid ${T.coral}`, background: T.coralL, color: T.coral, cursor: "pointer" }}>Clear all filters ({activeFilterCount})</span>}
     </div>
 
-    {/* Active filter chips */}
     {activeFilterCount > 0 && <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
       {Object.entries(filters).filter(([,v]) => v && v.length).map(([col, vals]) =>
         vals.map(val => <span key={`${col}-${val}`} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", background: T.blueL, borderRadius: 20, fontSize: 11, fontWeight: 550, color: T.blue }}>
@@ -163,14 +208,12 @@ function DirectoryTab({ people, search, setSearch, scope }) {
       )}
     </div>}
 
-    {/* Stats strip */}
     <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
       {[{ l: "Total", v: filtered.length, c: T.navy }, { l: "Deployed", v: filtered.filter(p => p.deployment !== "—").length, c: T.blue }, { l: "Available", v: filtered.filter(p => p.deployment === "—" && p.readiness >= 70).length, c: T.green }, { l: "Exceptions", v: filtered.filter(p => p.expiry).length, c: T.coral }].map((s, i) => <div key={i} style={{ flex: 1, background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ width: 8, height: 8, borderRadius: "50%", background: s.c }} /><span style={{ fontSize: 12, color: T.g600 }}>{s.l}</span><span style={{ marginLeft: "auto", fontWeight: 700, fontSize: 16 }}>{s.v}</span>
       </div>)}
     </div>
 
-    {/* Table grouped by agency */}
     <Card>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead><tr>
@@ -215,230 +258,339 @@ function DirectoryTab({ people, search, setSearch, scope }) {
   </>;
 }
 
-function ReadinessTab({ people, scope }) {
-  const levels = [
-    { label: "Interstate Ready", count: people.filter(p => p.deployability === "Interstate Ready").length, pct: 0, color: T.green },
-    { label: "International Pending", count: people.filter(p => p.deployability === "International Pending").length, pct: 0, color: T.orange },
-    { label: "Pending EOI", count: people.filter(p => p.deployability === "Pending EOI").length, pct: 0, color: T.blue },
-    { label: "On Hold", count: people.filter(p => p.deployability === "On Hold").length, pct: 0, color: T.coral },
-    { label: "Not Registered", count: people.filter(p => p.deployability === "Not Registered").length, pct: 0, color: T.g500 },
-  ];
-  levels.forEach(l => { l.pct = Math.round((l.count / people.length) * 100); });
+
+/* ═══════════════════════════════════════════════
+   EOI MANAGEMENT — Kanban Board
+   ═══════════════════════════════════════════════ */
+function EOIKanbanTab({ scope }) {
+  const [typeFilter, setTypeFilter] = useState("All");
+  const [requestFilter, setRequestFilter] = useState("All");
+  const requests = ["All", ...new Set(EOI_ITEMS.map(e => e.request))];
+
+  const items = EOI_ITEMS.filter(e => {
+    if (typeFilter !== "All" && e.type !== typeFilter) return false;
+    if (requestFilter !== "All" && e.request !== requestFilter) return false;
+    return true;
+  });
+
+  const steps = typeFilter === "International" ? INTERNATIONAL_STEPS : typeFilter === "Interstate" ? INTERSTATE_STEPS : [...new Set([...INTERSTATE_STEPS, ...INTERNATIONAL_STEPS])];
+  // Deduplicated ordered steps for "All"
+  const allSteps = ["EOI Submitted", "Agency Review", "NRSC Validation", "International Clearance", "Visa / eTA", "Pre-Deploy Checks", "Nomination Confirmed", "Mobilisation Ready"];
+  const displaySteps = typeFilter === "All" ? allSteps : steps;
+
+  const stepColor = (step) => {
+    if (step === "EOI Submitted") return T.g500;
+    if (step === "Agency Review" || step === "NRSC Validation") return T.orange;
+    if (step === "International Clearance" || step === "Visa / eTA") return T.blue;
+    if (step === "Pre-Deploy Checks") return T.teal;
+    if (step === "Nomination Confirmed") return T.green;
+    if (step === "Mobilisation Ready") return "#00B894";
+    return T.g500;
+  };
 
   return <>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 20 }}>
-      {levels.map((l, i) => <div key={i} style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, padding: "16px 18px", textAlign: "center" }}>
-        <div style={{ fontSize: 28, fontWeight: 700, color: l.color }}>{l.count}</div>
-        <div style={{ fontSize: 12, color: T.g500, marginTop: 4 }}>{l.label}</div>
-        <div style={{ fontSize: 11, color: T.g400, marginTop: 2 }}>{l.pct}%</div>
-      </div>)}
-    </div>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-      <Card title="Readiness by Agency">
-        {[{ ag: "NSW RFS", total: 6, ready: 5 }, { ag: "CFA", total: 2, ready: 1 }, { ag: "QFES", total: 1, ready: 1 }, { ag: "TFS", total: 1, ready: 1 }, { ag: "CFS", total: 1, ready: 0 }].map((a, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: i < 4 ? `1px solid ${T.g100}` : "none" }}>
-          <span style={{ width: 80, fontSize: 13, fontWeight: 600 }}>{a.ag}</span>
-          <div style={{ flex: 1, height: 8, background: T.g100, borderRadius: 4, overflow: "hidden" }}><div style={{ width: `${(a.ready / a.total) * 100}%`, height: "100%", background: T.green, borderRadius: 4 }} /></div>
-          <span style={{ fontSize: 12, fontWeight: 550, width: 50, textAlign: "right" }}>{a.ready}/{a.total}</span>
-        </div>)}
-      </Card>
-      <Card title="Readiness Tasks Pending">
-        {[
-          { task: "Complete EOI — Ben Harper", type: "EOI", urgency: "Medium" },
-          { task: "Upload eTA — Alice Nguyễn", type: "International", urgency: "High" },
-          { task: "Renew WWCC — Linda Brooks", type: "Credential", urgency: "Critical" },
-          { task: "Medical fitness review — 4 personnel", type: "Credential", urgency: "Medium" },
-        ].map((t, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: i < 3 ? `1px solid ${T.g100}` : "none" }}>
-          <div style={{ flex: 1 }}><div style={{ fontSize: 13, fontWeight: 550 }}>{t.task}</div><div style={{ fontSize: 11, color: T.g500 }}>{t.type}</div></div>
-          <Chip color={t.urgency === "Critical" ? "coral" : t.urgency === "High" ? "orange" : "blue"}>{t.urgency}</Chip>
-        </div>)}
-      </Card>
-    </div>
-  </>;
-}
-
-function RolesEvidenceTab({ people }) {
-  const roles = ["Crew Leader", "Crew Member", "Operations Officer", "Management Support", "Safety Officer", "Deployment Manager", "IC Support", "Heavy Plant Operator", "AREP", "IMT Support", "Coordinator", "Flood Ops"];
-  return <Card title="Qualification & Role Matrix">
-    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-      <thead><tr><TH>Name</TH><TH>Primary Role</TH><TH>Accreditation</TH><TH>WWCC</TH><TH>Medical</TH><TH>First Aid</TH><TH>Evidence</TH></tr></thead>
-      <tbody>
-        {people.map((p, i) => <tr key={i}>
-          <TD fw={600}><div style={{ display: "flex", alignItems: "center", gap: 8 }}><Avatar i={p.initials} c={p.color} s={24} />{p.name}</div></TD>
-          <TD>{p.role}</TD>
-          <TD><Chip color="green">Current</Chip></TD>
-          <TD><Chip color={p.name === "Linda Brooks" ? "coral" : "green"}>{p.name === "Linda Brooks" ? "Expired" : "Valid"}</Chip></TD>
-          <TD><Chip color="green">Valid</Chip></TD>
-          <TD><Chip color="green">Valid</Chip></TD>
-          <TD><span style={{ fontSize: 12, color: T.blue, cursor: "pointer" }}>View →</span></TD>
-        </tr>)}
-      </tbody>
-    </table>
-  </Card>;
-}
-
-function ExceptionsTab({ people }) {
-  const exceptions = people.filter(p => p.expiry);
-  return <>
-    <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-      {[{ l: "Total Exceptions", v: exceptions.length, c: T.coral }, { l: "Credential Expiries", v: 2, c: T.orange }, { l: "Active I/I/I", v: 1, c: T.coral }, { l: "Fatigue Alerts", v: 1, c: T.orange }].map((s, i) => <div key={i} style={{ flex: 1, background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8 }}>
-        <div style={{ width: 8, height: 8, borderRadius: "50%", background: s.c }} /><span style={{ fontSize: 12, color: T.g600 }}>{s.l}</span><span style={{ marginLeft: "auto", fontWeight: 700, fontSize: 16 }}>{s.v}</span>
-      </div>)}
-    </div>
-    <Card title="Active Exceptions">
-      {exceptions.map((p, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: i < exceptions.length - 1 ? `1px solid ${T.g100}` : "none" }}>
-        <Avatar i={p.initials} c={p.color} s={32} />
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 600 }}>{p.name}</div>
-          <div style={{ fontSize: 12, color: T.g500 }}>{p.agency} · {p.role}</div>
-        </div>
-        <div style={{ textAlign: "right" }}>
-          <Chip color={p.expiry.includes("expired") || p.expiry.includes("I/I/I") ? "coral" : "orange"}>{p.expiry}</Chip>
-          <div style={{ fontSize: 11, color: T.g400, marginTop: 2 }}>{p.deployment !== "—" ? p.deployment : "Not deployed"}</div>
-        </div>
-        <Btn v="primary" s={{ padding: "5px 12px", fontSize: 11 }}>Action →</Btn>
-      </div>)}
-    </Card>
-  </>;
-}
-
-
-/* ─── Expiring Credentials Workbench (NDMS-023) ─── */
-function ExpiringCredentialsTab() {
-  const expiring=[
-    {name:"Linda Brooks",agency:"NSW RFS",doc:"WWCC",expiry:"12 Jan 2025",daysLeft:-80,status:"Expired",c:"coral",action:"Block deployment"},
-    {name:"Karen Wong",agency:"QLD QFES",doc:"First Aid Certificate",expiry:"15 Apr 2026",daysLeft:16,status:"Expiring",c:"orange",action:"Send reminder"},
-    {name:"Jake Williams",agency:"VIC CFA",doc:"Medical Fitness",expiry:"22 Apr 2026",daysLeft:23,status:"Expiring",c:"orange",action:"Send reminder"},
-    {name:"Ben Harper",agency:"VIC CFA",doc:"WWCC",expiry:"1 May 2026",daysLeft:32,status:"Due Soon",c:"blue",action:"Notify"},
-    {name:"Rachel Kimura",agency:"VIC CFA",doc:"Swift Water Rescue",expiry:"10 May 2026",daysLeft:41,status:"Due Soon",c:"blue",action:"Notify"},
-    {name:"Peter O'Brien",agency:"TAS TFS",doc:"Driver's Licence",expiry:"18 May 2026",daysLeft:49,status:"Due Soon",c:"blue",action:"Notify"},
-    {name:"David Kang",agency:"SA CFS",doc:"First Aid Certificate",expiry:"30 May 2026",daysLeft:61,status:"OK (60d)",c:"green",action:"—"},
-  ];
-  return <>
-    <div style={{display:"flex",gap:10,marginBottom:16}}>
-      {[{l:"Expired",v:1,c:T.coral},{l:"Expiring (<30d)",v:2,c:T.orange},{l:"Due Soon (30-60d)",v:3,c:T.blue},{l:"Total Monitored",v:expiring.length,c:T.navy}].map((s,i)=><div key={i} style={{flex:1,background:T.white,border:`1px solid ${T.g200}`,borderRadius:6,padding:"10px 14px",display:"flex",alignItems:"center",gap:8}}><div style={{width:8,height:8,borderRadius:"50%",background:s.c}}/><span style={{fontSize:12,color:T.g600}}>{s.l}</span><span style={{marginLeft:"auto",fontWeight:700,fontSize:16}}>{s.v}</span></div>)}
-    </div>
-    <Card>
-      <table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><TH>Person</TH><TH>Agency</TH><TH>Document</TH><TH>Expiry</TH><TH>Days</TH><TH>Status</TH><TH>Action</TH></tr></thead>
-        <tbody>{expiring.map((e,i)=><tr key={i} style={{background:e.status==="Expired"?"#FFF5F5":"transparent"}}>
-          <TD fw={600}>{e.name}</TD>
-          <TD>{e.agency}</TD>
-          <TD>{e.doc}</TD>
-          <TD>{e.expiry}</TD>
-          <TD fw={600} s={{color:e.daysLeft<0?T.coral:e.daysLeft<30?T.orange:T.navy}}>{e.daysLeft<0?`${Math.abs(e.daysLeft)}d overdue`:`${e.daysLeft}d`}</TD>
-          <TD><Chip color={e.c}>{e.status}</Chip></TD>
-          <TD>{e.action!=="—"?<Btn v="secondary" s={{padding:"3px 10px",fontSize:11}}>{e.action}</Btn>:<span style={{color:T.g400,fontSize:12}}>—</span>}</TD>
-        </tr>)}</tbody>
-      </table>
-    </Card>
-    <div style={{marginTop:14,padding:"10px 14px",background:T.orangeL,borderRadius:6,fontSize:12,color:"#c06e15"}}>
-      <strong>Automation:</strong> Personnel with expired mandatory credentials (WWCC, Medical) are automatically blocked from new deployment nominations. Reminders are sent at 60, 30, and 7 days before expiry.
-    </div>
-  </>;
-}
-
-/* ─── EOI Queue (NDMS-008) ─── */
-function EOIQueueTab() {
-  const eois=[
-    {name:"Ben Harper",agency:"VIC CFA",role:"Management Support Officer",submitted:"22 Mar 2026",deployment:"Northern Rivers Flood Response",status:"Pending Agency",c:"orange",readiness:45,checks:{wwcc:"Valid",medical:"Valid",firstAid:"Valid",accred:"Pending"}},
-    {name:"Nina Roberts",agency:"QLD QFES",role:"Flood Ops",submitted:"28 Mar 2026",deployment:"Northern Rivers Flood Response",status:"Pending Agency",c:"orange",readiness:72,checks:{wwcc:"Valid",medical:"Valid",firstAid:"Valid",accred:"Valid"}},
-    {name:"Sam O'Connor",agency:"TAS TFS",role:"Safety Officer",submitted:"20 Mar 2026",deployment:"Northern Rivers Flood Response",status:"Agency Approved",c:"green",readiness:90,checks:{wwcc:"Valid",medical:"Valid",firstAid:"Valid",accred:"Valid"}},
-    {name:"Lisa Morton",agency:"SA CFS",role:"Crew Member",submitted:"25 Mar 2026",deployment:"Canada 2025",status:"Pending NRSC",c:"blue",readiness:65,checks:{wwcc:"Valid",medical:"Expiring",firstAid:"Valid",accred:"Valid"}},
-    {name:"Chris Adams",agency:"SA SASES",role:"Crew Leader",submitted:"15 Mar 2026",deployment:"Canada 2025",status:"Deployed",c:"green",readiness:88,checks:{wwcc:"Valid",medical:"Valid",firstAid:"Valid",accred:"Valid"}},
-  ];
-  return <>
-    <div style={{display:"flex",gap:10,marginBottom:16}}>
-      {[{l:"Pending Agency",v:2,c:T.orange},{l:"Pending NRSC",v:1,c:T.blue},{l:"Agency Approved",v:1,c:T.green},{l:"Deployed",v:1,c:T.green}].map((s,i)=><div key={i} style={{flex:1,background:T.white,border:`1px solid ${T.g200}`,borderRadius:6,padding:"10px 14px",display:"flex",alignItems:"center",gap:8}}><div style={{width:8,height:8,borderRadius:"50%",background:s.c}}/><span style={{fontSize:12,color:T.g600}}>{s.l}</span><span style={{marginLeft:"auto",fontWeight:700,fontSize:16}}>{s.v}</span></div>)}
-    </div>
-    {eois.map((e,i)=><Card key={i} title={<span>{e.name} <Chip color={e.c}>{e.status}</Chip></span>} right={<span style={{fontSize:12,color:T.g500}}>{e.agency}</span>} s={{marginBottom:14}}>
-      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:20}}>
-        <div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px 20px",fontSize:12.5,marginBottom:12}}>
-            {[["Role Applied",e.role],["Deployment",e.deployment],["Submitted",e.submitted],["Readiness",`${e.readiness}%`]].map(([k,v],ki)=><div key={ki}><span style={{color:T.g400,fontSize:10.5}}>{k}</span><div style={{fontWeight:550}}>{v}</div></div>)}
-          </div>
-          <div style={{fontSize:10.5,color:T.g400,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>Pre-deployment Checks</div>
-          <div style={{display:"flex",gap:6}}>
-            {Object.entries(e.checks).map(([k,v],ki)=><span key={ki} style={{padding:"3px 10px",background:v==="Valid"?T.greenL:v==="Expiring"?T.orangeL:T.blueL,borderRadius:4,fontSize:11,fontWeight:550,color:v==="Valid"?"#5a8a1f":v==="Expiring"?"#c06e15":T.blue}}>{k}: {v}</span>)}
-          </div>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:6}}>
-          {e.status.includes("Pending")&&<>
-            <Btn v="primary" s={{justifyContent:"center",fontSize:12}}>✓ Approve EOI</Btn>
-            <Btn v="secondary" s={{justifyContent:"center",fontSize:12,color:T.coral,borderColor:T.coral}}>✕ Decline</Btn>
-            <Btn v="ghost" s={{justifyContent:"center",fontSize:11}}>Request more info</Btn>
-          </>}
-          {e.status==="Agency Approved"&&<Btn v="primary" s={{justifyContent:"center",fontSize:12}}>Confirm for Deployment</Btn>}
-          {e.status==="Deployed"&&<div style={{textAlign:"center",padding:12,background:T.greenL,borderRadius:6,fontSize:12,color:"#5a8a1f",fontWeight:600}}>✓ Deployed — Active</div>}
-        </div>
+    {/* Filters bar */}
+    <div style={{ display: "flex", gap: 12, marginBottom: 18, alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 6 }}>
+        <span style={{ fontSize: 12, color: T.g500, fontWeight: 550, padding: "7px 0" }}>Type:</span>
+        {["All", "Interstate", "International"].map(f => (
+          <span key={f} onClick={() => setTypeFilter(f)} style={{
+            padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 550, cursor: "pointer",
+            border: `1px solid ${typeFilter === f ? T.blue : T.g300}`,
+            background: typeFilter === f ? T.blue : T.white,
+            color: typeFilter === f ? T.white : T.g600,
+          }}>{f}</span>
+        ))}
       </div>
-    </Card>)}
+      <div style={{ width: 1, height: 24, background: T.g200 }} />
+      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+        <span style={{ fontSize: 12, color: T.g500, fontWeight: 550 }}>Request:</span>
+        <select value={requestFilter} onChange={e => setRequestFilter(e.target.value)} style={{
+          padding: "6px 12px", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer",
+          border: `1px solid ${requestFilter !== "All" ? T.blue : T.g300}`,
+          background: requestFilter !== "All" ? T.blueL : T.white,
+          color: requestFilter !== "All" ? T.blue : T.navy,
+          fontFamily: "'DM Mono', monospace", outline: "none",
+        }}>
+          {requests.map(r => <option key={r} value={r}>{r === "All" ? "All Requests" : r}</option>)}
+        </select>
+      </div>
+      <div style={{ flex: 1 }} />
+      <div style={{ display: "flex", gap: 10 }}>
+        {[
+          { l: "Total EOIs", v: items.length, c: T.navy },
+          { l: "In Progress", v: items.filter(e => !["Mobilisation Ready", "Nomination Confirmed"].includes(e.step)).length, c: T.orange },
+          { l: "Complete", v: items.filter(e => ["Mobilisation Ready", "Nomination Confirmed"].includes(e.step)).length, c: T.green },
+        ].map((s, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 12px", background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, fontSize: 11 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.c }} />
+            <span style={{ color: T.g500 }}>{s.l}</span>
+            <span style={{ fontWeight: 700 }}>{s.v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Kanban board */}
+    <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, minHeight: 400 }}>
+      {displaySteps.map(step => {
+        const stepItems = items.filter(e => e.step === step);
+        const sc = stepColor(step);
+        return (
+          <div key={step} style={{
+            minWidth: 220, maxWidth: 260, flex: "0 0 220px",
+            background: T.g50, borderRadius: 8, display: "flex", flexDirection: "column",
+            border: `1px solid ${T.g200}`,
+          }}>
+            {/* Column header */}
+            <div style={{
+              padding: "10px 12px", borderBottom: `2px solid ${sc}`,
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+            }}>
+              <span style={{ fontSize: 11.5, fontWeight: 650, color: T.navy }}>{step}</span>
+              <span style={{
+                width: 20, height: 20, borderRadius: "50%", background: sc,
+                color: T.white, display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 10, fontWeight: 700,
+              }}>{stepItems.length}</span>
+            </div>
+            {/* Cards */}
+            <div style={{ padding: 8, flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+              {stepItems.map(eoi => (
+                <div key={eoi.id} style={{
+                  background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6,
+                  padding: "10px 12px", cursor: "pointer", transition: "box-shadow .12s",
+                  borderLeft: `3px solid ${eoi.priority === "High" ? T.coral : eoi.priority === "Medium" ? T.orange : T.g300}`,
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                    <Avatar i={eoi.initials} c={eoi.color} s={22} />
+                    <span style={{ fontSize: 12.5, fontWeight: 650, color: T.navy }}>{eoi.name}</span>
+                  </div>
+                  <div style={{ fontSize: 11, color: T.g500, marginBottom: 4 }}>{eoi.role}</div>
+                  <div style={{ fontSize: 10.5, color: T.g400, marginBottom: 8 }}>
+                    {eoi.agency} · <Chip color={eoi.type === "Interstate" ? "blue" : "teal"}>{eoi.type}</Chip>
+                  </div>
+                  {/* Request ref */}
+                  <div style={{ fontSize: 10, fontFamily: "'DM Mono', monospace", color: T.g500, background: T.g100, padding: "2px 6px", borderRadius: 3, display: "inline-block", marginBottom: 8 }}>{eoi.request}</div>
+                  {/* Footer: assignee + due */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${T.g100}`, paddingTop: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      <Avatar i={eoi.assigneeInit} c={eoi.assignee === "Unassigned" ? T.g400 : T.blue} s={18} />
+                      <span style={{ fontSize: 10.5, color: eoi.assignee === "Unassigned" ? T.g400 : T.g600, fontWeight: 550 }}>{eoi.assignee}</span>
+                    </div>
+                    <span style={{
+                      fontSize: 10, fontWeight: 600,
+                      color: eoi.dueDate === "—" ? T.g400 : eoi.priority === "High" ? T.coral : T.g500,
+                    }}>
+                      {eoi.dueDate === "—" ? "No due date" : `Due ${eoi.dueDate}`}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {stepItems.length === 0 && (
+                <div style={{ padding: 16, textAlign: "center", fontSize: 11, color: T.g400, fontStyle: "italic" }}>No EOIs</div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   </>;
 }
 
+
+/* ═══════════════════════════════════════════════
+   TASKS TAB — filterable table with role visibility
+   scope: national = super admin (all tasks)
+   scope: agency = managed team tasks
+   scope: personal = my tasks only
+   ═══════════════════════════════════════════════ */
+function TasksTab({ scope }) {
+  const [filters, setFilters] = useState({});
+  const [openFilter, setOpenFilter] = useState(null);
+
+  /* Role-based visibility */
+  const visibleTasks = scope === "national"
+    ? TASKS
+    : scope === "agency"
+    ? TASKS.filter(t => t.agency === "QLD QFES")
+    : TASKS.filter(t => t.assignee === "J. Walsh"); // default to logged-in user
+
+  const toggleFilter = (col, val) => {
+    setFilters(prev => {
+      const cur = prev[col] || [];
+      return { ...prev, [col]: cur.includes(val) ? cur.filter(v => v !== val) : [...cur, val] };
+    });
+  };
+  const clearFilter = (col) => setFilters(prev => { const n = { ...prev }; delete n[col]; return n; });
+  const activeFilterCount = Object.values(filters).filter(v => v && v.length > 0).length;
+
+  const filterCols = [
+    { key: "type", label: "Type" },
+    { key: "assignee", label: "Assignee" },
+    { key: "status", label: "Status" },
+    { key: "priority", label: "Priority" },
+    { key: "request", label: "Request" },
+  ];
+
+  const uniqueVals = (key) => [...new Set(visibleTasks.map(t => t[key]))].sort();
+
+  const filtered = visibleTasks.filter(t => {
+    for (const col of filterCols) {
+      const vals = filters[col.key];
+      if (vals && vals.length > 0 && !vals.includes(t[col.key])) return false;
+    }
+    return true;
+  });
+
+  const FilterTH = ({ col }) => {
+    const active = filters[col.key] && filters[col.key].length > 0;
+    const isOpen = openFilter === col.key;
+    return (
+      <th style={{
+        textAlign: "left", padding: "8px 10px", fontWeight: 550, color: active ? T.blue : T.g500,
+        fontSize: 10.5, textTransform: "uppercase", letterSpacing: .5,
+        borderBottom: `2px solid ${T.g200}`, whiteSpace: "nowrap", position: "relative", cursor: "pointer",
+        userSelect: "none",
+      }} onClick={(e) => { e.stopPropagation(); setOpenFilter(isOpen ? null : col.key); }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+          {col.label}
+          <span style={{ fontSize: 8, opacity: isOpen ? 1 : .5, transition: "transform .15s", transform: isOpen ? "rotate(180deg)" : "none" }}>▼</span>
+          {active && <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.blue, display: "inline-block" }} />}
+        </span>
+        {isOpen && (
+          <div onClick={e => e.stopPropagation()} style={{
+            position: "absolute", top: "100%", left: 0, zIndex: 100, minWidth: 200, maxHeight: 260, overflowY: "auto",
+            background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8,
+            boxShadow: "0 8px 24px rgba(35,52,74,.12)", padding: "6px 0", marginTop: 2,
+          }}>
+            {active && <div onClick={() => clearFilter(col.key)} style={{ padding: "6px 14px", fontSize: 11, color: T.coral, cursor: "pointer", fontWeight: 600, borderBottom: `1px solid ${T.g100}` }}>Clear filter</div>}
+            {uniqueVals(col.key).map(val => {
+              const checked = (filters[col.key] || []).includes(val);
+              return (
+                <label key={val} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 14px", fontSize: 12, cursor: "pointer", background: checked ? T.blueL : "transparent", fontWeight: checked ? 600 : 400, color: T.navy }}>
+                  <input type="checkbox" checked={checked} onChange={() => toggleFilter(col.key, val)} style={{ accentColor: T.blue }} />
+                  {val}
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </th>
+    );
+  };
+
+  const statusColor = (s) => s === "Complete" ? "green" : s === "In Progress" ? "blue" : s === "Overdue" ? "coral" : "orange";
+  const prioColor = (p) => p === "High" ? "coral" : p === "Medium" ? "orange" : "gray";
+
+  return <>
+    {/* Visibility banner */}
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+      <div style={{ padding: "8px 14px", background: scope === "national" ? T.blueL : scope === "agency" ? T.orangeL : T.greenL, borderRadius: 6, fontSize: 12, fontWeight: 550, color: scope === "national" ? T.blue : scope === "agency" ? "#c06e15" : "#5a8a1f" }}>
+        {scope === "national" ? "Super Admin — viewing all tasks across all teams" : scope === "agency" ? "Agency Admin — viewing tasks for your managed team" : "Viewing your assigned tasks"}
+      </div>
+      {activeFilterCount > 0 && <span onClick={() => setFilters({})} style={{ padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 550, border: `1px solid ${T.coral}`, background: T.coralL, color: T.coral, cursor: "pointer" }}>Clear all filters ({activeFilterCount})</span>}
+      <div style={{ flex: 1 }} />
+      <div style={{ display: "flex", gap: 8 }}>
+        {[
+          { l: "Total", v: filtered.length, c: T.navy },
+          { l: "Overdue", v: filtered.filter(t => t.status === "Overdue").length, c: T.coral },
+          { l: "In Progress", v: filtered.filter(t => t.status === "In Progress").length, c: T.blue },
+          { l: "Complete", v: filtered.filter(t => t.status === "Complete").length, c: T.green },
+        ].map((s, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 5, padding: "4px 10px", background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, fontSize: 11 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.c }} />
+            <span style={{ color: T.g500 }}>{s.l}</span>
+            <span style={{ fontWeight: 700 }}>{s.v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Active filter chips */}
+    {activeFilterCount > 0 && <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+      {Object.entries(filters).filter(([,v]) => v && v.length).map(([col, vals]) =>
+        vals.map(val => <span key={`${col}-${val}`} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", background: T.blueL, borderRadius: 20, fontSize: 11, fontWeight: 550, color: T.blue }}>
+          {filterCols.find(c => c.key === col)?.label}: {val}
+          <span onClick={() => toggleFilter(col, val)} style={{ cursor: "pointer", fontSize: 13, lineHeight: 1 }}>✕</span>
+        </span>)
+      )}
+    </div>}
+
+    {/* Tasks table */}
+    <Card>
+      <div onClick={() => setOpenFilter(null)}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead><tr>
+            <TH w={60}>ID</TH>
+            <TH w={280}>Task</TH>
+            {filterCols.map(col => <FilterTH key={col.key} col={col} />)}
+            <TH>Due</TH>
+          </tr></thead>
+          <tbody>
+            {filtered.map((t, i) => (
+              <tr key={i} style={{ cursor: "pointer", background: t.status === "Overdue" ? "#FFF5F5" : "transparent" }}>
+                <TD mono fw={600}>{t.id}</TD>
+                <TD fw={550}>{t.task}</TD>
+                <TD>{t.type}</TD>
+                <TD>{t.assignee}</TD>
+                <TD><Chip color={statusColor(t.status)}>{t.status}</Chip></TD>
+                <TD><Chip color={prioColor(t.priority)}>{t.priority}</Chip></TD>
+                <TD mono s={{ fontSize: 11 }}>{t.request !== "—" ? t.request : <span style={{ color: T.g400 }}>—</span>}</TD>
+                <TD s={{ fontWeight: 550, color: t.status === "Overdue" ? T.coral : T.navy }}>{t.due}</TD>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  </>;
+}
+
+
+/* ═══════════════════════════════════════════════
+   PERSONAL RECORD — Team Member view
+   ═══════════════════════════════════════════════ */
 function PersonalRecord({ tab, setTab, tabs }) {
-  const personalTabs = ["My Profile", "Readiness", "Documents", "Roles & Evidence", "Approvals History"];
   return <div style={{ padding: "24px 32px" }}>
     <div style={{ marginBottom: 4 }}>
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>My Record</h2>
       <p style={{ color: T.g500, fontSize: 13, margin: "4px 0 0" }}>Daniel Thornton · QLD QFES · Crew Leader</p>
     </div>
-    <TabBar tabs={personalTabs} active={tab} onChange={setTab} />
+    <TabBar tabs={tabs} active={tab} onChange={setTab} />
+
     {tab === "My Profile" && <Card title="Personal Details">
       {[["Full Name", "Daniel Thornton"], ["Agency", "Queensland Fire & Emergency Services"], ["Jurisdiction", "QLD"], ["Primary Role", "Crew Leader"], ["System Access", "Team Member"], ["Deployment Appointment", "Crew Leader — Northern Rivers Flood Response"], ["Phone", "+61 4XX XXX XXX"], ["Email", "d.thornton@qfes.qld.gov.au"], ["Emergency Contact", "Jane Thornton (spouse)"]].map(([k, v], i) => <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", fontSize: 13, borderBottom: `1px solid ${T.g50}` }}><span style={{ color: T.g500 }}>{k}</span><span style={{ fontWeight: 550 }}>{v}</span></div>)}
     </Card>}
-    {tab === "Readiness" && <Card title="My Readiness — 85%">
-      <div style={{ height: 10, background: T.g200, borderRadius: 5, overflow: "hidden", marginBottom: 16 }}><div style={{ width: "85%", height: "100%", background: T.green, borderRadius: 5 }} /></div>
-      {[["Interstate Readiness", "Complete", "green"], ["International Readiness", "Pending eTA", "orange"], ["WWCC", "Valid — Exp 2027", "green"], ["Medical Fitness", "Valid — Exp Nov 2026", "green"], ["First Aid", "Valid — Exp Mar 2027", "green"], ["Accreditation", "Crew Leader — Current", "green"]].map(([k, v, c], i) => <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: `1px solid ${T.g100}` }}><span style={{ fontSize: 13 }}>{k}</span><Chip color={c}>{v}</Chip></div>)}
-    </Card>}
-    {tab === "Documents" && <DocumentsTab />}
-    {tab === "Roles & Evidence" && <Card title="My Roles & Qualifications">
-      {[["Primary Role", "Crew Leader", "Active"], ["Secondary Role", "Crew Member", "Active"], ["Qualification", "Swift Water Rescue", "Current"], ["Training", "Flood Operations Advanced", "Completed 2024"]].map(([type, name, status], i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: `1px solid ${T.g100}` }}><div style={{ flex: 1 }}><div style={{ fontSize: 13, fontWeight: 600 }}>{name}</div><div style={{ fontSize: 11, color: T.g500 }}>{type}</div></div><Chip color="green">{status}</Chip><span style={{ color: T.blue, fontSize: 12, cursor: "pointer" }}>View evidence →</span></div>)}
-    </Card>}
-    {tab === "Approvals History" && <Card title="My Approval History">
-      {[
-        { action: "EOI Approved — Interstate Flood", date: "15 Oct 2025", by: "S. Patel (QLD QFES)", status: "Approved", c: "green" },
-        { action: "Deployment Confirmed — Northern Rivers Flood", date: "22 Mar 2026", by: "System", status: "Active", c: "blue" },
-        { action: "Role Change — Crew Member → Crew Leader", date: "22 Mar 2026", by: "R. Kimura (DM)", status: "Approved", c: "green" },
-      ].map((a, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < 2 ? `1px solid ${T.g100}` : "none" }}>
-        <div style={{ flex: 1 }}><div style={{ fontSize: 13, fontWeight: 600 }}>{a.action}</div><div style={{ fontSize: 11, color: T.g500 }}>{a.date} · {a.by}</div></div>
-        <Chip color={a.c}>{a.status}</Chip>
-      </div>)}
-    </Card>}
-  </div>;
-}
 
-/* ─── Document Register Tab (NDMS-022) ─── */
-function DocumentsTab() {
-  const docs=[
-    {name:"Working with Children Check (WWCC)",docId:"WWCC-QLD-2024-1847",status:"Valid",expiry:"15 Jun 2027",uploaded:"12 Jan 2025",c:"green"},
-    {name:"Medical Fitness Certificate",docId:"MED-2024-3921",status:"Valid",expiry:"30 Nov 2026",uploaded:"18 Nov 2024",c:"green"},
-    {name:"First Aid Certificate (HLTAID011)",docId:"FA-2024-7734",status:"Valid",expiry:"14 Mar 2027",uploaded:"14 Mar 2024",c:"green"},
-    {name:"Passport (AU)",docId:"PA4281937",status:"Valid",expiry:"22 Sep 2032",uploaded:"5 Feb 2025",c:"green"},
-    {name:"eTA (Canada)",docId:"—",status:"Pending",expiry:"—",uploaded:"—",c:"orange"},
-    {name:"Driver's Licence (Class C)",docId:"QLD-DL-9827341",status:"Valid",expiry:"18 Aug 2026",uploaded:"20 Aug 2023",c:"green"},
-    {name:"Swift Water Rescue Certificate",docId:"SWR-2024-0412",status:"Valid",expiry:"1 Oct 2026",uploaded:"1 Oct 2024",c:"green"},
-    {name:"Code of Conduct Declaration",docId:"COC-2025-DT",status:"Signed",expiry:"Annual",uploaded:"15 Jan 2025",c:"green"},
-  ];
-  return <>
-    <div style={{display:"flex",justifyContent:"space-between",marginBottom:16}}>
-      <div style={{display:"flex",gap:8}}>
-        {["All","Valid","Expiring","Pending"].map(f=><span key={f} style={{padding:"4px 14px",borderRadius:20,fontSize:11.5,fontWeight:550,border:`1px solid ${f==="All"?T.blue:T.g300}`,background:f==="All"?T.blue:T.white,color:f==="All"?T.white:T.g600,cursor:"pointer"}}>{f}</span>)}
+    {tab === "My EOIs" && <>
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+          {[{ l: "Active EOIs", v: 1, c: T.blue }, { l: "Approved", v: 1, c: T.green }, { l: "Pending", v: 0, c: T.orange }].map((s, i) => <div key={i} style={{ flex: 1, background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: s.c }} /><span style={{ fontSize: 12, color: T.g600 }}>{s.l}</span><span style={{ marginLeft: "auto", fontWeight: 700, fontSize: 16 }}>{s.v}</span>
+          </div>)}
+        </div>
       </div>
-      <Btn v="primary">+ Upload Document</Btn>
-    </div>
-    <Card>
-      <table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><TH>Document</TH><TH>Document ID</TH><TH>Status</TH><TH>Expiry</TH><TH>Uploaded</TH><TH w={80}>Actions</TH></tr></thead>
-        <tbody>{docs.map((d,i)=><tr key={i}>
-          <TD fw={600}>{d.name}</TD>
-          <TD mono>{d.docId}</TD>
-          <TD><Chip color={d.c}>{d.status}</Chip></TD>
-          <TD>{d.expiry}</TD>
-          <TD s={{color:T.g500,fontSize:12}}>{d.uploaded}</TD>
-          <TD><span style={{color:T.blue,fontSize:12,cursor:"pointer"}}>View</span></TD>
-        </tr>)}</tbody>
-      </table>
-    </Card>
-    <div style={{marginTop:14,padding:"10px 14px",background:T.blueL,borderRadius:6,fontSize:12,color:T.blue}}>
-      <strong>Note:</strong> Documents are verified by your agency administrator. Expiring documents will trigger reminder notifications 30 days before expiry.
-    </div>
-  </>;
+      <Card title="My Expressions of Interest">
+        {[
+          { deployment: "Northern Rivers Flood Response", role: "Crew Leader", submitted: "15 Mar 2026", status: "Deployed", c: "green", step: "Mobilisation Ready" },
+          { deployment: "Canada 2025 Wildfire Season", role: "Crew Member", submitted: "10 Feb 2026", status: "Not Selected", c: "gray", step: "Closed" },
+        ].map((eoi, i) => (
+          <div key={i} style={{ padding: "14px 0", borderBottom: i === 0 ? `1px solid ${T.g100}` : "none" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <span style={{ fontSize: 14, fontWeight: 650 }}>{eoi.deployment}</span>
+              <Chip color={eoi.c}>{eoi.status}</Chip>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, fontSize: 12 }}>
+              {[["Role Applied", eoi.role], ["Submitted", eoi.submitted], ["Current Step", eoi.step]].map(([k, v], ki) => (
+                <div key={ki}><span style={{ color: T.g400, fontSize: 10.5 }}>{k}</span><div style={{ fontWeight: 550, marginTop: 2 }}>{v}</div></div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </Card>
+    </>}
+
+    {tab === "My Tasks" && <TasksTab scope="personal" />}
+  </div>;
 }
