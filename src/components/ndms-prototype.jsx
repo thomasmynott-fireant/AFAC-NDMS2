@@ -155,8 +155,8 @@ export default function NDMSPrototype() {
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [wizardOpen, setWizardOpen] = useState(false);
+  const [sitRepOpen, setSitRepOpen] = useState(false);
   const [taskDrawerOpen, setTaskDrawerOpen] = useState(false);
-  const [demoMode, setDemoMode] = useState(true);
 
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => { setActiveNav("home"); }, [role]);
@@ -170,7 +170,7 @@ export default function NDMSPrototype() {
     const shell = currentRole.shell;
     switch (activeNav) {
       case "home":
-        if (role === "nrsc") return <NRSCHome onOpenWizard={() => setWizardOpen(true)} />;
+        if (role === "nrsc") return <NRSCHome onOpenWizard={() => setWizardOpen(true)} onOpenSitRep={() => setSitRepOpen(true)} />;
         if (role === "team") return <TeamMemberHome />;
         if (role === "agency") return <AgencyHome onOpenWizard={() => setWizardOpen(true)} />;
         if (role === "dmt") return <DMTHome />;
@@ -351,14 +351,6 @@ export default function NDMSPrototype() {
           height: 54, background: T.white, borderBottom: `1px solid ${T.g200}`,
           display: "flex", alignItems: "center", padding: "0 24px", gap: 14, flexShrink: 0,
         }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: T.navy }}>
-            {{nrsc:"National Operations",team:"My Readiness",agency:"Agency Operations",dmt:"DMT Operations",airdesk:"Aviation Operations",inlo:"Field Coordination",rmg:"State Oversight",exec:"Executive View"}[role]}
-          </span>
-          {/* Breadcrumb */}
-          <span style={{ color: T.g300, fontSize: 13 }}>›</span>
-          <span style={{ fontSize: 13, color: T.g500, fontWeight: 500 }}>
-            {navSections.flatMap(s=>s.items).find(i=>i.id===activeNav)?.label || "Home"}
-          </span>
           <div style={{ flex: 1 }} />
           <span style={{
             padding: "3px 12px", background: "linear-gradient(135deg, #D4380D, #CF1322)", color: T.white,
@@ -394,16 +386,6 @@ export default function NDMSPrototype() {
           </div>
         </div>
 
-        {/* Demo mode banner */}
-        {demoMode && <div style={{
-          display: "flex", alignItems: "center", gap: 10, padding: "6px 24px",
-          background: "linear-gradient(90deg, #23344A, #2c4a6a)", fontSize: 12, flexShrink: 0,
-        }}>
-          <span style={{ color: T.orange, fontWeight: 700, fontSize: 10, letterSpacing: .8, textTransform: "uppercase" }}>▶ Demo Mode</span>
-          <span style={{ color: "rgba(255,255,255,.6)", fontSize: 11.5 }}>Northern Rivers Flood Response — End-to-end scenario active</span>
-          <div style={{ flex: 1 }} />
-          <span onClick={() => setDemoMode(false)} style={{ color: "rgba(255,255,255,.4)", cursor: "pointer", fontSize: 11 }}>Dismiss ✕</span>
-        </div>}
 
         {/* Content */}
         <div style={{ flex: 1, overflowY: "auto", padding: "0 0 40px" }}>
@@ -425,6 +407,9 @@ export default function NDMSPrototype() {
 
       {/* ═══ REQUEST WIZARD MODAL ═══ */}
       {wizardOpen && <RequestWizard onClose={() => setWizardOpen(false)} />}
+
+      {/* ═══ SITREP WIZARD MODAL ═══ */}
+      {sitRepOpen && <SitRepWizard onClose={() => setSitRepOpen(false)} />}
     </div>
   );
 }
@@ -432,7 +417,7 @@ export default function NDMSPrototype() {
 /* ═══════════════════════════════════════════════════
    NRSC STAFF — National Operations Home
    ═══════════════════════════════════════════════════ */
-function NRSCHome() {
+function NRSCHome({ onOpenWizard, onOpenSitRep }) {
   return (
     <div>
       {/* Hero */}
@@ -442,102 +427,132 @@ function NRSCHome() {
       }}>
         <div>
           <h1 style={{ color: T.white, fontSize: 21, fontWeight: 700, margin: 0 }}>National Operations Overview</h1>
-          <p style={{ color: "rgba(255,255,255,.55)", fontSize: 13, margin: "4px 0 0" }}>Monday 30 Mar 2026 — Season 2025/26 — Week 22 — Northern Rivers Flood Response Active</p>
+          <p style={{ color: "rgba(255,255,255,.55)", fontSize: 13, margin: "4px 0 0" }}>Monday 30 Mar 2026 — Season 2025/26 — Week 22</p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <Btn variant="light">{Icons.download} Export</Btn>
-          <Btn variant="primary">{Icons.plus} New SitRep</Btn>
+          <Btn variant="primary" onClick={onOpenSitRep}>+ New SitRep</Btn>
         </div>
       </div>
 
       <div style={{ padding: "20px 32px" }}>
-        {/* Alert */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 12,
-          padding: "12px 16px", borderRadius: 6, marginBottom: 20,
-          background: T.orangeL, borderLeft: `3px solid ${T.orange}`, fontSize: 13,
-        }}>
-          {Icons.alert}
-          <div><strong>I/I/I Report filed</strong> — Welfare incident reported by AREP for contingent IMT1 (Canada 2025). Investigation commenced. <a style={{ color: "inherit", textDecoration: "underline" }}>View report →</a></div>
-        </div>
-        <div style={{
-          display: "flex", alignItems: "center", gap: 12,
-          padding: "12px 16px", borderRadius: 6, marginBottom: 10,
-          background: T.blueL, borderLeft: `3px solid ${T.blue}`, fontSize: 13,
-        }}>
-          <span style={{ fontSize: 14 }}>🌊</span>
-          <div><strong>Northern Rivers Flood Response</strong> — 68 personnel deployed to Lismore/Northern Rivers NSW. Response & recovery operations continue. <a style={{ color: "inherit", textDecoration: "underline" }}>View deployment →</a></div>
+        {/* ── Deployment KPI cards grouped by deployment ── */}
+        <div style={{ fontSize: 12, fontWeight: 600, color: T.g500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Active Deployments</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+          {/* Northern Rivers deployment */}
+          <div style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, overflow: "hidden" }}>
+            <div style={{ padding: "14px 18px", borderBottom: `1px solid ${T.g200}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 10, height: 10, borderRadius: "50%", background: T.green }} />
+                <span style={{ fontSize: 15, fontWeight: 700 }}>Northern Rivers Flood Response</span>
+              </div>
+              <Chip color="green">Active</Chip>
+            </div>
+            <div style={{ padding: "14px 18px", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+              {[{l:"Personnel",v:"68",c:T.blue},{l:"Contingents",v:"4",c:T.navy},{l:"Day",v:"8",c:T.green},{l:"Rotations Due",v:"2",c:T.orange}].map((m,i)=><div key={i} style={{ textAlign: "center" }}><div style={{ fontSize: 22, fontWeight: 700, color: m.c }}>{m.v}</div><div style={{ fontSize: 10.5, color: T.g500, marginTop: 2 }}>{m.l}</div></div>)}
+            </div>
+            <div style={{ padding: "8px 18px 14px", display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {[{l:"IMT & Overhead",v:7},{l:"Flood Ops",v:12},{l:"Safety",v:2},{l:"Admin/DM",v:4},{l:"QLD QFES",v:22},{l:"VIC CFA",v:18},{l:"SA CFS",v:10},{l:"TAS TFS",v:8}].map((t,i)=><span key={i} style={{ padding: "3px 10px", background: i<4?T.blueL:T.g100, borderRadius: 4, fontSize: 11, fontWeight: 550, color: i<4?T.blue:T.g600 }}>{t.l}: {t.v}</span>)}
+            </div>
+          </div>
+
+          {/* Canada deployment */}
+          <div style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, overflow: "hidden" }}>
+            <div style={{ padding: "14px 18px", borderBottom: `1px solid ${T.g200}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 10, height: 10, borderRadius: "50%", background: T.green }} />
+                <span style={{ fontSize: 15, fontWeight: 700 }}>Canada 2025 Wildfire Season</span>
+              </div>
+              <Chip color="green">Active</Chip>
+            </div>
+            <div style={{ padding: "14px 18px", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+              {[{l:"Personnel",v:"33",c:T.blue},{l:"Contingents",v:"4",c:T.navy},{l:"Day",v:"58",c:T.green},{l:"Rotations Due",v:"0",c:T.g400}].map((m,i)=><div key={i} style={{ textAlign: "center" }}><div style={{ fontSize: 22, fontWeight: 700, color: m.c }}>{m.v}</div><div style={{ fontSize: 10.5, color: T.g500, marginTop: 2 }}>{m.l}</div></div>)}
+            </div>
+            <div style={{ padding: "8px 18px 14px", display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {[{l:"IMT",v:3},{l:"INLO",v:2},{l:"Crew",v:24},{l:"Overhead",v:4}].map((t,i)=><span key={i} style={{ padding: "3px 10px", background: T.blueL, borderRadius: 4, fontSize: 11, fontWeight: 550, color: T.blue }}>{t.l}: {t.v}</span>)}
+            </div>
+          </div>
         </div>
 
-        {/* Metric cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 22 }}>
+        {/* ── Total KPI strip ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 24 }}>
           {[
-            { label: "Currently Deployed", value: "101", change: "68 Northern Rivers + 33 Canada", changeColor: T.green },
-            { label: "Active Requests", value: "5", change: "1 pending nomination", changeColor: T.g500 },
-            { label: "Active Contingents", value: "8", change: "Across 2 deployments", changeColor: T.g500 },
-            { label: "NAA Assets Active", value: "3", change: "1 pending approval", changeColor: T.coral },
-            { label: "Inbound Rotations", value: "14", change: "Next 72h", changeColor: T.orange },
+            { label: "Total Deployed", value: "101", sub: "Across 2 deployments", color: T.green },
+            { label: "Active Contingents", value: "8", sub: "4 Northern Rivers + 4 Canada", color: T.blue },
+            { label: "NAA Assets Active", value: "3", sub: "1 pending approval", color: T.navy },
+            { label: "Inbound Rotations", value: "14", sub: "Next 72h", color: T.orange },
+            { label: "Season Requests", value: "5", sub: "2 active, 1 pending", color: T.teal },
           ].map((m, i) => (
             <div key={i} style={{
-              background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, padding: "18px 20px",
-              transition: "box-shadow .15s", cursor: "pointer",
+              background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, padding: "16px 18px",
             }}>
-              <div style={{ fontSize: 12, color: T.g500, marginBottom: 8 }}>{m.label}</div>
-              <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 3 }}>{m.value}</div>
-              <div style={{ fontSize: 11, fontWeight: 550, color: m.changeColor }}>{m.change}</div>
+              <div style={{ fontSize: 11.5, color: T.g500, marginBottom: 6 }}>{m.label}</div>
+              <div style={{ fontSize: 24, fontWeight: 700, color: m.color }}>{m.value}</div>
+              <div style={{ fontSize: 11, color: T.g500, marginTop: 2 }}>{m.sub}</div>
             </div>
           ))}
         </div>
 
-        {/* Two-column layout */}
+        {/* ── Two-column: Capability + Quick Actions ── */}
         <div style={{ display: "grid", gridTemplateColumns: "5fr 3fr", gap: 20 }}>
           <div>
-            {/* Map */}
-            <Card title="Deployment Map" right={
-              <div style={{ display: "flex", gap: 6 }}>
-                <Chip color="green">In Field</Chip>
-                <Chip color="orange">Mobilising</Chip>
-                <Chip color="coral">Attention</Chip>
-              </div>
-            }>
-              <div style={{
-                height: 260, background: `linear-gradient(170deg, ${T.g100} 0%, #e0eef8 40%, #e8f0e4 70%, ${T.g100} 100%)`,
-                borderRadius: 6, position: "relative", overflow: "hidden",
-              }}>
-                {/* Stylised Australia outline with Northern Rivers focus */}
-                <svg viewBox="0 0 500 300" style={{ width: "100%", height: "100%", position: "absolute" }}>
-                  <path d="M180,60 Q200,40 230,55 Q260,35 290,50 L310,65 Q330,60 345,80 L350,110 Q360,130 350,155 L340,180 Q330,200 310,210 L290,215 Q270,225 250,220 L230,225 Q210,230 195,215 L180,195 Q165,175 170,155 L165,130 Q160,100 170,80 Z" fill="rgba(14,120,201,.06)" stroke="rgba(14,120,201,.15)" strokeWidth="1.5"/>
-                  {/* Northern Rivers / Lismore — primary deployment */}
-                  <circle cx="315" cy="138" r="8" fill={T.blue} stroke={T.white} strokeWidth="2.5"/>
-                  <circle cx="315" cy="138" r="14" fill="none" stroke={T.blue} strokeWidth="1" opacity=".3"/>
-                  <circle cx="315" cy="138" r="20" fill="none" stroke={T.blue} strokeWidth=".5" opacity=".2"/>
-                  {/* Other state markers */}
-                  <circle cx="310" cy="110" r="4" fill={T.green} stroke={T.white} strokeWidth="1.5"/>
-                  <circle cx="270" cy="175" r="4" fill={T.teal} stroke={T.white} strokeWidth="1.5"/>
-                  <circle cx="210" cy="170" r="3" fill={T.g400} stroke={T.white} strokeWidth="1.5"/>
-                  <circle cx="280" cy="65" r="3" fill={T.g400} stroke={T.white} strokeWidth="1.5"/>
-                  {/* Canada marker */}
-                  <circle cx="80" cy="35" r="6" fill={T.coral} stroke={T.white} strokeWidth="2"/>
-                  <circle cx="80" cy="35" r="11" fill="none" stroke={T.coral} strokeWidth="1" opacity=".3"/>
-                  {/* Labels */}
-                  <text x="330" y="133" fontSize="10" fill={T.navy} fontWeight="700">Lismore (68)</text>
-                  <text x="330" y="146" fontSize="8" fill={T.blue} fontWeight="500">Northern Rivers</text>
-                  <text x="62" y="27" fontSize="9" fill={T.coral} fontWeight="600">Canada 2025 (33)</text>
-                  <text x="320" y="107" fontSize="8" fill={T.g500}>QLD</text>
-                  <text x="276" y="172" fontSize="8" fill={T.g500}>VIC</text>
-                  <text x="218" y="167" fontSize="8" fill={T.g500}>SA</text>
-                </svg>
+            {/* Deployment Capability by Jurisdiction */}
+            <Card title="Deployment Capability by Jurisdiction" right={<Btn variant="ghost" style={{ fontSize: 12 }}>View all →</Btn>}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr>
+                    {["Jurisdiction", "Registered", "Available", "Deployed", "Availability %", "Assets"].map(h => (
+                      <th key={h} style={{
+                        textAlign: "left", padding: "8px 10px", fontWeight: 550, color: T.g500,
+                        fontSize: 10.5, textTransform: "uppercase", letterSpacing: .5,
+                        borderBottom: `2px solid ${T.g200}`, whiteSpace: "nowrap",
+                      }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { jur: "NSW", reg: 186, avail: 42, dep: 0, assets: "—" },
+                    { jur: "QLD", reg: 214, avail: 68, dep: 22, assets: "NHAWK (QLD)" },
+                    { jur: "VIC", reg: 178, avail: 55, dep: 18, assets: "—" },
+                    { jur: "SA", reg: 112, avail: 31, dep: 10, assets: "NHAWK (SA)" },
+                    { jur: "TAS", reg: 64, avail: 18, dep: 8, assets: "—" },
+                    { jur: "WA", reg: 98, avail: 28, dep: 0, assets: "—" },
+                    { jur: "NT", reg: 42, avail: 12, dep: 0, assets: "—" },
+                    { jur: "ACT", reg: 28, avail: 8, dep: 0, assets: "—" },
+                    { jur: "INT'L", reg: "—", avail: "—", dep: 33, assets: "NLEAD" },
+                  ].map((j, i) => (
+                    <tr key={i} style={{ cursor: "pointer" }}>
+                      <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}`, fontWeight: 700, fontSize: 14 }}>{j.jur}</td>
+                      <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}` }}>{j.reg}</td>
+                      <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}`, fontWeight: 600, color: T.green }}>{j.avail}</td>
+                      <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}`, fontWeight: 600, color: j.dep > 0 ? T.blue : T.g400 }}>{j.dep}</td>
+                      <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}` }}>
+                        {typeof j.avail === "number" ? <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <div style={{ width: 50, height: 6, background: T.g200, borderRadius: 3, overflow: "hidden" }}>
+                            <div style={{ width: `${Math.round(j.avail/j.reg*100)}%`, height: "100%", background: T.green, borderRadius: 3 }} />
+                          </div>
+                          <span style={{ fontSize: 11, color: T.g500 }}>{Math.round(j.avail/j.reg*100)}%</span>
+                        </div> : <span style={{ color: T.g400 }}>—</span>}
+                      </td>
+                      <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}`, fontSize: 12, color: j.assets !== "—" ? T.navy : T.g400, fontWeight: j.assets !== "—" ? 600 : 400 }}>{j.assets}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 10px 4px", borderTop: `2px solid ${T.g200}` }}>
+                {[{l:"Total Registered",v:"922"},{l:"Total Available",v:"262"},{l:"Total Deployed",v:"91"},{l:"NAA Assets",v:"5 (3 active)"}].map((t,i)=><div key={i} style={{ textAlign: "center" }}><div style={{ fontSize: 11, color: T.g500 }}>{t.l}</div><div style={{ fontSize: 16, fontWeight: 700, color: T.navy, marginTop: 2 }}>{t.v}</div></div>)}
               </div>
             </Card>
 
             {/* Personnel by Status */}
             <Card title="Personnel by Status" right={<Btn variant="ghost" style={{ fontSize: 12 }}>View all →</Btn>} style={{ marginTop: 16 }}>
               {[
-                { label: "Working", val: 153, pct: 62, color: T.blue },
-                { label: "Resting", val: 49, pct: 20, color: T.teal },
-                { label: "Travel", val: 21, pct: 8, color: T.orange },
-                { label: "Briefing", val: 10, pct: 4, color: T.green },
-                { label: "Demob", val: 14, pct: 6, color: T.g400 },
+                { label: "Working", val: 64, pct: 63, color: T.blue },
+                { label: "Resting", val: 18, pct: 18, color: T.teal },
+                { label: "Travel", val: 8, pct: 8, color: T.orange },
+                { label: "Briefing", val: 5, pct: 5, color: T.green },
+                { label: "Demob", val: 6, pct: 6, color: T.g400 },
               ].map((b, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "5px 0" }}>
                   <span style={{ width: 65, fontSize: 12, color: T.g500, textAlign: "right" }}>{b.label}</span>
@@ -549,16 +564,16 @@ function NRSCHome() {
               ))}
             </Card>
 
-            {/* Requests table */}
-            <Card title="Recent Requests" right={<Btn variant="ghost" style={{ fontSize: 12 }}>All requests →</Btn>} style={{ marginTop: 16 }}>
+            {/* SitRep Log */}
+            <Card title="SitRep Log" right={<Btn variant="ghost" style={{ fontSize: 12 }}>All SitReps →</Btn>} style={{ marginTop: 16 }}>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                     <tr>
-                      {["Request ID", "Route", "Type", "Roles", "Status", "Updated"].map(h => (
+                      {["Ref", "Deployment", "Period", "Author", "Status", "Submitted"].map(h => (
                         <th key={h} style={{
                           textAlign: "left", padding: "8px 10px", fontWeight: 550, color: T.g500,
-                          fontSize: 11, textTransform: "uppercase", letterSpacing: .5,
+                          fontSize: 10.5, textTransform: "uppercase", letterSpacing: .5,
                           borderBottom: `2px solid ${T.g200}`, whiteSpace: "nowrap",
                         }}>{h}</th>
                       ))}
@@ -566,19 +581,20 @@ function NRSCHome() {
                   </thead>
                   <tbody>
                     {[
-                      { id: "2025_26_007NSW_QLD001", route: "NSW ← QLD,VIC,SA,TAS", type: "Interstate", roles: "IMT, DM, Crew ×12, Safety", status: "Deployed", color: "green", date: "14 Mar" },
-                      { id: "2025_26_INT_CAN_001", route: "NRSC → Canada", type: "International", roles: "INLO, IMT, CREW ×2", status: "Deployed", color: "green", date: "1 Feb" },
-                      { id: "2025_26_008NSW_VIC001", route: "NSW ← VIC", type: "Interstate", roles: "Crew Leader, Flood Ops ×6", status: "Pending Nomination", color: "orange", date: "28 Mar" },
-                      { id: "2025_26_009NSW_SA001", route: "NSW ← SA", type: "Interstate", roles: "Management Support Officer", status: "Draft", color: "blue", date: "30 Mar" },
-                      { id: "2025_26_010NSW_WA001", route: "NSW ← WA", type: "Interstate", roles: "JLO, Safety Advisor", status: "Cancelled", color: "gray", date: "10 Jan" },
-                    ].map((r, i) => (
+                      { ref: "SITREP-NR-009", deploy: "Northern Rivers Flood", period: "30 Mar AM", author: "J. Walsh", status: "Draft", color: "orange", date: "30 Mar 10:30" },
+                      { ref: "SITREP-NR-008", deploy: "Northern Rivers Flood", period: "29 Mar PM", author: "J. Walsh", status: "Submitted", color: "green", date: "29 Mar 16:00" },
+                      { ref: "SITREP-NR-007", deploy: "Northern Rivers Flood", period: "29 Mar AM", author: "J. Walsh", status: "Submitted", color: "green", date: "29 Mar 08:15" },
+                      { ref: "SITREP-CA-003", deploy: "Canada 2025", period: "Week 3", author: "P. Nguy\u1ec5n", status: "Draft", color: "orange", date: "30 Mar 09:12" },
+                      { ref: "SITREP-CA-002", deploy: "Canada 2025", period: "Week 2", author: "P. Nguy\u1ec5n", status: "Submitted", color: "green", date: "23 Mar 16:00" },
+                      { ref: "SITREP-NR-006", deploy: "Northern Rivers Flood", period: "28 Mar PM", author: "A. Ford", status: "Submitted", color: "green", date: "28 Mar 16:30" },
+                    ].map((sr, i) => (
                       <tr key={i} style={{ cursor: "pointer" }}>
-                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g200}`, fontFamily: "'DM Mono', monospace", fontSize: 11.5 }}>{r.id}</td>
-                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g200}`, fontWeight: 550 }}>{r.route}</td>
-                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g200}` }}>{r.type}</td>
-                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g200}`, maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.roles}</td>
-                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g200}` }}><Chip color={r.color}>{r.status}</Chip></td>
-                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g200}`, fontSize: 12, color: T.g500 }}>{r.date}</td>
+                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}`, fontFamily: "'DM Mono', monospace", fontSize: 11.5, fontWeight: 600 }}>{sr.ref}</td>
+                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}`, fontWeight: 550 }}>{sr.deploy}</td>
+                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}` }}>{sr.period}</td>
+                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}` }}>{sr.author}</td>
+                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}` }}><Chip color={sr.color}>{sr.status}</Chip></td>
+                        <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.g100}`, fontSize: 12, color: T.g500 }}>{sr.date}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -591,97 +607,55 @@ function NRSCHome() {
           <div>
             {/* Quick Actions */}
             <Card title="Quick Actions">
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {[
-                  { icon: "📋", label: "New Request" },
-                  { icon: "✈️", label: "NAA Request" },
-                  { icon: "📊", label: "Run Report" },
-                  { icon: "📝", label: "Draft SitRep" },
+                  { label: "New Request", desc: "Raise an interstate or international deployment request" },
+                  { label: "NAA Request", desc: "Request a national aviation asset" },
+                  { label: "New SitRep", desc: "Draft a situation report for an active deployment" },
+                  { label: "Run Report", desc: "Generate an operational or financial report" },
+                  { label: "Register Person", desc: "Add a new team member to the NDMS register" },
+                  { label: "New Claim", desc: "Submit a financial claim against a deployment" },
                 ].map((a, i) => (
-                  <div key={i} style={{
-                    padding: 14, border: `1px solid ${T.g200}`, borderRadius: 6,
-                    textAlign: "center", cursor: "pointer", transition: "all .12s",
-                    background: T.white,
+                  <div key={i} onClick={a.label === "New SitRep" ? onOpenSitRep : a.label === "New Request" ? onOpenWizard : undefined} style={{
+                    padding: "12px 16px", border: `1px solid ${T.g200}`, borderRadius: 6,
+                    cursor: "pointer", transition: "all .12s", background: T.white,
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
                   }}>
-                    <div style={{ fontSize: 22, marginBottom: 4 }}>{a.icon}</div>
-                    <div style={{ fontSize: 12, fontWeight: 550 }}>{a.label}</div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{a.label}</div>
+                      <div style={{ fontSize: 11, color: T.g500, marginTop: 1 }}>{a.desc}</div>
+                    </div>
+                    <span style={{ color: T.g400, fontSize: 16 }}>›</span>
                   </div>
                 ))}
               </div>
             </Card>
 
-            {/* Active Issues */}
-            <Card title="Active Issues" right={<Chip color="coral">4</Chip>} style={{ marginTop: 16 }}>
-              {[
-                { icon: "⚠", bg: T.coralL, fg: T.coral, title: "I/I/I — Welfare", sub: "Canada 2025 · IMT1 · Investigation commenced", time: "2h ago" },
-                { icon: "⏱", bg: T.orangeL, fg: T.orange, title: "Fatigue threshold", sub: "Northern Rivers · 3 personnel at 12+ consecutive days", time: "4h ago" },
-                { icon: "↻", bg: T.blueL, fg: T.blue, title: "Rotation gap", sub: "Northern Rivers · DM replacement needed by 1 Apr", time: "6h ago" },
-                { icon: "$", bg: T.orangeL, fg: T.orange, title: "Claims overdue", sub: "7 claims past 14-day agency review window", time: "1d ago" },
-              ].map((iss, i) => (
-                <div key={i} style={{
-                  display: "flex", alignItems: "center", gap: 10,
-                  padding: "10px 0", borderBottom: i < 3 ? `1px solid ${T.g200}` : "none",
-                  cursor: "pointer",
-                }}>
-                  <div style={{
-                    width: 30, height: 30, borderRadius: "50%",
-                    background: iss.bg, color: iss.fg,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 13, fontWeight: 700, flexShrink: 0,
-                  }}>{iss.icon}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600 }}>{iss.title}</div>
-                    <div style={{ fontSize: 11, color: T.g500 }}>{iss.sub}</div>
-                  </div>
-                  <span style={{ fontSize: 11, color: T.g400, whiteSpace: "nowrap" }}>{iss.time}</span>
-                </div>
-              ))}
-            </Card>
-
-            {/* SitReps */}
-            <Card title="Recent SitReps" style={{ marginTop: 16 }}>
-              {[
-                { title: "Northern Rivers Flood — SitRep #8", status: "Submitted", color: "green", meta: "29 Mar 2026, 16:00 AEST · J. Walsh" },
-                { title: "Canada 2025 — Weekly #3", status: "Draft", color: "orange", meta: "30 Mar 2026, 09:12 AEST · P. Nguyễn" },
-                { title: "Northern Rivers Flood — SitRep #9", status: "Draft", color: "orange", meta: "30 Mar 2026, 10:30 AEST · J. Walsh" },
-              ].map((sr, i) => (
-                <div key={i} style={{
-                  padding: 12, border: `1px solid ${T.g200}`, borderRadius: 6,
-                  marginBottom: 8, cursor: "pointer", transition: "box-shadow .12s",
-                }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600 }}>{sr.title}</span>
-                    <Chip color={sr.color}>{sr.status}</Chip>
-                  </div>
-                  <div style={{ fontSize: 11, color: T.g500 }}>{sr.meta}</div>
-                </div>
-              ))}
-            </Card>
-
-            {/* Jurisdiction cards */}
+            {/* Jurisdiction Summary */}
             <Card title="By Jurisdiction" style={{ marginTop: 16 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {[
-                  { code: "NSW", deployed: 0, requests: 1, color: "blue" },
-                  { code: "QLD", deployed: 22, requests: 2, color: "green" },
-                  { code: "VIC", deployed: 18, requests: 1, color: "blue" },
-                  { code: "SA", deployed: 10, requests: 1, color: "teal" },
-                  { code: "TAS", deployed: 8, requests: 1, color: "teal" },
-                  { code: "INT'L", deployed: 33, requests: 1, color: "coral" },
+                  { code: "NSW", deployed: 0, avail: 42, color: "blue" },
+                  { code: "QLD", deployed: 22, avail: 68, color: "green" },
+                  { code: "VIC", deployed: 18, avail: 55, color: "blue" },
+                  { code: "SA", deployed: 10, avail: 31, color: "teal" },
+                  { code: "TAS", deployed: 8, avail: 18, color: "teal" },
+                  { code: "WA", deployed: 0, avail: 28, color: "gray" },
+                  { code: "NT", deployed: 0, avail: 12, color: "gray" },
+                  { code: "INT'L", deployed: 33, avail: "—", color: "coral" },
                 ].map((j, i) => (
                   <div key={i} style={{
                     padding: 12, border: `1px solid ${T.g200}`, borderRadius: 6, cursor: "pointer",
-                    transition: "box-shadow .12s",
                   }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                      <span style={{ fontWeight: 700, fontSize: 15 }}>{j.code}</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <span style={{ fontWeight: 700, fontSize: 14 }}>{j.code}</span>
                       <Chip color={j.color} dot={true}>{""}</Chip>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: T.g500, padding: "2px 0" }}>
-                      <span>Deployed</span><span style={{ fontWeight: 650, color: T.navy }}>{j.deployed}</span>
+                      <span>Deployed</span><span style={{ fontWeight: 650, color: j.deployed > 0 ? T.blue : T.g400 }}>{j.deployed}</span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: T.g500, padding: "2px 0" }}>
-                      <span>Requests</span><span style={{ fontWeight: 650, color: T.navy }}>{j.requests}</span>
+                      <span>Available</span><span style={{ fontWeight: 650, color: T.green }}>{j.avail}</span>
                     </div>
                   </div>
                 ))}
@@ -1142,5 +1116,159 @@ function Card({ title, right, children, style: s }) {
       )}
       <div style={{ padding: "16px 18px" }}>{children}</div>
     </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   SITREP WIZARD MODAL
+   ═══════════════════════════════════════════════════ */
+function SitRepWizard({ onClose }) {
+  const [step, setStep] = useState(1);
+  const steps = ["Deployment", "Period & Summary", "Key Metrics", "Issues & Actions", "Review & Submit"];
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(35,52,74,.35)", zIndex: 600 }} />
+      <div style={{
+        position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+        width: 720, maxHeight: "85vh", background: T.white, borderRadius: 12,
+        boxShadow: "0 20px 60px rgba(35,52,74,.2)", zIndex: 601,
+        display: "flex", flexDirection: "column", overflow: "hidden",
+      }}>
+        {/* Header */}
+        <div style={{
+          padding: "18px 24px", borderBottom: `1px solid ${T.g200}`,
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}>
+          <div>
+            <div style={{ fontSize: 17, fontWeight: 700 }}>New Situation Report</div>
+            <div style={{ fontSize: 12, color: T.g500, marginTop: 2 }}>Step {step} of {steps.length} — {steps[step-1]}</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 20, color: T.g400, cursor: "pointer" }}>✕</button>
+        </div>
+
+        {/* Step indicator */}
+        <div style={{ display: "flex", padding: "12px 24px", gap: 4, borderBottom: `1px solid ${T.g100}` }}>
+          {steps.map((s, i) => (
+            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <div style={{
+                width: 24, height: 24, borderRadius: "50%",
+                background: i+1 < step ? T.green : i+1 === step ? T.blue : T.g200,
+                color: i+1 <= step ? T.white : T.g500,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 10, fontWeight: 700,
+              }}>{i+1 < step ? "✓" : i+1}</div>
+              <span style={{ fontSize: 9.5, color: i+1 === step ? T.blue : T.g500, fontWeight: i+1 === step ? 600 : 400 }}>{s}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "20px 24px" }}>
+          {step === 1 && <>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Select Deployment</div>
+            {[
+              { name: "Northern Rivers Flood Response", status: "Active", day: "Day 8", selected: true },
+              { name: "Canada 2025 Wildfire Season", status: "Active", day: "Day 58", selected: false },
+            ].map((d, i) => (
+              <div key={i} style={{
+                padding: "14px 16px", border: `2px solid ${d.selected ? T.blue : T.g200}`,
+                borderRadius: 8, marginBottom: 8, cursor: "pointer",
+                background: d.selected ? T.blueL : T.white,
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 14, fontWeight: 600 }}>{d.name}</span>
+                  <Chip color={d.selected ? "blue" : "green"}>{d.status}</Chip>
+                </div>
+                <div style={{ fontSize: 12, color: T.g500, marginTop: 4 }}>{d.day} · {d.name.includes("Northern") ? "68 personnel" : "33 personnel"}</div>
+              </div>
+            ))}
+          </>}
+
+          {step === 2 && <>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+              {[["Reporting Period", "30 Mar 2026 AM"], ["SitRep Number", "SITREP-NR-009"], ["Author", "J. Walsh (NRSC)"], ["Classification", "Official"]].map(([l,v], i) => (
+                <div key={i}>
+                  <label style={{ fontSize: 11.5, fontWeight: 550, color: T.g600, display: "block", marginBottom: 4 }}>{l}</label>
+                  <div style={{ padding: "9px 12px", background: T.g50, border: `1px solid ${T.g200}`, borderRadius: 6, fontSize: 13 }}>{v}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 11.5, fontWeight: 550, color: T.g600, display: "block", marginBottom: 4 }}>Executive Summary</label>
+              <div style={{ padding: "9px 12px", background: T.g50, border: `1px solid ${T.g200}`, borderRadius: 6, fontSize: 13, minHeight: 80, color: T.g400 }}>Flood response operations continue across the Northern Rivers region. Day 8 of deployment. All contingents active and in field…</div>
+            </div>
+            <div>
+              <label style={{ fontSize: 11.5, fontWeight: 550, color: T.g600, display: "block", marginBottom: 4 }}>Weather & Conditions</label>
+              <div style={{ padding: "9px 12px", background: T.g50, border: `1px solid ${T.g200}`, borderRadius: 6, fontSize: 13, minHeight: 50, color: T.g400 }}>Partly cloudy, 24°C. Floodwaters receding. Minor rainfall forecast overnight…</div>
+            </div>
+          </>}
+
+          {step === 3 && <>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Key Metrics — auto-populated from deployment data</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 16 }}>
+              {[{l:"Personnel On Shift",v:"48"},{l:"Personnel Resting",v:"14"},{l:"Personnel Travel",v:"6"},{l:"Contingents Active",v:"4"},{l:"Areas of Operation",v:"3"},{l:"Check-Ins Today",v:"62/68"}].map((m,i)=>(
+                <div key={i} style={{ padding: 14, border: `1px solid ${T.g200}`, borderRadius: 6, textAlign: "center" }}>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: T.blue }}>{m.v}</div>
+                  <div style={{ fontSize: 11, color: T.g500, marginTop: 2 }}>{m.l}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: "10px 14px", background: T.blueL, borderRadius: 6, fontSize: 12, color: T.blue }}>
+              These metrics are auto-populated from live deployment data. You can override values before submission.
+            </div>
+          </>}
+
+          {step === 4 && <>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Issues, Actions & Recommendations</div>
+            {[
+              { type: "Issue", text: "3 personnel approaching fatigue threshold (12+ consecutive days)", severity: "Medium" },
+              { type: "Action", text: "DM rotation for 1 Apr confirmed — R. Kimura to be replaced by incoming VIC CFA DM", severity: "Resolved" },
+              { type: "Issue", text: "Minor vehicle damage reported — ute VR-042 at Lismore depot", severity: "Low" },
+            ].map((item, i) => (
+              <div key={i} style={{ padding: "12px 14px", border: `1px solid ${T.g200}`, borderRadius: 6, marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
+                <Chip color={item.type === "Issue" ? "orange" : "green"}>{item.type}</Chip>
+                <span style={{ flex: 1, fontSize: 13 }}>{item.text}</span>
+                <Chip color={item.severity === "Resolved" ? "green" : item.severity === "Medium" ? "orange" : "blue"}>{item.severity}</Chip>
+              </div>
+            ))}
+            <div style={{ marginTop: 12 }}>
+              <label style={{ fontSize: 11.5, fontWeight: 550, color: T.g600, display: "block", marginBottom: 4 }}>Recommendations</label>
+              <div style={{ padding: "9px 12px", background: T.g50, border: `1px solid ${T.g200}`, borderRadius: 6, fontSize: 13, minHeight: 50, color: T.g400 }}>Continue operations as planned. Monitor fatigue thresholds for next rotation window…</div>
+            </div>
+          </>}
+
+          {step === 5 && <>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Review & Submit</div>
+            <div style={{ padding: 16, border: `1px solid ${T.g200}`, borderRadius: 8 }}>
+              {[["SitRep","SITREP-NR-009"],["Deployment","Northern Rivers Flood Response"],["Period","30 Mar 2026 AM"],["Author","J. Walsh (NRSC)"],["Personnel","68 (48 on shift)"],["Issues","2 open, 1 resolved"],["Classification","Official"]].map(([k,v],i)=>(
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", fontSize: 13, borderBottom: `1px solid ${T.g100}` }}>
+                  <span style={{ color: T.g500 }}>{k}</span><span style={{ fontWeight: 600 }}>{v}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 14, padding: "10px 14px", background: T.greenL, borderRadius: 6, fontSize: 12, color: "#5a8a1f" }}>
+              Ready. Submitting will notify all stakeholders and make this SitRep available in the reporting module.
+            </div>
+          </>}
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          padding: "14px 24px", borderTop: `1px solid ${T.g200}`,
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}>
+          <Btn variant="ghost" onClick={step === 1 ? onClose : () => setStep(step-1)}>
+            {step === 1 ? "Cancel" : "← Back"}
+          </Btn>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Btn variant="secondary">Save Draft</Btn>
+            <Btn variant="primary" onClick={step < 5 ? () => setStep(step+1) : onClose}>
+              {step < 5 ? "Continue →" : "Submit SitRep"}
+            </Btn>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
