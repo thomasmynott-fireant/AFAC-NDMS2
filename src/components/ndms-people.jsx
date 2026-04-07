@@ -56,6 +56,16 @@ const EOI_ITEMS = [
   { id: 6, name: "Jake Williams", agency: "VIC CFA", role: "Crew Member", type: "Interstate", request: "2025_26_008NSW_VIC001", step: "EOI Submitted", assignee: "Unassigned", assigneeInit: "—", dueDate: "3 Apr", priority: "Medium", initials: "JW", color: T.teal },
   { id: 7, name: "Tom Briggs", agency: "QLD QFES", role: "Flood Ops", type: "Interstate", request: "2025_26_007NSW_QLD001", step: "Pre-Deploy Checks", assignee: "R. Kimura", assigneeInit: "RK", dueDate: "31 Mar", priority: "High", initials: "TB", color: T.blue },
   { id: 8, name: "Alice Nguyễn", agency: "VIC CFA", role: "INLO Admin", type: "International", request: "2025_26_INT_CAN_001", step: "International Clearance", assignee: "J. Walsh", assigneeInit: "JW", dueDate: "4 Apr", priority: "Medium", initials: "AN", color: T.blue },
+  { id: 9, name: "Raj Patel", agency: "NSW RFS", role: "Crew Member", type: "Interstate", request: "2025_26_008NSW_VIC001", step: "EOI Submitted", assignee: "Unassigned", assigneeInit: "—", dueDate: "3 Apr", priority: "High", initials: "RP", color: "#6C5CE7" },
+  { id: 10, name: "Meg Lawson", agency: "QLD QFES", role: "Crew Leader", type: "Interstate", request: "2025_26_007NSW_QLD001", step: "EOI Submitted", assignee: "Unassigned", assigneeInit: "—", dueDate: "4 Apr", priority: "Medium", initials: "ML", color: T.navy },
+  { id: 11, name: "Yuki Tanaka", agency: "VIC CFA", role: "IMT Support", type: "International", request: "2025_26_INT_CAN_001", step: "Agency Review", assignee: "S. Patel", assigneeInit: "SP", dueDate: "3 Apr", priority: "High", initials: "YT", color: T.coral },
+  { id: 12, name: "Liam Chen", agency: "TAS TFS", role: "Flood Ops", type: "Interstate", request: "2025_26_007NSW_QLD001", step: "Agency Review", assignee: "R. Kimura", assigneeInit: "RK", dueDate: "2 Apr", priority: "Medium", initials: "LC", color: T.green },
+  { id: 13, name: "Priya Sharma", agency: "SA CFS", role: "Operations Officer", type: "Interstate", request: "2025_26_009NSW_SA001", step: "NRSC Validation", assignee: "J. Walsh", assigneeInit: "JW", dueDate: "2 Apr", priority: "Medium", initials: "PS", color: "#00B894" },
+  { id: 14, name: "Oscar Trent", agency: "WA DFES", role: "Safety Advisor", type: "Interstate", request: "2025_26_010NSW_WA001", step: "Pre-Deploy Checks", assignee: "R. Kimura", assigneeInit: "RK", dueDate: "4 Apr", priority: "Low", initials: "OT", color: T.orange },
+  { id: 15, name: "Zara Mitchell", agency: "QLD QFES", role: "IC Support", type: "International", request: "2025_26_INT_CAN_001", step: "International Clearance", assignee: "M. Sullivan", assigneeInit: "MS", dueDate: "6 Apr", priority: "High", initials: "ZM", color: "#6C5CE7" },
+  { id: 16, name: "Dave Kowalski", agency: "VIC CFA", role: "Heavy Plant Operator", type: "Interstate", request: "2025_26_008NSW_VIC001", step: "Nomination Confirmed", assignee: "J. Walsh", assigneeInit: "JW", dueDate: "—", priority: "Low", initials: "DK", color: T.navy },
+  { id: 17, name: "Fiona Grant", agency: "NSW RFS", role: "Coordinator", type: "International", request: "2025_26_INT_CAN_001", step: "Visa / eTA", assignee: "J. Walsh", assigneeInit: "JW", dueDate: "7 Apr", priority: "Medium", initials: "FG", color: T.teal },
+  { id: 18, name: "Steve Barker", agency: "SA SASES", role: "AREP", type: "International", request: "2025_26_INT_CAN_001", step: "Mobilisation Ready", assignee: "M. Sullivan", assigneeInit: "MS", dueDate: "—", priority: "Low", initials: "SB", color: T.green },
 ];
 
 /* ═══════════════════════════════════════════════
@@ -80,7 +90,7 @@ const TASKS = [
    ═══════════════════════════════════════════════ */
 export default function PeopleWorkspace({ scope = "national" }) {
   const personalTabs = ["My Profile", "My EOIs", "My Tasks"];
-  const orgTabs = ["Directory", "EOI Management", "Tasks"];
+  const orgTabs = ["EOI Management", "Tasks", "Directory"];
   const tabs = scope === "personal" ? personalTabs : orgTabs;
   const [tab, setTab] = useState(tabs[0]);
   const [search, setSearch] = useState("");
