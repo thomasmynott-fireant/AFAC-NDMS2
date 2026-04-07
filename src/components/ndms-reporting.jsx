@@ -175,7 +175,7 @@ export default function MapWorkspace() {
         <div style={{ padding: "12px 18px", borderBottom: `1px solid ${T.g200}` }}>
           <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g500, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Quick Zoom</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <button onClick={() => { setFlyTarget([-25, 135]); setFlyZoom(4); setSelectedDeployment("All"); }} style={qzStyle(selectedDeployment === "All")}>
+            <button onClick={() => { setFlyTarget([-10, 135]); setFlyZoom(3); setSelectedDeployment("All"); }} style={qzStyle(selectedDeployment === "All")}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.navy }} />
               Global Overview
             </button>
@@ -274,14 +274,18 @@ export default function MapWorkspace() {
         </div>
 
         <MapContainer
-          center={[-25, 135]}
-          zoom={4}
+          center={[-10, 135]}
+          zoom={3}
+          minZoom={2}
+          maxBounds={[[-85, -60], [85, 330]]}
+          maxBoundsViscosity={1.0}
           style={{ height: "100%", width: "100%" }}
           zoomControl={false}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            noWrap={true}
           />
 
           {flyTarget && <FlyTo center={flyTarget} zoom={flyZoom} />}

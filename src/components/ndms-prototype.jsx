@@ -6,7 +6,6 @@ import MapWorkspace from "./ndms-reporting";
 import { MyClaims, ClaimSubmit, AgencyReview, NRSCAudit, Reconciliation } from "./ndms-c5-finance";
 import { NAAForm, NAARegister, AssetBoard, ApprovalPanel, Performance, DemoRoute } from "./ndms-stage4-aviation";
 import { TaskCentre, Deployment360, ApprovalTimeline } from "./ndms-task-centre";
-import { DMTHome, AirDeskHome, ExecutiveHome, INLOHome, RMGHome } from "./ndms-workspaces";
 import AdminWorkspace from "./ndms-admin";
 
 /* ─── AFAC Brand Tokens ─── */
@@ -110,17 +109,12 @@ const ROLES = [
   { id: "nrsc", shell: "nrsc", label: "NRSC Operations", name: "Jessica Walsh", agency: "NRSC", initials: "JW", color: T.teal, sysRole: "NRSC Operations", deployRole: null },
   { id: "team", shell: "team", label: "Team Member", name: "Daniel Thornton", agency: "QLD QFES", initials: "DT", color: T.blue, sysRole: "Team Member", deployRole: "Crew Leader — Northern Rivers" },
   { id: "agency", shell: "agency", label: "Agency Staff", name: "Sarah Patel", agency: "QLD QFES", initials: "SP", color: T.coral, sysRole: "Agency Administrator", deployRole: null },
-  { id: "dmt", shell: "specialist", label: "DMT", name: "Rachel Kimura", agency: "VIC CFA", initials: "RK", color: "#6C5CE7", sysRole: "Team Member", deployRole: "Deployment Manager — Northern Rivers" },
-  { id: "airdesk", shell: "specialist", label: "Air Desk", name: "Air Desk Operator", agency: "AFAC NRSC", initials: "AD", color: T.orange, sysRole: "Aviation Operations", deployRole: null },
-  { id: "inlo", shell: "specialist", label: "INLO / AREP", name: "Mark Sullivan", agency: "SA CFS", initials: "MS", color: "#00B894", sysRole: "Team Member", deployRole: "AREP — Northern Rivers" },
-  { id: "rmg", shell: "specialist", label: "RMG / State", name: "State Coordinator", agency: "NSW", initials: "SC", color: "#636E72", sysRole: "RMG Member", deployRole: null },
-  { id: "exec", shell: "specialist", label: "Executive", name: "CCOSC Delegate", agency: "AFAC", initials: "CC", color: "#2D3436", sysRole: "Executive Oversight", deployRole: null },
 ];
 
-/* Unified 7-module nav — same structure for all roles, with role-specific labels */
+/* Unified nav — 3 core roles */
 const getNavItems = (role) => {
   const shell = ROLES.find(r => r.id === role)?.shell || "nrsc";
-  const homeLabel = { nrsc: "Home", team: "My Readiness", agency: "Agency Home", dmt: "DMT Console", airdesk: "Air Desk", inlo: "Field Console", rmg: "State Overview", exec: "Executive View" }[role] || "Home";
+  const homeLabel = { nrsc: "Home", team: "My Readiness", agency: "Agency Home" }[role] || "Home";
 
   const core = [
     { section: "Platform", items: [
@@ -132,17 +126,15 @@ const getNavItems = (role) => {
     ]},
   ];
 
-  // Finance — all roles except exec/rmg
-  if (!["exec", "rmg"].includes(role)) {
-    core.push({ section: "Finance", items: [
-      { icon: "dollar", label: shell === "team" ? "My Claims" : shell === "agency" ? "Claims Review" : "Finance", id: "finance", badge: shell === "agency" ? "8" : null },
-    ]});
-  }
+  // Finance — all 3 roles
+  core.push({ section: "Finance", items: [
+    { icon: "dollar", label: shell === "team" ? "My Claims" : shell === "agency" ? "Claims Review" : "Finance", id: "finance", badge: shell === "agency" ? "8" : null },
+  ]});
 
-  // Aviation — only nrsc, airdesk, exec
-  if (["nrsc", "airdesk", "exec"].includes(role)) {
+  // Aviation — nrsc only
+  if (role === "nrsc") {
     core.push({ section: "Specialist", items: [
-      { icon: "send", label: role === "airdesk" ? "Aviation Console" : "Aviation", id: "aviation" },
+      { icon: "send", label: "Aviation", id: "aviation" },
     ]});
   }
 
@@ -174,11 +166,6 @@ export default function NDMSPrototype() {
         if (role === "nrsc") return <NRSCHome onOpenWizard={() => setWizardOpen(true)} onOpenSitRep={() => setSitRepOpen(true)} />;
         if (role === "team") return <TeamMemberHome />;
         if (role === "agency") return <AgencyHome onOpenWizard={() => setWizardOpen(true)} />;
-        if (role === "dmt") return <DMTHome />;
-        if (role === "airdesk") return <AirDeskHome />;
-        if (role === "inlo") return <INLOHome />;
-        if (role === "rmg") return <RMGHome />;
-        if (role === "exec") return <ExecutiveHome />;
         return <NRSCHome />;
       case "people":
         if (shell === "team") return <PeopleWorkspace scope="personal" />;
@@ -195,7 +182,6 @@ export default function NDMSPrototype() {
         if (shell === "agency") return <AgencyReview />;
         return <Reconciliation />;
       case "aviation":
-        if (role === "airdesk") return <AirDeskHome />;
         return <AssetBoard />;
       case "admin":
         return <AdminWorkspace />;
