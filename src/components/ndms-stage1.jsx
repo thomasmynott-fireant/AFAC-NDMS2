@@ -165,7 +165,7 @@ function C1Readiness(){
             {done:true,t:"Profile complete",s:"Personal details, emergency contacts, next of kin"},
             {done:true,t:"Code of Conduct signed",s:"Signed 12 Jan 2026"},
             {done:true,t:"MFA enabled",s:"Authenticator app configured"},
-            {done:true,t:"Roles approved",s:"Crew Leader, Strike Team Leader — approved by NSW RFS"},
+            {done:true,t:"Roles approved",s:"Crew Leader, Strike Team Leader — approved by QLD QFES"},
             {done:true,t:"Medical fitness",s:"Certificate valid until 18 Nov 2026"},
             {done:false,t:"Passport uploaded",s:"Required for international deployability"},
             {done:false,t:"Working With Children Check",s:"Expires 2 Apr 2026 — renewal needed"},
@@ -180,9 +180,9 @@ function C1Readiness(){
       <div>
         <Card title="Active Deployment" right={<Chip color="blue">Day 8</Chip>}>
           <div style={{borderLeft:`3px solid ${T.blue}`,paddingLeft:14,marginBottom:14}}>
-            <div style={{fontSize:15,fontWeight:650,marginBottom:6}}>NT Cyclone Response</div>
+            <div style={{fontSize:15,fontWeight:650,marginBottom:6}}>Northern Rivers Flood Response</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4px 16px",fontSize:12}}>
-              {[["Request","2025_26_007NT_NSW001"],["Role","Crew Leader"],["Location","Darwin, NT"],["Contingent","CREW2"],["Agency","NSW RFS"],["Status","Working"]].map(([k,v],i)=><div key={i}><span style={{color:T.g400,fontSize:10.5}}>{k}</span><div style={{fontWeight:550,fontFamily:k==="Request"?"'DM Mono',monospace":"inherit",fontSize:k==="Request"?11:12}}>{v}</div></div>)}
+              {[["Request","2025_26_007NSW_QLD001"],["Role","Crew Leader"],["Location","Lismore, NSW"],["Contingent","CREW2"],["Agency","QLD QFES"],["Status","Working"]].map(([k,v],i)=><div key={i}><span style={{color:T.g400,fontSize:10.5}}>{k}</span><div style={{fontWeight:550,fontFamily:k==="Request"?"'DM Mono',monospace":"inherit",fontSize:k==="Request"?11:12}}>{v}</div></div>)}
             </div>
           </div>
           <div style={{fontSize:12,fontWeight:600,marginBottom:6}}>Fatigue</div>
@@ -339,12 +339,12 @@ function C1EOIWizard(){
 function C1RolesEvidence(){
   return<div style={{padding:"24px 32px"}}>
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20}}>
-      <div><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Roles & Evidence</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Daniel Thornton · NSW RFS · Governed readiness record</p></div>
+      <div><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Roles & Evidence</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Daniel Thornton · QLD QFES · Governed readiness record</p></div>
       <Btn v="primary">+ Request New Role</Btn>
     </div>
     {[
-      {role:"Crew Leader",family:"Crew",qualifications:["Advanced Firefighting Certificate","Crew Leader Qualification","First Aid (HLTAID011)"],fitness:"Approved",fitnessExpiry:"18 Nov 2026",status:"Approved",reviewer:"Sarah Patel (NSW RFS)",reviewDate:"15 Jan 2026",comments:"All evidence verified. Deployment-ready.",c:"green"},
-      {role:"Strike Team Leader",family:"Overhead",qualifications:["STL Qualification Module","Leadership & Command Certificate"],fitness:"Approved",fitnessExpiry:"18 Nov 2026",status:"Approved",reviewer:"Sarah Patel (NSW RFS)",reviewDate:"15 Jan 2026",comments:null,c:"green"},
+      {role:"Crew Leader",family:"Crew",qualifications:["Advanced Firefighting Certificate","Crew Leader Qualification","First Aid (HLTAID011)"],fitness:"Approved",fitnessExpiry:"18 Nov 2026",status:"Approved",reviewer:"Sarah Patel (QLD QFES)",reviewDate:"15 Jan 2026",comments:"All evidence verified. Deployment-ready.",c:"green"},
+      {role:"Strike Team Leader",family:"Overhead",qualifications:["STL Qualification Module","Leadership & Command Certificate"],fitness:"Approved",fitnessExpiry:"18 Nov 2026",status:"Approved",reviewer:"Sarah Patel (QLD QFES)",reviewDate:"15 Jan 2026",comments:null,c:"green"},
       {role:"Storm Damage Operator",family:"Crew",qualifications:["Chainsaw Operator Certificate","Working at Heights (pending)"],fitness:"Approved",fitnessExpiry:"18 Nov 2026",status:"Under Review",reviewer:"—",reviewDate:"—",comments:"Awaiting Working at Heights evidence upload.",c:"teal"},
     ].map((r,i)=><Card key={i} title={r.role} right={<div style={{display:"flex",gap:8}}><Chip color={r.c==="green"?"green":"teal"}>{r.status}</Chip><Badge label={r.family} color="blue"/></div>} s={{marginBottom:16}}>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:20}}>
@@ -448,21 +448,21 @@ function C1NationalExceptions(){
       </div>)}
     </div>
 
-    <FilterChips items={["All","NSW RFS","CFA","ACT ESA","DFES WA","QFES","SASES","FENZ"]} active={agencyFilter} onChange={setAgencyFilter}/>
+    <FilterChips items={["All","QLD QFES","CFA","ACT ESA","DFES WA","QFES","SASES","FENZ"]} active={agencyFilter} onChange={setAgencyFilter}/>
 
     <Card>
       <table style={{width:"100%",borderCollapse:"collapse"}}>
         <thead><tr><TH>Name</TH><TH>Agency</TH><TH>Jurisdiction</TH><TH>Exception</TH><TH>Severity</TH><TH>Deployability</TH><TH>Days</TH></tr></thead>
         <tbody>
           {[
-            {name:"James McAllister",agency:"NSW RFS",jur:"NSW",exception:"Medical fitness expired",severity:"coral",deploy:"Suspended",days:"12"},
+            {name:"James McAllister",agency:"QLD QFES",jur:"NSW",exception:"Medical fitness expired",severity:"coral",deploy:"Suspended",days:"12"},
             {name:"Priya Singh",agency:"CFA",jur:"VIC",exception:"WWCC expired",severity:"coral",deploy:"Suspended",days:"8"},
             {name:"Tom Walsh",agency:"DFES WA",jur:"WA",exception:"Medical fitness expired",severity:"coral",deploy:"Suspended",days:"3"},
-            {name:"Sarah Chen",agency:"NSW RFS",jur:"NSW",exception:"WWCC expiring in 5 days",severity:"orange",deploy:"At Risk",days:"5"},
-            {name:"Daniel Thornton",agency:"NSW RFS",jur:"NSW",exception:"WWCC expiring in 3 days",severity:"orange",deploy:"At Risk",days:"3"},
+            {name:"Sarah Chen",agency:"QLD QFES",jur:"NSW",exception:"WWCC expiring in 5 days",severity:"orange",deploy:"At Risk",days:"5"},
+            {name:"Daniel Thornton",agency:"QLD QFES",jur:"NSW",exception:"WWCC expiring in 3 days",severity:"orange",deploy:"At Risk",days:"3"},
             {name:"Mark O'Sullivan",agency:"ACT ESA",jur:"ACT",exception:"First Aid expiring in 18 days",severity:"orange",deploy:"Active",days:"18"},
             {name:"Lisa Cooper",agency:"QFES",jur:"QLD",exception:"Pending role approval",severity:"blue",deploy:"Pending",days:"22"},
-            {name:"Ben Harper",agency:"NSW RFS",jur:"NSW",exception:"Pending EOI approval",severity:"blue",deploy:"Pending",days:"8"},
+            {name:"Ben Harper",agency:"QLD QFES",jur:"NSW",exception:"Pending EOI approval",severity:"blue",deploy:"Pending",days:"8"},
           ].map((r,i)=><tr key={i} style={{cursor:"pointer"}}>
             <TD s={{fontWeight:600}}>{r.name}</TD>
             <TD>{r.agency}</TD>
@@ -499,9 +499,9 @@ function C2RequestRegister(){
           <thead><tr><TH>Request ID</TH><TH>Jurisdiction</TH><TH>Type</TH><TH>Roles Requested</TH><TH>Filled</TH><TH>Status</TH><TH>Handler</TH><TH>Created</TH></tr></thead>
           <tbody>
             {[
-              {id:"2025_26_007NT_NSW001",jur:"NT → NSW",type:"Interstate",roles:"IMT, DM, Safety Officer (Field), Storm Damage Ops ×8",filled:"18/18",status:"Deployed",color:"green",handler:"J. Walsh",date:"14 Mar"},
+              {id:"2025_26_007NSW_QLD001",jur:"NT → NSW",type:"Interstate",roles:"IMT, DM, Safety Officer (Field), Flood Ops ×8",filled:"18/18",status:"Deployed",color:"green",handler:"J. Walsh",date:"14 Mar"},
               {id:"2025_26_012INT_CAN001",jur:"NRSC → Canada",type:"International",roles:"INLO, IMT ×3, CREW ×12",filled:"16/16",status:"Mobilising",color:"blue",handler:"P. Nguyễn",date:"8 Mar"},
-              {id:"2025_26_015QLD_VIC002",jur:"QLD → VIC",type:"Interstate",roles:"Crew Leader ×2, Storm Damage Ops ×6",filled:"0/8",status:"Pending Allocation",color:"orange",handler:"Unassigned",date:"28 Mar"},
+              {id:"2025_26_015QLD_VIC002",jur:"QLD → VIC",type:"Interstate",roles:"Crew Leader ×2, Flood Ops ×6",filled:"0/8",status:"Pending Allocation",color:"orange",handler:"Unassigned",date:"28 Mar"},
               {id:"2025_26_009SA_NSW003",jur:"SA → NSW",type:"Interstate",roles:"Management Support Officer",filled:"1/1",status:"Demobilising",color:"gray",handler:"L. Brooks",date:"10 Mar"},
               {id:"2025_26_018WA_NT004",jur:"WA → NT",type:"Interstate",roles:"JLO, Safety Advisor",filled:"0/2",status:"Under Review",color:"teal",handler:"M. Cooper",date:"29 Mar"},
               {id:"2025_26_020NT_QLD005",jur:"NT → QLD",type:"Interstate",roles:"Deployment Manager, Admin Support ×2",filled:"1/3",status:"Partially Filled",color:"orange",handler:"J. Walsh",date:"30 Mar"},
@@ -526,10 +526,10 @@ function C2RequestRegister(){
 /* ── C2: Order & Fulfilment Console ── */
 function C2OrderConsole(){
   return<div style={{padding:"24px 32px"}}>
-    <div style={{marginBottom:20}}><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Order & Fulfilment Console</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Request 2025_26_007NT_NSW001 — NT Cyclone Response</p></div>
+    <div style={{marginBottom:20}}><h2 style={{fontSize:20,fontWeight:700,margin:0}}>Order & Fulfilment Console</h2><p style={{color:T.g500,fontSize:13,margin:"4px 0 0"}}>Request 2025_26_007NSW_QLD001 — Northern Rivers Flood Response</p></div>
 
     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:14,marginBottom:20}}>
-      {[{l:"Parent Order",v:"ORD-2025-0047"},{l:"RP",v:"Rachel Kimura (NSW RFS)"},{l:"SP",v:"Mark Sullivan (NT Gov)"},{l:"Fulfilment",v:"18/18 (100%)"}].map((m,i)=><div key={i} style={{background:T.white,border:`1px solid ${T.g200}`,borderRadius:8,padding:"14px 18px"}}>
+      {[{l:"Parent Order",v:"ORD-2025-0047"},{l:"RP",v:"Rachel Kimura (QLD QFES)"},{l:"SP",v:"Mark Sullivan (NT Gov)"},{l:"Fulfilment",v:"18/18 (100%)"}].map((m,i)=><div key={i} style={{background:T.white,border:`1px solid ${T.g200}`,borderRadius:8,padding:"14px 18px"}}>
         <div style={{fontSize:11,color:T.g400,fontWeight:550}}>{m.l}</div>
         <div style={{fontSize:14,fontWeight:650,marginTop:4}}>{m.v}</div>
       </div>)}
@@ -540,8 +540,8 @@ function C2OrderConsole(){
         {[
           {id:"ORD-0047-A",desc:"IMT & Overhead",roles:"IC Support, Planning, DM",filled:"3/3",status:"Deployed",c:"green"},
           {id:"ORD-0047-B",desc:"Safety",roles:"Safety Officer (Field)",filled:"1/1",status:"Deployed",c:"green"},
-          {id:"ORD-0047-C",desc:"Storm Ops Crew 1",roles:"Crew Leader, Storm Damage Ops ×5",filled:"6/6",status:"Deployed",c:"green"},
-          {id:"ORD-0047-D",desc:"Storm Ops Crew 2",roles:"Crew Leader, Storm Damage Ops ×5",filled:"6/6",status:"Deployed",c:"green"},
+          {id:"ORD-0047-C",desc:"Flood Ops Crew 1",roles:"Crew Leader, Flood Ops ×5",filled:"6/6",status:"Deployed",c:"green"},
+          {id:"ORD-0047-D",desc:"Flood Ops Crew 2",roles:"Crew Leader, Flood Ops ×5",filled:"6/6",status:"Deployed",c:"green"},
           {id:"ORD-0047-E",desc:"Management Support",roles:"Management Support Officer ×2",filled:"2/2",status:"Demobilising",c:"gray"},
         ].map((o,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:i<4?`1px solid ${T.g100}`:"none"}}>
           <span style={{fontFamily:"'DM Mono',monospace",fontSize:11,color:T.g500,width:80}}>{o.id}</span>
@@ -556,9 +556,9 @@ function C2OrderConsole(){
           {date:"14 Mar 09:15",action:"Request created",by:"J. Walsh (NRSC)",c:T.blue},
           {date:"14 Mar 11:00",action:"Order ORD-2025-0047 generated",by:"System",c:T.teal},
           {date:"15 Mar 14:30",action:"Sub-orders A–E created",by:"J. Walsh",c:T.blue},
-          {date:"16 Mar 10:00",action:"NSW RFS nominated 18 personnel",by:"S. Patel (NSW RFS)",c:T.green},
+          {date:"16 Mar 10:00",action:"QLD QFES nominated 18 personnel",by:"S. Patel (QLD QFES)",c:T.green},
           {date:"17 Mar 08:00",action:"All sub-orders confirmed",by:"J. Walsh",c:T.green},
-          {date:"22 Mar 06:00",action:"Deployment commenced — Darwin",by:"System",c:T.green},
+          {date:"22 Mar 06:00",action:"Deployment commenced — Lismore",by:"System",c:T.green},
           {date:"27 Mar 15:00",action:"MSO ×2 demobilisation started",by:"R. Kimura",c:T.g500},
         ].map((h,i)=><div key={i} style={{display:"flex",gap:10,padding:"7px 0",borderBottom:i<6?`1px solid ${T.g100}`:"none"}}>
           <div style={{width:3,borderRadius:2,background:h.c,flexShrink:0}}/>
@@ -582,9 +582,9 @@ function C2ContingentBuilder(){
     </div>
 
     {[
-      {group:"INLO1",type:"INLO & Admin",deployed:"12 Mar",roles:[{name:"Peter Nguyễn",role:"INLO",agency:"NSW RFS",jur:"NSW",status:"In Field"},{name:"Alice Nguyễn",role:"INLO Admin",agency:"NSW RFS",jur:"NSW",status:"In Field"}]},
-      {group:"IMT1",type:"IMT",deployed:"12 Mar",roles:[{name:"David Kang",role:"IC Support",agency:"CFA",jur:"VIC",status:"In Field"},{name:"Rachel Kim",role:"Planning Officer",agency:"NSW RFS",jur:"NSW",status:"In Field"},{name:"Tom O'Brien",role:"Logistics",agency:"DFES WA",jur:"WA",status:"In Field"}]},
-      {group:"CREW1",type:"Crew",deployed:"12 Mar",roles:[{name:"Mark Sullivan",role:"Crew Leader",agency:"CFA",jur:"VIC",status:"In Field"},{name:"Sarah Chen",role:"Firefighter",agency:"CFA",jur:"VIC",status:"In Field"},{name:"James Liu",role:"Firefighter",agency:"ACT ESA",jur:"ACT",status:"In Field"},{name:"Ben Taylor",role:"Firefighter",agency:"NSW RFS",jur:"NSW",status:"In Field"},{name:"Emma Walsh",role:"Firefighter",agency:"FENZ",jur:"NZ",status:"In Field"}]},
+      {group:"INLO1",type:"INLO & Admin",deployed:"12 Mar",roles:[{name:"Peter Nguyễn",role:"INLO",agency:"QLD QFES",jur:"NSW",status:"In Field"},{name:"Alice Nguyễn",role:"INLO Admin",agency:"QLD QFES",jur:"NSW",status:"In Field"}]},
+      {group:"IMT1",type:"IMT",deployed:"12 Mar",roles:[{name:"David Kang",role:"IC Support",agency:"CFA",jur:"VIC",status:"In Field"},{name:"Rachel Kimura",role:"Planning Officer",agency:"QLD QFES",jur:"NSW",status:"In Field"},{name:"Tom O'Brien",role:"Logistics",agency:"DFES WA",jur:"WA",status:"In Field"}]},
+      {group:"CREW1",type:"Crew",deployed:"12 Mar",roles:[{name:"Mark Sullivan",role:"Crew Leader",agency:"CFA",jur:"VIC",status:"In Field"},{name:"Sarah Chen",role:"Firefighter",agency:"CFA",jur:"VIC",status:"In Field"},{name:"James Liu",role:"Firefighter",agency:"ACT ESA",jur:"ACT",status:"In Field"},{name:"Ben Taylor",role:"Firefighter",agency:"QLD QFES",jur:"NSW",status:"In Field"},{name:"Emma Walsh",role:"Firefighter",agency:"FENZ",jur:"NZ",status:"In Field"}]},
       {group:"CREW2",type:"Crew",deployed:"12 Mar",roles:[{name:"Chris Adams",role:"Crew Leader",agency:"SASES",jur:"SA",status:"In Field"},{name:"Lisa Morton",role:"Firefighter",agency:"SASES",jur:"SA",status:"In Field"},{name:"Paul Green",role:"Firefighter",agency:"DFES WA",jur:"WA",status:"In Field"},{name:"Nina Roberts",role:"Firefighter",agency:"QFES",jur:"QLD",status:"In Field"},{name:"Sam O'Connor",role:"Firefighter",agency:"TFS",jur:"TAS",status:"In Field"},{name:"Jake Williams",role:"Firefighter",agency:"CFA",jur:"VIC",status:"In Field"}]},
     ].map((g,gi)=><Card key={gi} title={<span>{g.group} <span style={{fontWeight:400,color:T.g500,fontSize:12}}>— {g.type} · Deployed {g.deployed}</span></span>} right={<Chip color="green">In Field ({g.roles.length})</Chip>} s={{marginBottom:14}}>
       <table style={{width:"100%",borderCollapse:"collapse"}}>

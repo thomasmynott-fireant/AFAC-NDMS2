@@ -41,7 +41,7 @@ export function Deployment360(){
     {type:"Order",id:"ORD-2025-0047",sub:"Sub-order D: CREW2",color:T.navy},
     {type:"Contingent",id:"CREW2",sub:"6 personnel · Storm Ops",color:T.green},
     {type:"Manifest",id:"MAN-0047-C2",sub:"SYD → DRW · VA1417",color:T.orange},
-    {type:"Movement",id:"In Field",sub:"Darwin, NT · Day 8",color:T.blue},
+    {type:"Movement",id:"In Field",sub:"Lismore, NSW · Day 8",color:T.blue},
     {type:"Deployment",id:"Northern Rivers Flood Response",sub:"64 deployed · Active",color:T.green},
     {type:"SitRep",id:"SITREP-NT-2025-009",sub:"Draft · 30 Mar 2026",color:T.teal},
     {type:"Claim",id:"CLM-2025-0891",sub:"$52.40 AUD · Pending",color:T.orange},
@@ -120,7 +120,7 @@ export function TaskCentre(){
   const[filter,setFilter]=useState("All");
   const tasks=[
     {id:1,type:"Approval",icon:"✓",bg:T.greenL,fg:T.green,title:"EOI Approval — Ben Harper",sub:"New EOI · Management Support Officer · NSW RFS",urgency:"Medium",time:"8d pending",category:"EOI"},
-    {id:2,type:"Approval",icon:"✓",bg:T.greenL,fg:T.green,title:"Role Change — Tom Briggs",sub:"Storm Damage Ops → Crew Leader · Northern Rivers Flood · CREW2",urgency:"High",time:"2d pending",category:"Role Change"},
+    {id:2,type:"Approval",icon:"✓",bg:T.greenL,fg:T.green,title:"Role Change — Tom Briggs",sub:"Flood Ops → Crew Leader · Northern Rivers Flood · CREW2",urgency:"High",time:"2d pending",category:"Role Change"},
     {id:3,type:"Exception",icon:"⚠",bg:T.coralL,fg:T.coral,title:"Rotation Gap — DM Replacement",sub:"Northern Rivers Flood · Rachel Kim demobilising 1 Apr · No replacement sourced",urgency:"Critical",time:"1d remaining",category:"Rotation"},
     {id:4,type:"Exception",icon:"⏱",bg:T.orangeL,fg:T.orange,title:"Fatigue Threshold — Karen Wong",sub:"Northern Rivers Flood · CREW2 · 9 consecutive work days",urgency:"High",time:"Active",category:"Fatigue"},
     {id:5,type:"I/I/I",icon:"🔴",bg:T.coralL,fg:T.coral,title:"I/I/I Investigation — David Kang",sub:"Canada 2025 · IMT1 · Injury — investigation commenced",urgency:"Critical",time:"1d active",category:"I/I/I"},

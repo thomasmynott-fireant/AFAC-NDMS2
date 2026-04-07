@@ -23,7 +23,7 @@ const REQUESTS = [
    REQUESTS WORKSPACE — tabbed module
    ═══════════════════════════════════════════════ */
 export default function RequestsWorkspace({ onOpenWizard }) {
-  const tabs = ["Overview", "Orders", "Teams & Contingents", "Manifest", "Travel & Logistics", "Movement"];
+  const tabs = ["Overview", "Approval Chain", "Agency Response", "Orders", "Teams & Contingents", "Manifest", "Travel & Logistics", "Movement"];
   const [tab, setTab] = useState("Overview");
 
   return <div style={{ padding: "24px 32px" }}>
@@ -36,6 +36,8 @@ export default function RequestsWorkspace({ onOpenWizard }) {
     </div>
     <TabBar tabs={tabs} active={tab} onChange={setTab} />
     {tab === "Overview" && <OverviewTab onOpenWizard={onOpenWizard} />}
+    {tab === "Approval Chain" && <ApprovalChainTab />}
+    {tab === "Agency Response" && <AgencyResponseTab />}
     {tab === "Orders" && <OrdersTab />}
     {tab === "Teams & Contingents" && <ContingentsTab />}
     {tab === "Manifest" && <ManifestTab />}
@@ -216,7 +218,7 @@ function MovementTab() {
         { name: "Sam O'Connor", dir: "Inbound", route: "HBA → LIS", date: "31 Mar", status: "Confirmed", c: "green" },
         { name: "Peter O'Brien", dir: "Outbound", route: "LIS → SYD", date: "31 Mar", status: "Booked", c: "blue" },
         { name: "Jake Williams", dir: "Inbound", route: "MEL → LIS", date: "2 Apr", status: "Pending", c: "orange" },
-        { name: "Rachel Kimura", dir: "Outbound", route: "LIS → MEL", date: "1 Apr", status: "Gap — no replacement", c: "coral" },
+        { name: "Rachel Kimuraura", dir: "Outbound", route: "LIS → MEL", date: "1 Apr", status: "Gap — no replacement", c: "coral" },
         { name: "Karen Wong", dir: "Outbound", route: "LIS → BNE", date: "1 Apr", status: "Booked", c: "blue" },
       ].map((r, i) => <tr key={i}><TD fw={600}>{r.name}</TD><TD><Chip color={r.dir === "Inbound" ? "green" : "orange"}>{r.dir}</Chip></TD><TD>{r.route}</TD><TD fw={600}>{r.date}</TD><TD><Chip color={r.c}>{r.status}</Chip></TD></tr>)}</tbody>
     </table>
@@ -259,7 +261,7 @@ export function RequestWizard({ onClose }) {
         {step === 2 && <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <Field label="Requesting Jurisdiction"><Select value={form.jurisdiction} onChange={e => setForm({ ...form, jurisdiction: e.target.value })}><option value="">Select…</option>{["NSW","VIC","QLD","SA","WA","TAS","NT","ACT"].map(j=><option key={j}>{j}</option>)}</Select></Field>
           <Field label="Receiving Jurisdiction"><Select value={form.receiving} onChange={e => setForm({ ...form, receiving: e.target.value })}><option value="">Select…</option>{["NSW","VIC","QLD","SA","WA","TAS","NT","ACT","Canada","USA","NZ"].map(j=><option key={j}>{j}</option>)}</Select></Field>
-          <Field label="Incident / Deployment Name" span={2}><Input placeholder="e.g. NT Cyclone Response" value={form.incident} onChange={e => setForm({ ...form, incident: e.target.value })} /></Field>
+          <Field label="Incident / Deployment Name" span={2}><Input placeholder="e.g. Northern Rivers Flood Response" value={form.incident} onChange={e => setForm({ ...form, incident: e.target.value })} /></Field>
           <Field label="Start Date"><Input type="date" /></Field>
           <Field label="End Date (estimated)"><Input type="date" /></Field>
           <Field label="Urgency"><Select value={form.urgency} onChange={e => setForm({ ...form, urgency: e.target.value })}><option value="">Select…</option><option>Immediate</option><option>Urgent</option><option>Planned</option><option>Non-Urgent</option></Select></Field>
@@ -308,7 +310,7 @@ export function RequestWizard({ onClose }) {
         {step === 6 && <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <Field label="Manifest Required?"><Select><option>Yes — flights to be arranged</option><option>No — self-travel</option><option>Mixed</option></Select></Field>
           <Field label="Muster Point"><Input placeholder="e.g. Sydney Airport T2" /></Field>
-          <Field label="Accommodation"><Input placeholder="e.g. Hilton Darwin" /></Field>
+          <Field label="Accommodation"><Input placeholder="e.g. Lismore Gateway Motel" /></Field>
           <Field label="Ground Transport"><Select><option>Required — NRSC to arrange</option><option>Required — host agency provides</option><option>Not required</option></Select></Field>
           {form.type === "international" && <>
             <Field label="Passport Check"><Select><option>All personnel verified</option><option>Verification in progress</option><option>Not yet checked</option></Select></Field>

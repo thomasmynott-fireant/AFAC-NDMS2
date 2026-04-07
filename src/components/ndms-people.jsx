@@ -30,7 +30,7 @@ const PEOPLE = [
    ═══════════════════════════════════════════════ */
 export default function PeopleWorkspace({ scope = "national" }) {
   const personalTabs = ["My Profile", "Readiness", "Roles & Evidence", "Approvals History"];
-  const orgTabs = ["Directory", "Readiness", "Roles & Evidence", "Exceptions"];
+  const orgTabs = ["Directory", "Readiness", "Roles & Evidence", "Exceptions", "Expiring Credentials", "EOI Queue"];
   const tabs = scope === "personal" ? personalTabs : orgTabs;
   const [tab, setTab] = useState(tabs[0]);
   const [search, setSearch] = useState("");
@@ -63,6 +63,8 @@ export default function PeopleWorkspace({ scope = "national" }) {
       {tab === "Readiness" && <ReadinessTab people={filtered} scope={scope} />}
       {tab === "Roles & Evidence" && <RolesEvidenceTab people={filtered} />}
       {tab === "Exceptions" && <ExceptionsTab people={filtered} />}
+      {tab === "Expiring Credentials" && <ExpiringCredentialsTab />}
+      {tab === "EOI Queue" && <EOIQueueTab />}
     </div>
   );
 }
@@ -148,7 +150,7 @@ function ReadinessTab({ people, scope }) {
 }
 
 function RolesEvidenceTab({ people }) {
-  const roles = ["Crew Leader", "Crew Member", "Operations Officer", "Management Support", "Safety Officer", "Deployment Manager", "IC Support", "Heavy Plant Operator", "AREP", "IMT Support", "Coordinator", "Storm Damage Ops"];
+  const roles = ["Crew Leader", "Crew Member", "Operations Officer", "Management Support", "Safety Officer", "Deployment Manager", "IC Support", "Heavy Plant Operator", "AREP", "IMT Support", "Coordinator", "Flood Ops"];
   return <Card title="Qualification & Role Matrix">
     <table style={{ width: "100%", borderCollapse: "collapse" }}>
       <thead><tr><TH>Name</TH><TH>Primary Role</TH><TH>Accreditation</TH><TH>WWCC</TH><TH>Medical</TH><TH>First Aid</TH><TH>Evidence</TH></tr></thead>
@@ -189,6 +191,79 @@ function ExceptionsTab({ people }) {
         <Btn v="primary" s={{ padding: "5px 12px", fontSize: 11 }}>Action →</Btn>
       </div>)}
     </Card>
+  </>;
+}
+
+
+/* ─── Expiring Credentials Workbench (NDMS-023) ─── */
+function ExpiringCredentialsTab() {
+  const expiring=[
+    {name:"Linda Brooks",agency:"NSW RFS",doc:"WWCC",expiry:"12 Jan 2025",daysLeft:-80,status:"Expired",c:"coral",action:"Block deployment"},
+    {name:"Karen Wong",agency:"QLD QFES",doc:"First Aid Certificate",expiry:"15 Apr 2026",daysLeft:16,status:"Expiring",c:"orange",action:"Send reminder"},
+    {name:"Jake Williams",agency:"VIC CFA",doc:"Medical Fitness",expiry:"22 Apr 2026",daysLeft:23,status:"Expiring",c:"orange",action:"Send reminder"},
+    {name:"Ben Harper",agency:"VIC CFA",doc:"WWCC",expiry:"1 May 2026",daysLeft:32,status:"Due Soon",c:"blue",action:"Notify"},
+    {name:"Rachel Kimura",agency:"VIC CFA",doc:"Swift Water Rescue",expiry:"10 May 2026",daysLeft:41,status:"Due Soon",c:"blue",action:"Notify"},
+    {name:"Peter O'Brien",agency:"TAS TFS",doc:"Driver's Licence",expiry:"18 May 2026",daysLeft:49,status:"Due Soon",c:"blue",action:"Notify"},
+    {name:"David Kang",agency:"SA CFS",doc:"First Aid Certificate",expiry:"30 May 2026",daysLeft:61,status:"OK (60d)",c:"green",action:"—"},
+  ];
+  return <>
+    <div style={{display:"flex",gap:10,marginBottom:16}}>
+      {[{l:"Expired",v:1,c:T.coral},{l:"Expiring (<30d)",v:2,c:T.orange},{l:"Due Soon (30-60d)",v:3,c:T.blue},{l:"Total Monitored",v:expiring.length,c:T.navy}].map((s,i)=><div key={i} style={{flex:1,background:T.white,border:`1px solid ${T.g200}`,borderRadius:6,padding:"10px 14px",display:"flex",alignItems:"center",gap:8}}><div style={{width:8,height:8,borderRadius:"50%",background:s.c}}/><span style={{fontSize:12,color:T.g600}}>{s.l}</span><span style={{marginLeft:"auto",fontWeight:700,fontSize:16}}>{s.v}</span></div>)}
+    </div>
+    <Card>
+      <table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><TH>Person</TH><TH>Agency</TH><TH>Document</TH><TH>Expiry</TH><TH>Days</TH><TH>Status</TH><TH>Action</TH></tr></thead>
+        <tbody>{expiring.map((e,i)=><tr key={i} style={{background:e.status==="Expired"?"#FFF5F5":"transparent"}}>
+          <TD fw={600}>{e.name}</TD>
+          <TD>{e.agency}</TD>
+          <TD>{e.doc}</TD>
+          <TD>{e.expiry}</TD>
+          <TD fw={600} s={{color:e.daysLeft<0?T.coral:e.daysLeft<30?T.orange:T.navy}}>{e.daysLeft<0?`${Math.abs(e.daysLeft)}d overdue`:`${e.daysLeft}d`}</TD>
+          <TD><Chip color={e.c}>{e.status}</Chip></TD>
+          <TD>{e.action!=="—"?<Btn v="secondary" s={{padding:"3px 10px",fontSize:11}}>{e.action}</Btn>:<span style={{color:T.g400,fontSize:12}}>—</span>}</TD>
+        </tr>)}</tbody>
+      </table>
+    </Card>
+    <div style={{marginTop:14,padding:"10px 14px",background:T.orangeL,borderRadius:6,fontSize:12,color:"#c06e15"}}>
+      <strong>Automation:</strong> Personnel with expired mandatory credentials (WWCC, Medical) are automatically blocked from new deployment nominations. Reminders are sent at 60, 30, and 7 days before expiry.
+    </div>
+  </>;
+}
+
+/* ─── EOI Queue (NDMS-008) ─── */
+function EOIQueueTab() {
+  const eois=[
+    {name:"Ben Harper",agency:"VIC CFA",role:"Management Support Officer",submitted:"22 Mar 2026",deployment:"Northern Rivers Flood Response",status:"Pending Agency",c:"orange",readiness:45,checks:{wwcc:"Valid",medical:"Valid",firstAid:"Valid",accred:"Pending"}},
+    {name:"Nina Roberts",agency:"QLD QFES",role:"Flood Ops",submitted:"28 Mar 2026",deployment:"Northern Rivers Flood Response",status:"Pending Agency",c:"orange",readiness:72,checks:{wwcc:"Valid",medical:"Valid",firstAid:"Valid",accred:"Valid"}},
+    {name:"Sam O'Connor",agency:"TAS TFS",role:"Safety Officer",submitted:"20 Mar 2026",deployment:"Northern Rivers Flood Response",status:"Agency Approved",c:"green",readiness:90,checks:{wwcc:"Valid",medical:"Valid",firstAid:"Valid",accred:"Valid"}},
+    {name:"Lisa Morton",agency:"SA CFS",role:"Crew Member",submitted:"25 Mar 2026",deployment:"Canada 2025",status:"Pending NRSC",c:"blue",readiness:65,checks:{wwcc:"Valid",medical:"Expiring",firstAid:"Valid",accred:"Valid"}},
+    {name:"Chris Adams",agency:"SA SASES",role:"Crew Leader",submitted:"15 Mar 2026",deployment:"Canada 2025",status:"Deployed",c:"green",readiness:88,checks:{wwcc:"Valid",medical:"Valid",firstAid:"Valid",accred:"Valid"}},
+  ];
+  return <>
+    <div style={{display:"flex",gap:10,marginBottom:16}}>
+      {[{l:"Pending Agency",v:2,c:T.orange},{l:"Pending NRSC",v:1,c:T.blue},{l:"Agency Approved",v:1,c:T.green},{l:"Deployed",v:1,c:T.green}].map((s,i)=><div key={i} style={{flex:1,background:T.white,border:`1px solid ${T.g200}`,borderRadius:6,padding:"10px 14px",display:"flex",alignItems:"center",gap:8}}><div style={{width:8,height:8,borderRadius:"50%",background:s.c}}/><span style={{fontSize:12,color:T.g600}}>{s.l}</span><span style={{marginLeft:"auto",fontWeight:700,fontSize:16}}>{s.v}</span></div>)}
+    </div>
+    {eois.map((e,i)=><Card key={i} title={<span>{e.name} <Chip color={e.c}>{e.status}</Chip></span>} right={<span style={{fontSize:12,color:T.g500}}>{e.agency}</span>} s={{marginBottom:14}}>
+      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:20}}>
+        <div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px 20px",fontSize:12.5,marginBottom:12}}>
+            {[["Role Applied",e.role],["Deployment",e.deployment],["Submitted",e.submitted],["Readiness",`${e.readiness}%`]].map(([k,v],ki)=><div key={ki}><span style={{color:T.g400,fontSize:10.5}}>{k}</span><div style={{fontWeight:550}}>{v}</div></div>)}
+          </div>
+          <div style={{fontSize:10.5,color:T.g400,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>Pre-deployment Checks</div>
+          <div style={{display:"flex",gap:6}}>
+            {Object.entries(e.checks).map(([k,v],ki)=><span key={ki} style={{padding:"3px 10px",background:v==="Valid"?T.greenL:v==="Expiring"?T.orangeL:T.blueL,borderRadius:4,fontSize:11,fontWeight:550,color:v==="Valid"?"#5a8a1f":v==="Expiring"?"#c06e15":T.blue}}>{k}: {v}</span>)}
+          </div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:6}}>
+          {e.status.includes("Pending")&&<>
+            <Btn v="primary" s={{justifyContent:"center",fontSize:12}}>✓ Approve EOI</Btn>
+            <Btn v="secondary" s={{justifyContent:"center",fontSize:12,color:T.coral,borderColor:T.coral}}>✕ Decline</Btn>
+            <Btn v="ghost" s={{justifyContent:"center",fontSize:11}}>Request more info</Btn>
+          </>}
+          {e.status==="Agency Approved"&&<Btn v="primary" s={{justifyContent:"center",fontSize:12}}>Confirm for Deployment</Btn>}
+          {e.status==="Deployed"&&<div style={{textAlign:"center",padding:12,background:T.greenL,borderRadius:6,fontSize:12,color:"#5a8a1f",fontWeight:600}}>✓ Deployed — Active</div>}
+        </div>
+      </div>
+    </Card>)}
   </>;
 }
 

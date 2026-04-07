@@ -14,8 +14,8 @@ const FilterChips=({items,active,onChange})=><div style={{display:"flex",gap:6,f
 
 const ASSETS=[
   {callsign:"NLAT",make:"Lockheed C-130J Hercules",reg:"A97-449",base:"Richmond NSW",nob:"Richmond NSW",status:"Available",mission:"—",loc:"Richmond NSW",color:"green"},
-  {callsign:"NLEAD",make:"King Air 350",reg:"VH-FIZ",base:"Bankstown NSW",nob:"Bankstown NSW",status:"Deployed",mission:"NT Cyclone — reconnaissance",loc:"Darwin NT",color:"blue"},
-  {callsign:"NHAWK (SA)",make:"Sikorsky S-70A Black Hawk",reg:"VH-NHA",base:"Parafield SA",nob:"Parafield SA",status:"Deployed",mission:"NT Cyclone — aerial support",loc:"Darwin NT",color:"blue"},
+  {callsign:"NLEAD",make:"King Air 350",reg:"VH-FIZ",base:"Bankstown NSW",nob:"Bankstown NSW",status:"Deployed",mission:"Northern Rivers — reconnaissance",loc:"Lismore NSW",color:"blue"},
+  {callsign:"NHAWK (SA)",make:"Sikorsky S-70A Black Hawk",reg:"VH-NHA",base:"Parafield SA",nob:"Parafield SA",status:"Deployed",mission:"Northern Rivers — aerial support",loc:"Lismore NSW",color:"blue"},
   {callsign:"NHAWK (QLD)",make:"Sikorsky S-70A Black Hawk",reg:"VH-NHB",base:"Bundaberg QLD",nob:"Bundaberg QLD",status:"Moving",mission:"Repositioning to Bundaberg",loc:"In transit",color:"orange"},
   {callsign:"NS61N",make:"Sikorsky S-61N",reg:"VH-NSA",base:"Bankstown NSW",nob:"Bankstown NSW",status:"Unavailable",mission:"Scheduled maintenance",loc:"Bankstown NSW",color:"gray"},
 ];
@@ -112,7 +112,7 @@ function NAAForm(){
     {/* Mission details */}
     <Card title="3. Mission Details" s={{marginTop:16}}>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
-        {[["Mission Type","Aerial reconnaissance and damage assessment"],["Operating Base","Darwin NT"],["Mission Duration","3 days (est. 30 Mar – 1 Apr 2026)"],["Jurisdiction","Northern Territory"],["Incident / Event","NT Cyclone Response 2026"],["Mission Description","Post-cyclone aerial reconnaissance of coastal communities north of Darwin. Damage assessment and supply route survey required."]].map(([l,v],i)=><div key={i} style={i===5?{gridColumn:"1/3"}:{}}>
+        {[["Mission Type","Aerial reconnaissance and damage assessment"],["Operating Base","Lismore NSW"],["Mission Duration","3 days (est. 30 Mar – 1 Apr 2026)"],["Jurisdiction","New South Wales"],["Incident / Event","Northern Rivers Flood Response 2026"],["Mission Description","Post-cyclone aerial reconnaissance of coastal communities north of Lismore. Flood damage assessment and infrastructure survey required."]].map(([l,v],i)=><div key={i} style={i===5?{gridColumn:"1/3"}:{}}>
           <label style={{fontSize:11.5,fontWeight:550,color:T.g600,display:"block",marginBottom:4}}>{l}</label>
           <div style={{padding:"9px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:6,fontSize:13}}>{v}</div>
         </div>)}
@@ -146,10 +146,10 @@ function NAARegister(){
         <table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><TH>Request No.</TH><TH>Asset</TH><TH>Urgency</TH><TH>Type</TH><TH>Mission</TH><TH>Status</TH><TH>Requested</TH><TH>Sign-off</TH><TH>Notes</TH></tr></thead>
           <tbody>
             {[
-              {no:"NAA-2025-0018",asset:"NLEAD",urg:"Urgent",type:"New",mission:"NT Cyclone recon",status:"Approved - DM",color:"green",req:"28 Mar 06:30",signoff:"28 Mar 07:15",notes:"Sign-off received"},
-              {no:"NAA-2025-0017",asset:"NHAWK (SA)",urg:"Urgent",type:"New",mission:"NT Cyclone aerial",status:"Approved - DM",color:"green",req:"27 Mar 14:00",signoff:"27 Mar 14:45",notes:"Tracker updated"},
+              {no:"NAA-2025-0018",asset:"NLEAD",urg:"Urgent",type:"New",mission:"Northern Rivers recon",status:"Approved - DM",color:"green",req:"28 Mar 06:30",signoff:"28 Mar 07:15",notes:"Sign-off received"},
+              {no:"NAA-2025-0017",asset:"NHAWK (SA)",urg:"Urgent",type:"New",mission:"Northern Rivers aerial",status:"Approved - DM",color:"green",req:"27 Mar 14:00",signoff:"27 Mar 14:45",notes:"Tracker updated"},
               {no:"NAA-2025-0019",asset:"NLAT",urg:"Non-Urgent",type:"New",mission:"QLD resupply",status:"Under Review",color:"teal",req:"30 Mar 09:00",signoff:"—",notes:"Awaiting DM"},
-              {no:"NAA-2025-0017-E1",asset:"NHAWK (SA)",urg:"Non-Urgent",type:"Extension",mission:"NT Cyclone extended",status:"Extension Requested",color:"orange",req:"30 Mar 08:00",signoff:"—",notes:"3-day extension"},
+              {no:"NAA-2025-0017-E1",asset:"NHAWK (SA)",urg:"Non-Urgent",type:"Extension",mission:"Northern Rivers extended",status:"Extension Requested",color:"orange",req:"30 Mar 08:00",signoff:"—",notes:"3-day extension"},
             ].map((r,i)=><tr key={i} style={{cursor:"pointer"}}>
               <TD mono fw={600}>{r.no}</TD>
               <TD fw={600}>{r.asset}</TD>
@@ -169,13 +169,13 @@ function NAARegister(){
     {/* Timestamp ladder for latest request */}
     <Card title="Request Timeline — NAA-2025-0018" s={{marginTop:20}}>
       {[
-        {time:"28 Mar 06:30",event:"Request raised by Air Desk",detail:"Urgent — NLEAD requested for NT Cyclone reconnaissance",c:T.coral},
+        {time:"28 Mar 06:30",event:"Request raised by Air Desk",detail:"Urgent — NLEAD requested for Northern Rivers reconnaissance",c:T.coral},
         {time:"28 Mar 06:32",event:"Auto-routed to Duty Manager",detail:"Urgent pathway activated",c:T.orange},
         {time:"28 Mar 06:45",event:"Duty Manager reviewing",detail:"J. Walsh (NRSC)",c:T.teal},
         {time:"28 Mar 07:15",event:"Approved by Duty Manager",detail:"Approved for 3-day deployment. Sign-off filed.",c:T.green},
         {time:"28 Mar 07:16",event:"CCOSC ASC notified",detail:"Automatic notification sent",c:T.navy},
-        {time:"28 Mar 07:30",event:"Tracker updated",detail:"NLEAD status → Deployed. Mission: NT Cyclone recon",c:T.green},
-        {time:"28 Mar 08:00",event:"Asset departed NOB",detail:"NLEAD departed Bankstown NSW for Darwin NT",c:T.blue},
+        {time:"28 Mar 07:30",event:"Tracker updated",detail:"NLEAD status → Deployed. Mission: Northern Rivers recon",c:T.green},
+        {time:"28 Mar 08:00",event:"Asset departed NOB",detail:"NLEAD departed Bankstown NSW for Lismore NSW",c:T.blue},
       ].map((e,i)=><div key={i} style={{display:"flex",gap:12,padding:"8px 0",borderBottom:i<6?`1px solid ${T.g100}`:"none"}}>
         <div style={{width:3,borderRadius:2,background:e.c,flexShrink:0}}/>
         <div style={{width:110,fontSize:11,color:T.g500,flexShrink:0,paddingTop:1}}>{e.time}</div>
@@ -207,7 +207,7 @@ function AssetBoard(){
           <path d="M180,50 Q200,32 230,44 Q260,27 290,40 L310,53 Q330,47 345,66 L350,92 Q360,110 350,132 L340,154 Q330,172 310,182 L290,185 Q270,195 250,189 L230,193 Q210,200 195,185 L180,168 Q165,150 170,132 L167,108 Q160,82 170,66 Z" fill="rgba(14,120,201,.04)" stroke="rgba(14,120,201,.1)" strokeWidth="1"/>
           {/* Assets */}
           <g><circle cx="260" cy="140" r="7" fill={T.green} stroke="#fff" strokeWidth="2"/><text x="272" y="138" fontSize="9" fill={T.navy} fontWeight="700">NLAT</text><text x="272" y="148" fontSize="8" fill={T.g500}>Richmond NSW</text></g>
-          <g><circle cx="282" cy="55" r="7" fill={T.blue} stroke="#fff" strokeWidth="2"/><text x="294" y="53" fontSize="9" fill={T.blue} fontWeight="700">NLEAD</text><text x="294" y="63" fontSize="8" fill={T.g500}>Darwin NT</text></g>
+          <g><circle cx="282" cy="55" r="7" fill={T.blue} stroke="#fff" strokeWidth="2"/><text x="294" y="53" fontSize="9" fill={T.blue} fontWeight="700">NLEAD</text><text x="294" y="63" fontSize="8" fill={T.g500}>Lismore NSW</text></g>
           <g><circle cx="270" cy="60" r="6" fill={T.blue} stroke="#fff" strokeWidth="2"/><text x="230" y="58" fontSize="9" fill={T.blue} fontWeight="700">NHAWK(SA)</text></g>
           <g><circle cx="310" cy="95" r="6" fill={T.orange} stroke="#fff" strokeWidth="2"/><text x="320" y="93" fontSize="9" fill={T.orange} fontWeight="700">NHAWK(QLD)</text><text x="320" y="103" fontSize="8" fill={T.g500}>In transit</text></g>
           <g><circle cx="255" cy="145" r="5" fill={T.g400} stroke="#fff" strokeWidth="2"/><text x="220" y="158" fontSize="8" fill={T.g500}>NS61N (maint.)</text></g>
@@ -233,7 +233,7 @@ function ApprovalPanel(){
       <div>
         <Card title="Request Summary">
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px 20px",fontSize:12.5}}>
-            {[["Request","NAA-2025-0019"],["Asset","NLAT (C-130J Hercules)"],["Urgency","Non-Urgent"],["Mission","QLD resupply — cyclone relief"],["Operating Base","Bundaberg QLD"],["Duration","2 days (est.)"],["Requested by","Air Desk — AFAC NRSC"],["Requested","30 Mar 09:00"]].map(([k,v],i)=><div key={i}><div style={{fontSize:10.5,color:T.g400,fontWeight:550}}>{k}</div><div style={{fontWeight:550,marginTop:2}}>{v}</div></div>)}
+            {[["Request","NAA-2025-0019"],["Asset","NLAT (C-130J Hercules)"],["Urgency","Non-Urgent"],["Mission","QLD resupply — flood relief"],["Operating Base","Bundaberg QLD"],["Duration","2 days (est.)"],["Requested by","Air Desk — AFAC NRSC"],["Requested","30 Mar 09:00"]].map(([k,v],i)=><div key={i}><div style={{fontSize:10.5,color:T.g400,fontWeight:550}}>{k}</div><div style={{fontWeight:550,marginTop:2}}>{v}</div></div>)}
           </div>
         </Card>
 
@@ -382,7 +382,7 @@ function DemoRoute(){
     {/* Summary stats */}
     <Card title="Prototype Coverage Summary" s={{marginTop:10}}>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14}}>
-        {[{l:"Total Screens",v:"36+",sub:"Across 7 capabilities"},{l:"Role Views",v:"7",sub:"NRSC, Team, Agency, DMT, AREP, Air Desk, RMG"},{l:"Seeded Scenarios",v:"3",sub:"NT Interstate, Canada Int'l, NAA"},{l:"Interactive Flows",v:"12",sub:"Wizards, approvals, drawers, toggles"}].map((m,i)=><div key={i} style={{textAlign:"center"}}>
+        {[{l:"Total Screens",v:"36+",sub:"Across 7 capabilities"},{l:"Role Views",v:"7",sub:"NRSC, Team, Agency, DMT, AREP, Air Desk, RMG"},{l:"Seeded Scenarios",v:"3",sub:"Northern Rivers Interstate, Canada Int'l, NAA"},{l:"Interactive Flows",v:"12",sub:"Wizards, approvals, drawers, toggles"}].map((m,i)=><div key={i} style={{textAlign:"center"}}>
           <div style={{fontSize:24,fontWeight:700,color:T.blue}}>{m.v}</div>
           <div style={{fontSize:12.5,fontWeight:600,marginTop:2}}>{m.l}</div>
           <div style={{fontSize:11,color:T.g500,marginTop:1}}>{m.sub}</div>

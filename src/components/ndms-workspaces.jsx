@@ -111,7 +111,7 @@ export function DMTHome(){
 
           {/* Logistics */}
           <Card title="Logistics Summary" s={{marginTop:16}}>
-            {[["Accommodation","Hilton Darwin — 64 rooms"],["Ground transport","3 buses, 4 utes"],["Meals","Catering contract active"],["Flights booked","22 (12 inbound, 10 outbound)"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"6px 0",fontSize:12.5,borderBottom:i<3?`1px solid ${T.g50}`:"none"}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550}}>{v}</span></div>)}
+            {[["Accommodation","Hilton Lismore — 64 rooms"],["Ground transport","3 buses, 4 utes"],["Meals","Catering contract active"],["Flights booked","22 (12 inbound, 10 outbound)"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"6px 0",fontSize:12.5,borderBottom:i<3?`1px solid ${T.g50}`:"none"}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550}}>{v}</span></div>)}
           </Card>
         </div>
       </div>
@@ -172,8 +172,8 @@ export function AirDeskHome(){
           {/* Active missions */}
           <Card title="Active Missions" right={<Chip color="blue">2 deployed</Chip>} s={{marginTop:16}}>
             {[
-              {asset:"NLEAD",callsign:"NLEAD",mission:"Northern Rivers Flood — aerial reconnaissance",base:"Darwin NT",since:"28 Mar",ends:"1 Apr (est.)",no:"NAA-2025-0018"},
-              {asset:"NHAWK (SA)",callsign:"NHAWK(SA)",mission:"Northern Rivers Flood — aerial support",base:"Darwin NT",since:"27 Mar",ends:"30 Mar (ext. pending)",no:"NAA-2025-0017"},
+              {asset:"NLEAD",callsign:"NLEAD",mission:"Northern Rivers Flood — aerial reconnaissance",base:"Lismore NT",since:"28 Mar",ends:"1 Apr (est.)",no:"NAA-2025-0018"},
+              {asset:"NHAWK (SA)",callsign:"NHAWK(SA)",mission:"Northern Rivers Flood — aerial support",base:"Lismore NT",since:"27 Mar",ends:"30 Mar (ext. pending)",no:"NAA-2025-0017"},
             ].map((m,i)=><div key={i} style={{padding:"14px 0",borderBottom:i<1?`1px solid ${T.g100}`:"none"}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
                 <span style={{fontSize:15,fontWeight:700}}>{m.asset}</span>
@@ -292,8 +292,8 @@ export function ExecutiveHome(){
         <div style={{display:"grid",gridTemplateColumns:"repeat(5, 1fr)",gap:12}}>
           {[
             {asset:"NLAT",type:"C-130J Hercules",status:"Available",loc:"Richmond NSW",c:"green"},
-            {asset:"NLEAD",type:"King Air 350",status:"Deployed",loc:"Darwin NT",c:"blue"},
-            {asset:"NHAWK (SA)",type:"Black Hawk",status:"Deployed",loc:"Darwin NT",c:"blue"},
+            {asset:"NLEAD",type:"King Air 350",status:"Deployed",loc:"Lismore NT",c:"blue"},
+            {asset:"NHAWK (SA)",type:"Black Hawk",status:"Deployed",loc:"Lismore NT",c:"blue"},
             {asset:"NHAWK (QLD)",type:"Black Hawk",status:"Repositioning",loc:"In transit",c:"orange"},
             {asset:"NS61N",type:"Sikorsky S-61N",status:"Maintenance",loc:"Bankstown NSW",c:"gray"},
           ].map((a,i)=><div key={i} style={{padding:14,border:`1px solid ${T.g200}`,borderRadius:8,textAlign:"center"}}>
@@ -317,7 +317,7 @@ export function INLOHome(){
     <div style={{background:`linear-gradient(135deg, #1a4a3a 0%, #234a3a 100%)`,padding:"22px 32px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
       <div>
         <h1 style={{color:T.white,fontSize:21,fontWeight:700,margin:0}}>Field Coordination — AREP</h1>
-        <p style={{color:"rgba(255,255,255,.55)",fontSize:13,margin:"4px 0 0"}}>Mark Sullivan — Agency Representative · Northern Rivers Flood Response · Darwin</p>
+        <p style={{color:"rgba(255,255,255,.55)",fontSize:13,margin:"4px 0 0"}}>Mark Sullivan — Agency Representative · Northern Rivers Flood Response · Lismore</p>
       </div>
       <div style={{display:"flex",gap:8}}>
         <Btn v="light">📋 Log Contact</Btn>

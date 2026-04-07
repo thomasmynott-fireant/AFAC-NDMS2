@@ -34,15 +34,15 @@ const SCREENS=[
 ];
 
 const DEPLOYED=[
-  {name:"Daniel Thornton",init:"DT",c:T.blue,role:"Crew Leader",agency:"NSW RFS",jur:"NSW",contingent:"CREW2",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Working",day:8,country:"AU"},
-  {name:"Rachel Kim",init:"RK",c:T.teal,role:"Deployment Manager",agency:"NSW RFS",jur:"NSW",contingent:"IMT1",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Working",day:12,country:"AU"},
-  {name:"Tom Briggs",init:"TB",c:T.orange,role:"Flood Ops",agency:"NSW RFS",jur:"NSW",contingent:"CREW2",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Resting",day:8,country:"AU"},
-  {name:"Peter Nguyễn",init:"PN",c:T.green,role:"INLO",agency:"NSW RFS",jur:"NSW",contingent:"INLO1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
-  {name:"Alice Nguyễn",init:"AN",c:T.green,role:"INLO Admin",agency:"NSW RFS",jur:"NSW",contingent:"INLO1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
-  {name:"David Kang",init:"DK",c:T.coral,role:"IC Support",agency:"CFA",jur:"VIC",contingent:"IMT1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
-  {name:"Mark Sullivan",init:"MS",c:T.navy,role:"Crew Leader",agency:"CFA",jur:"VIC",contingent:"CREW1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Resting",day:18,country:"CA"},
-  {name:"Peter O'Brien",init:"PO",c:T.g500,role:"Safety Officer",agency:"NSW RFS",jur:"NSW",contingent:"IMT1",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Demobilising",day:14,country:"AU"},
-  {name:"Chris Adams",init:"CA",c:T.teal,role:"Crew Leader",agency:"SASES",jur:"SA",contingent:"CREW2",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
+  {name:"Daniel Thornton",init:"DT",c:T.blue,role:"Crew Leader",agency:"QLD QFES",jur:"NSW",contingent:"CREW2",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Working",day:8,country:"AU"},
+  {name:"Rachel Kimura",init:"RK",c:T.teal,role:"Deployment Manager",agency:"QLD QFES",jur:"NSW",contingent:"IMT1",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Working",day:12,country:"AU"},
+  {name:"Tom Briggs",init:"TB",c:T.orange,role:"Flood Ops",agency:"QLD QFES",jur:"NSW",contingent:"CREW2",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Resting",day:8,country:"AU"},
+  {name:"Peter Nguyễn",init:"PN",c:T.green,role:"INLO",agency:"QLD QFES",jur:"NSW",contingent:"INLO1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
+  {name:"Alice Nguyễn",init:"AN",c:T.green,role:"INLO Admin",agency:"QLD QFES",jur:"NSW",contingent:"INLO1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
+  {name:"David Kang",init:"DK",c:T.coral,role:"IC Support",agency:"SA CFS",jur:"VIC",contingent:"IMT1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
+  {name:"Mark Sullivan",init:"MS",c:T.navy,role:"Crew Leader",agency:"SA CFS",jur:"VIC",contingent:"CREW1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Resting",day:18,country:"CA"},
+  {name:"Peter O'Brien",init:"PO",c:T.g500,role:"Safety Officer",agency:"QLD QFES",jur:"NSW",contingent:"IMT1",deployment:"Northern Rivers Flood",location:"Lismore, NSW",status:"Demobilising",day:14,country:"AU"},
+  {name:"Chris Adams",init:"CA",c:T.teal,role:"Crew Leader",agency:"SA SASES",jur:"SA",contingent:"CREW2",deployment:"Canada 2025",location:"Kamloops, BC",status:"Working",day:18,country:"CA"},
   {name:"Emma Walsh",init:"EW",c:T.coral,role:"Firefighter",agency:"FENZ",jur:"NZ",contingent:"CREW1",deployment:"Canada 2025",location:"Kamloops, BC",status:"Travel",day:18,country:"CA"},
 ];
 
@@ -152,7 +152,7 @@ function C3PersonDetail(){
       <Card>
         <div style={{textAlign:"center",marginBottom:16}}><Avatar i={p.init} c={p.c} s={64}/><div style={{fontSize:17,fontWeight:700,marginTop:10}}>{p.name}</div><div style={{fontSize:12.5,color:T.g500}}>{p.role} · {p.agency}</div><div style={{marginTop:8}}><Chip color={statusColor(p.status)}>{p.status}</Chip></div></div>
         <div style={{borderTop:`1px solid ${T.g100}`,paddingTop:12}}>
-          {[["Location",p.location],["Deployment",p.deployment],["Contingent",p.contingent],["Jurisdiction",p.jur],["Deploy day",`Day ${p.day}`],["Request","2025_26_007NT_NSW001"],["Manifest","MAN-0047-C2"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",fontSize:12.5,borderBottom:`1px solid ${T.g50}`}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550}}>{v}</span></div>)}
+          {[["Location",p.location],["Deployment",p.deployment],["Contingent",p.contingent],["Jurisdiction",p.jur],["Deploy day",`Day ${p.day}`],["Request","2025_26_007NSW_QLD001"],["Manifest","MAN-0047-C2"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",fontSize:12.5,borderBottom:`1px solid ${T.g50}`}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550}}>{v}</span></div>)}
         </div>
       </Card>
 
@@ -189,7 +189,7 @@ function C3PersonDetail(){
         </Card>
         <Card title="Linked Manifest" s={{marginTop:16}}>
           <div style={{fontSize:12.5}}><strong>Manifest:</strong> MAN-0047-C2</div>
-          <div style={{fontSize:12.5,marginTop:4}}><strong>Flight:</strong> VA1417 BNE→LIS</div>
+          <div style={{fontSize:12.5,marginTop:4}}><strong>Flight:</strong> REX1712 BNE→LIS</div>
           <div style={{fontSize:12.5,marginTop:4}}><strong>Accommodation:</strong> Lismore Gateway Motel</div>
           <div style={{marginTop:10}}><Btn v="sm">View full manifest →</Btn></div>
         </Card>
@@ -314,7 +314,7 @@ function C3FatigueLogs(){
             {[
               {name:"Daniel Thornton",role:"Crew Leader",days:["W","W","R","W","W","R","W","W","W"],consec:3,alert:false},
               {name:"Tom Briggs",role:"Flood Ops",days:["W","W","R","W","W","R","W","R","W"],consec:1,alert:false},
-              {name:"Rachel Kim",role:"DM",days:["W","W","W","W","R","W","W","W","W"],consec:4,alert:false},
+              {name:"Rachel Kimura",role:"DM",days:["W","W","W","W","R","W","W","W","W"],consec:4,alert:false},
               {name:"Karen Wong",role:"Flood Ops",days:["W","W","W","W","W","W","W","W","W"],consec:9,alert:true},
               {name:"Ben Taylor",role:"Flood Ops",days:["W","W","W","W","W","W","R","W","W"],consec:2,alert:false},
             ].map((r,i)=><tr key={i}><TD s={{fontWeight:600,fontSize:12.5}}>{r.name}</TD><TD s={{fontSize:12}}>{r.role}</TD>
@@ -362,7 +362,7 @@ function C3Rotation(){
           <tbody>
             {[
               {name:"Peter O'Brien",role:"Safety Officer",deploy:"Northern Rivers Flood",date:"31 Mar",replacement:"Sourced",rc:"green"},
-              {name:"Rachel Kim",role:"DM",deploy:"Northern Rivers Flood",date:"1 Apr",replacement:"Required",rc:"coral"},
+              {name:"Rachel Kimura",role:"DM",deploy:"Northern Rivers Flood",date:"1 Apr",replacement:"Required",rc:"coral"},
               {name:"Karen Wong",role:"Flood Ops",deploy:"Northern Rivers Flood",date:"1 Apr",replacement:"Required",rc:"coral"},
               {name:"Tom Briggs",role:"Flood Ops",deploy:"Northern Rivers Flood",date:"2 Apr",replacement:"Sourced",rc:"green"},
             ].map((r,i)=><tr key={i}><TD s={{fontWeight:600}}>{r.name}</TD><TD>{r.role}</TD><TD>{r.deploy}</TD><TD s={{fontWeight:600}}>{r.date}</TD><TD><Chip color={r.rc}>{r.replacement}</Chip></TD></tr>)}
@@ -375,7 +375,7 @@ function C3Rotation(){
           <tbody>
             {[
               {name:"Sam O'Connor",role:"Safety Officer",agency:"TFS",arrival:"31 Mar",replacing:"P. O'Brien"},
-              {name:"Jake Williams",role:"Flood Ops",agency:"CFA",arrival:"2 Apr",replacing:"T. Briggs"},
+              {name:"Jake Williams",role:"Flood Ops",agency:"SA CFS",arrival:"2 Apr",replacing:"T. Briggs"},
               {name:"Nina Roberts",role:"Flood Ops",agency:"QFES",arrival:"3 Apr",replacing:"—"},
             ].map((r,i)=><tr key={i}><TD s={{fontWeight:600}}>{r.name}</TD><TD>{r.role}</TD><TD>{r.agency}</TD><TD s={{fontWeight:600}}>{r.arrival}</TD><TD>{r.replacing}</TD></tr>)}
           </tbody>
@@ -460,7 +460,7 @@ function C4NationalDash(){
         <div style={{height:240,background:`linear-gradient(170deg,${T.g100},#e0eef8 40%,#e8f0e4 70%,${T.g100})`,borderRadius:6,position:"relative"}}>
           <svg viewBox="0 0 400 240" style={{width:"100%",height:"100%",position:"absolute"}}>
             <path d="M150,50 Q170,32 200,44 Q225,27 250,40 L268,53 Q285,47 298,66 L303,92 Q313,110 303,132 L293,154 Q283,172 263,182 L248,185 Q230,195 212,189 L195,193 Q178,200 165,185 L153,168 Q140,150 145,132 L142,108 Q136,82 145,66 Z" fill="rgba(14,120,201,.05)" stroke="rgba(14,120,201,.12)" strokeWidth="1"/>
-            <circle cx="242" cy="52" r="6" fill={T.blue} stroke={T.white} strokeWidth="2"/><text x="253" y="52" fontSize="8" fill={T.navy} fontWeight="600">Darwin 64</text>
+            <circle cx="242" cy="52" r="6" fill={T.blue} stroke={T.white} strokeWidth="2"/><text x="253" y="52" fontSize="8" fill={T.navy} fontWeight="600">Lismore 64</text>
             <circle cx="273" cy="96" r="4" fill={T.green} stroke={T.white} strokeWidth="1.5"/><text x="281" y="98" fontSize="7" fill={T.g500}>QLD 38</text>
             <circle cx="262" cy="132" r="4" fill={T.blue} stroke={T.white} strokeWidth="1.5"/><text x="270" y="134" fontSize="7" fill={T.g500}>NSW 48</text>
             <circle cx="235" cy="155" r="3" fill={T.teal} stroke={T.white} strokeWidth="1.5"/><text x="243" y="157" fontSize="7" fill={T.g500}>VIC 42</text>
@@ -490,7 +490,7 @@ function C4NationalDash(){
         </div>)}
       </Card>
       <Card title="Inbound Rotations (72h)">
-        {[{name:"Sam O'Connor",role:"Safety Officer → NT",agency:"TFS",date:"31 Mar"},{name:"Jake Williams",role:"Storm Ops → NT",agency:"CFA",date:"2 Apr"},{name:"Nina Roberts",role:"Storm Ops → NT",agency:"QFES",date:"3 Apr"},{name:"Rotation B — Canada",role:"CREW swap ×6",agency:"Multi",date:"8 Apr"}].map((r,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:i<3?`1px solid ${T.g100}`:"none"}}>
+        {[{name:"Sam O'Connor",role:"Safety Officer → NT",agency:"TFS",date:"31 Mar"},{name:"Jake Williams",role:"Flood Ops → NT",agency:"SA CFS",date:"2 Apr"},{name:"Nina Roberts",role:"Flood Ops → NT",agency:"QFES",date:"3 Apr"},{name:"Rotation B — Canada",role:"CREW swap ×6",agency:"Multi",date:"8 Apr"}].map((r,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:i<3?`1px solid ${T.g100}`:"none"}}>
           <div style={{flex:1}}><div style={{fontSize:12.5,fontWeight:600}}>{r.name}</div><div style={{fontSize:11,color:T.g500}}>{r.role} · {r.agency}</div></div>
           <Badge label={r.date} color="blue"/>
         </div>)}
@@ -593,7 +593,7 @@ function C4SitRep(){
           {title:"2. Deployment Summary",auto:true,content:null,table:[["Contingent","Personnel","Status","Day"],["IMT1","3","Active (1 demob)","12–14"],["CREW1","6","Active","8"],["CREW2","6","Active","8"],["Overhead","4","Active","8–12"]]},
           {title:"3. Weather & Fire Context",auto:false,content:"Post-cyclone conditions: temperatures 32–35°C, humidity 75–85%, scattered thunderstorms forecast for 31 Mar–2 Apr. Wind gusts to 60km/h possible. Category 2 cyclone remnants have weakened to a tropical low."},
           {title:"4. Issues & Risks",auto:true,content:null,items:["I/I/I Report filed for Canada 2025 (IMT1) — investigation commenced","Fatigue threshold warning: 3 personnel at 12+ consecutive days","Rotation gap: 2 DM replacements required by 4 Apr","7 expense claims past 14-day agency review window"]},
-          {title:"5. Planned Actions (Next 24–72h)",auto:false,content:"Rotation 1 commencing 31 Mar — Safety Officer replacement arriving. DM replacement to be sourced urgently. Continue storm damage clearance in suburban Darwin. Weather watch for thunderstorm activity."},
+          {title:"5. Planned Actions (Next 24–72h)",auto:false,content:"Rotation 1 commencing 31 Mar — Safety Officer replacement arriving. DM replacement to be sourced urgently. Continue storm damage clearance in suburban Lismore. Weather watch for thunderstorm activity."},
         ].map((sec,i)=><Card key={i} title={<span>{sec.title} {sec.auto&&<Badge label="Auto-populated" color="teal"/>}</span>} s={{marginBottom:14}}>
           {sec.content&&<div style={{fontSize:13,lineHeight:1.7,color:T.g700}}>{sec.content}</div>}
           {sec.table&&<table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr>{sec.table[0].map(h=><TH key={h}>{h}</TH>)}</tr></thead><tbody>{sec.table.slice(1).map((r,ri)=><tr key={ri}>{r.map((c,ci)=><TD key={ci} s={{fontWeight:ci===0?600:400}}>{c}</TD>)}</tr>)}</tbody></table>}

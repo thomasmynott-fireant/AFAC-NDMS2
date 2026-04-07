@@ -39,7 +39,7 @@ export default function C5Finance(){
           </div>})}
         </div>
         <div style={{padding:"12px 16px",borderTop:"1px solid rgba(255,255,255,.08)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:10}}><Av i="DT" c={T.blue} s={32}/><div><div style={{color:"rgba(255,255,255,.85)",fontSize:12.5,fontWeight:550}}>Daniel Thornton</div><div style={{color:"rgba(255,255,255,.35)",fontSize:11}}>NSW RFS · Team Member</div></div></div>
+          <div style={{display:"flex",alignItems:"center",gap:10}}><Av i="DT" c={T.blue} s={32}/><div><div style={{color:"rgba(255,255,255,.85)",fontSize:12.5,fontWeight:550}}>Daniel Thornton</div><div style={{color:"rgba(255,255,255,.35)",fontSize:11}}>QLD QFES · Team Member</div></div></div>
         </div>
       </nav>
       <main style={{flex:1,display:"flex",flexDirection:"column",background:T.g50}}>
@@ -197,7 +197,7 @@ function ClaimSubmit(){
           {[["Phase","In Field"],["Category","Meal"],["Amount","$52.40 AUD"],["Date","29 March 2026"],["Description","Dinner — Lismore CBD"],["Receipt","receipt_dinner_29mar.jpg ✓"],["Allocation","Self only (100%)"],["Deployment","Northern Rivers Flood Response"]].map(([k,v],i)=><div key={i}><div style={{fontSize:11,color:T.g400,fontWeight:550}}>{k}</div><div style={{fontWeight:550,marginTop:2}}>{v}</div></div>)}
         </div>
         <div style={{padding:"10px 14px",background:T.blueL,borderRadius:6,fontSize:12,color:T.blue}}>
-          This claim will be submitted to NSW RFS for agency review. You will be notified when the status changes.
+          This claim will be submitted to QLD QFES for agency review. You will be notified when the status changes.
         </div>
       </div>}
 
@@ -273,9 +273,9 @@ function AgencyReview(){
 function NRSCAudit(){
   const[drawer,setDrawer]=useState(null);
   const claims=[
-    {id:"CLM-2025-0862",person:"Daniel Thornton",agency:"NSW RFS",cat:"Meal",amt:"$47.50",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"27 Mar",auditor:"—",status:"Awaiting Audit"},
-    {id:"CLM-2025-0855",person:"Daniel Thornton",agency:"NSW RFS",cat:"Meal",amt:"$68.00",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"26 Mar",auditor:"—",status:"Awaiting Audit"},
-    {id:"CLM-2025-0841",person:"Daniel Thornton",agency:"NSW RFS",cat:"Transport",amt:"$124.00",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"26 Mar",auditor:"J. Walsh",status:"Under Review"},
+    {id:"CLM-2025-0862",person:"Daniel Thornton",agency:"QLD QFES",cat:"Meal",amt:"$47.50",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"27 Mar",auditor:"—",status:"Awaiting Audit"},
+    {id:"CLM-2025-0855",person:"Daniel Thornton",agency:"QLD QFES",cat:"Meal",amt:"$68.00",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"26 Mar",auditor:"—",status:"Awaiting Audit"},
+    {id:"CLM-2025-0841",person:"Daniel Thornton",agency:"QLD QFES",cat:"Transport",amt:"$124.00",cur:"AUD",deploy:"Northern Rivers Flood",agApproved:"26 Mar",auditor:"J. Walsh",status:"Under Review"},
     {id:"CLM-2025-0810",person:"Mark Sullivan",agency:"CFA",cat:"Meal",amt:"C$55.00",cur:"CAD",deploy:"Canada 2025",agApproved:"24 Mar",auditor:"J. Walsh",status:"Returned for Info"},
   ];
 
@@ -359,7 +359,7 @@ function Reconciliation(){
 
     <Card title="Invoice Notes" s={{marginTop:20}}>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,fontSize:12.5}}>
-        {[["Invoice Reference","INV-AFAC-NT-2025-003"],["Billing Entity","AFAC NRSC"],["Receiving Jurisdiction","NT Government — Emergency Services"],["Period","14 Mar – 14 Apr 2026 (est.)"],["Status","Draft — awaiting final demob costs"],["Prepared by","Jessica Walsh (NRSC)"]].map(([k,v],i)=><div key={i}><div style={{fontSize:11,color:T.g400,fontWeight:550}}>{k}</div><div style={{fontWeight:550,marginTop:2}}>{v}</div></div>)}
+        {[["Invoice Reference","INV-AFAC-NT-2025-003"],["Billing Entity","AFAC NRSC"],["Receiving Jurisdiction","NSW Government — Emergency Services"],["Period","14 Mar – 14 Apr 2026 (est.)"],["Status","Draft — awaiting final demob costs"],["Prepared by","Jessica Walsh (NRSC)"]].map(([k,v],i)=><div key={i}><div style={{fontSize:11,color:T.g400,fontWeight:550}}>{k}</div><div style={{fontWeight:550,marginTop:2}}>{v}</div></div>)}
       </div>
       <div style={{marginTop:14,padding:12,background:T.g50,borderRadius:6}}>
         <div style={{fontSize:11,color:T.g400,fontWeight:600,marginBottom:4}}>Notes</div>
