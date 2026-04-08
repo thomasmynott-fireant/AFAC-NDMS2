@@ -9,16 +9,14 @@ const SCREENS=[
   {id:"checkin",label:"Daily Check-In"},
   {id:"actions",label:"Field Actions"},
   {id:"iii",label:"I/I/I Report"},
-  {id:"offline",label:"Offline Queue"},
-  {id:"dashboard",label:"Dashboard"},
-  {id:"approvals",label:"Approvals"},
+  {id:"claims",label:"My Claims"},
 ];
 
 export default function C6Mobile({onBackToDesktop}){
   const[screen,setScreen]=useState("home");
   const[m,setM]=useState(false);
   useEffect(()=>setM(true),[]);
-  const R={"home":<MobileHome/>,"checkin":<DailyCheckIn/>,"offline":<OfflineQueue/>,"actions":<FieldActions/>,"iii":<IIISelfReport/>,"dashboard":<MobileDash/>,"approvals":<MobileApprovals/>};
+  const R={"home":<MobileHome/>,"checkin":<DailyCheckIn/>,"actions":<FieldActions/>,"iii":<IIISelfReport/>,"claims":<MobileClaims/>};
 
   return(
     <div style={{display:"flex",height:"100vh",fontFamily:"'DM Sans',-apple-system,sans-serif",color:T.navy,fontSize:14,lineHeight:1.5,WebkitFontSmoothing:"antialiased",opacity:m?1:0,transition:"opacity .3s",background:T.g100,alignItems:"center",justifyContent:"center",gap:32}}>
@@ -73,10 +71,8 @@ export default function C6Mobile({onBackToDesktop}){
           <div style={{fontSize:12,fontWeight:650,marginBottom:6}}>Design Notes</div>
           <div style={{fontSize:11.5,color:T.g600,lineHeight:1.6}}>
             {screen==="home"&&"Role-based quick-start with open tasks, sync state, and favourites. Larger tap targets for field use."}
-            {screen==="offline"&&"Offline queue proves field readiness. Shows pending sync items, conflicts, and last sync time."}
             {screen==="actions"&&"Fast-entry mode for fatigue, incident, contact, claims. Camera capture for receipts."}
-            {screen==="dashboard"&&"Simplified card-based dashboard with map and filtered summaries for visibility mode."}
-            {screen==="approvals"&&"Audit-safe approval flow with confirm steps, notes, and governance trail."}
+            {screen==="claims"&&"Mobile-first claim submission with receipt capture, category selection, and status tracking."}
           </div>
         </div>
         <div style={{padding:14,background:T.blueL,borderRadius:8,border:`1px solid ${T.blue}20`}}>
@@ -153,63 +149,120 @@ function MobileHome(){
   </div>;
 }
 
-/* ── Offline Queue ── */
-function OfflineQueue(){
-  return<div>
+/* ── Mobile Claims ── */
+function MobileClaims(){
+  const[view,setView]=useState("list"); // list | new | submitted
+  const[newClaim,setNewClaim]=useState({category:"Meal",amount:"",notes:"",receipt:false});
+
+  if(view==="submitted") return<div>
     <div style={{background:T.navy,padding:"16px 20px 20px"}}>
-      <div style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:8}}>Offline Queue</div>
-      {/* Offline banner */}
-      <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px",background:"rgba(240,138,39,.15)",borderRadius:8,border:"1px solid rgba(240,138,39,.3)"}}>
-        <div style={{width:10,height:10,borderRadius:"50%",background:T.orange}}/>
-        <div><div style={{color:T.orange,fontSize:12,fontWeight:600}}>Limited Connectivity</div><div style={{color:"rgba(255,255,255,.5)",fontSize:11}}>Last successful sync: 30 Mar 08:15</div></div>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Claim Submitted</div>
+    </div>
+    <div style={{padding:16,textAlign:"center"}}>
+      <div style={{width:56,height:56,borderRadius:"50%",background:T.greenL,color:T.green,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,margin:"30px auto 14px"}}>✓</div>
+      <div style={{fontSize:16,fontWeight:650,marginBottom:4}}>Claim Submitted</div>
+      <div style={{fontSize:13,color:T.g500,marginBottom:6}}>CLM-2026-0912 · {newClaim.category} · ${newClaim.amount||"0.00"} AUD</div>
+      <div style={{fontSize:12,color:T.g400,marginBottom:20}}>Your claim has been submitted for agency review. You will be notified when it is processed.</div>
+      <div onClick={()=>{setView("list");setNewClaim({category:"Meal",amount:"",notes:"",receipt:false});}} style={{padding:"12px 24px",background:T.blue,color:"#fff",borderRadius:8,display:"inline-block",fontSize:13,fontWeight:600,cursor:"pointer"}}>Back to Claims</div>
+    </div>
+  </div>;
+
+  if(view==="new") return<div>
+    <div style={{background:T.navy,padding:"16px 20px 20px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div style={{color:"#fff",fontSize:17,fontWeight:700}}>New Claim</div>
+        <span onClick={()=>setView("list")} style={{color:"rgba(255,255,255,.6)",fontSize:13,cursor:"pointer"}}>Cancel</span>
+      </div>
+      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>Northern Rivers Flood Response</div>
+    </div>
+    <div style={{padding:16}}>
+      {/* Category */}
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Category</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6,marginBottom:16}}>
+        {["Meal","Sundries","Travel","Accommodation","Communications","Other"].map(c=><div key={c} onClick={()=>setNewClaim({...newClaim,category:c})} style={{padding:"10px 6px",background:newClaim.category===c?T.blueL:"#fff",borderRadius:8,border:`2px solid ${newClaim.category===c?T.blue:T.g200}`,textAlign:"center",cursor:"pointer"}}>
+          <div style={{fontSize:11.5,fontWeight:newClaim.category===c?700:500,color:newClaim.category===c?T.blue:T.g600}}>{c}</div>
+        </div>)}
+      </div>
+
+      {/* Amount */}
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Amount (AUD)</div>
+      <div style={{padding:"12px 14px",background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,marginBottom:16,display:"flex",alignItems:"center",gap:8}}>
+        <span style={{fontSize:16,fontWeight:600,color:T.g400}}>$</span>
+        <input type="text" value={newClaim.amount} onChange={e=>setNewClaim({...newClaim,amount:e.target.value})} placeholder="0.00" style={{border:"none",outline:"none",flex:1,fontSize:16,fontWeight:600,fontFamily:"inherit",background:"transparent"}}/>
+        <span style={{fontSize:12,color:T.g400}}>AUD</span>
+      </div>
+
+      {/* Date */}
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Date of Expense</div>
+      <div style={{padding:"12px 14px",background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,marginBottom:16,fontSize:13,color:T.g600}}>30 Mar 2026</div>
+
+      {/* Receipt */}
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Receipt</div>
+      <div onClick={()=>setNewClaim({...newClaim,receipt:!newClaim.receipt})} style={{padding:14,background:newClaim.receipt?T.greenL:"#fff",borderRadius:10,border:`1px solid ${newClaim.receipt?T.green:T.g200}`,textAlign:"center",cursor:"pointer",marginBottom:16}}>
+        <div style={{fontSize:13,fontWeight:600,color:newClaim.receipt?"#5a8a1f":T.g600}}>{newClaim.receipt?"receipt_30mar.jpg attached":"Tap to capture receipt"}</div>
+        <div style={{fontSize:11,color:T.g400,marginTop:2}}>{newClaim.receipt?"Tap to remove":"Camera or file upload"}</div>
+      </div>
+
+      {/* Notes */}
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Notes (optional)</div>
+      <div style={{padding:"10px 14px",background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,fontSize:12.5,color:T.g400,minHeight:50,marginBottom:20}}>Add claim description…</div>
+
+      {/* Submit */}
+      <div onClick={()=>setView("submitted")} style={{padding:14,background:T.blue,borderRadius:12,textAlign:"center",cursor:"pointer"}}>
+        <div style={{color:"#fff",fontSize:15,fontWeight:700}}>Submit Claim</div>
+        <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>Will be sent for agency review</div>
       </div>
     </div>
+  </div>;
 
-    <div style={{padding:"16px"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-        <span style={{fontSize:13,fontWeight:650}}>Pending Sync Items</span>
-        <Chip color="orange">3 items</Chip>
+  // List view
+  return<div>
+    <div style={{background:T.navy,padding:"16px 20px 20px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div style={{color:"#fff",fontSize:17,fontWeight:700}}>My Claims</div>
+        <div onClick={()=>setView("new")} style={{padding:"6px 14px",background:T.blue,borderRadius:6,color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer"}}>+ New Claim</div>
+      </div>
+      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>Northern Rivers Flood Response</div>
+    </div>
+    <div style={{padding:16}}>
+      {/* Summary strip */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
+        {[{l:"Total",v:"$312.80",c:T.navy},{l:"Approved",v:"$214.40",c:T.green},{l:"Pending",v:"$98.40",c:T.orange}].map((m,i)=><div key={i} style={{background:"#fff",borderRadius:10,padding:"10px 8px",border:`1px solid ${T.g200}`,textAlign:"center"}}>
+          <div style={{fontSize:15,fontWeight:700,color:m.c}}>{m.v}</div>
+          <div style={{fontSize:10.5,color:T.g500,marginTop:1}}>{m.l}</div>
+        </div>)}
       </div>
 
+      {/* Claims list */}
+      <div style={{fontSize:13,fontWeight:650,marginBottom:10}}>Recent Claims</div>
       {[
-        {title:"Fatigue entry — 30 Mar",sub:"Working day logged at 08:00",status:"Queued",c:"orange"},
-        {title:"Receipt capture",sub:"receipt_lunch_30mar.jpg (2.1 MB)",status:"Queued",c:"orange"},
-        {title:"Claim draft — Lunch",sub:"$38.50 AUD · Meal category",status:"Draft saved",c:"blue"},
-      ].map((item,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:14,background:"#fff",borderRadius:10,marginBottom:8,border:`1px solid ${T.g200}`}}>
-        <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600}}>{item.title}</div><div style={{fontSize:11.5,color:T.g500}}>{item.sub}</div></div>
-        <Chip color={item.c}>{item.status}</Chip>
+        {id:"CLM-2026-0911",cat:"Meal",amt:"$52.40",date:"29 Mar",status:"Submitted",sc:"blue"},
+        {id:"CLM-2026-0908",cat:"Sundries",amt:"$31.90",date:"28 Mar",status:"Approved",sc:"green"},
+        {id:"CLM-2026-0905",cat:"Meal",amt:"$47.50",date:"27 Mar",status:"Approved",sc:"green"},
+        {id:"CLM-2026-0901",cat:"Travel",amt:"$82.60",date:"25 Mar",status:"Approved",sc:"green"},
+        {id:"CLM-2026-0898",cat:"Meal",amt:"$46.00",date:"24 Mar",status:"Info Requested",sc:"orange"},
+        {id:"CLM-2026-0895",cat:"Sundries",amt:"$52.40",date:"23 Mar",status:"Approved",sc:"green"},
+      ].map((cl,i)=><div key={i} style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:"12px 14px",marginBottom:8}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+          <div style={{flex:1}}>
+            <div style={{fontSize:13,fontWeight:600}}>{cl.cat}</div>
+            <div style={{fontSize:11,color:T.g400}}>{cl.date} · {cl.id}</div>
+          </div>
+          <div style={{textAlign:"right"}}>
+            <div style={{fontSize:15,fontWeight:700}}>{cl.amt}</div>
+            <Chip color={cl.sc} s={{fontSize:9.5}}>{cl.status}</Chip>
+          </div>
+        </div>
       </div>)}
 
-      {/* Sync button */}
-      <div style={{padding:14,background:T.blueL,borderRadius:10,textAlign:"center",marginTop:12,cursor:"pointer",border:`1px solid ${T.blue}30`}}>
-        <div style={{fontSize:14,fontWeight:650,color:T.blue}}>Retry Sync Now</div>
-        <div style={{fontSize:11.5,color:T.g500,marginTop:2}}>3 items will be uploaded when connection resumes</div>
-      </div>
-
-      {/* Sync history */}
-      <div style={{fontSize:13,fontWeight:650,marginTop:20,marginBottom:10}}>Sync History</div>
-      {[
-        {time:"08:15",status:"Success",items:"2 items synced",c:"green"},
-        {time:"07:30",status:"Success",items:"1 item synced",c:"green"},
-        {time:"06:00",status:"Failed",items:"Network timeout",c:"coral"},
-      ].map((h,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"#fff",borderRadius:8,marginBottom:6,border:`1px solid ${T.g200}`}}>
-        <div style={{width:8,height:8,borderRadius:"50%",background:{green:T.green,coral:T.coral}[h.c]}}/>
-        <div style={{flex:1}}><div style={{fontSize:12.5,fontWeight:550}}>{h.items}</div></div>
-        <span style={{fontSize:11,color:T.g400}}>Today {h.time}</span>
-        <Chip color={h.c} s={{fontSize:10}}>{h.status}</Chip>
-      </div>)}
-
-      {/* Conflict */}
-      <div style={{marginTop:12,padding:14,background:T.coralL,borderRadius:10,border:`1px solid ${T.coral}30`}}>
-        <div style={{fontSize:12.5,fontWeight:650,color:T.coral,marginBottom:4}}>Sync Conflict</div>
-        <div style={{fontSize:12,color:T.g600}}>Fatigue entry for 29 Mar was updated on server by AREP. Review and resolve before next sync.</div>
-        <div style={{marginTop:8,padding:"8px 14px",background:"#fff",borderRadius:6,textAlign:"center",fontSize:12,fontWeight:600,color:T.coral,cursor:"pointer"}}>Resolve Conflict</div>
+      {/* Claim totals note */}
+      <div style={{marginTop:6,padding:"10px 14px",background:T.g50,borderRadius:8,fontSize:11,color:T.g500,textAlign:"center"}}>
+        Showing claims for current deployment. All claims are subject to agency review.
       </div>
     </div>
   </div>;
 }
 
-/* ── Field Actions Hub ── */
 function FieldActions(){
   return<div>
     <div style={{background:T.navy,padding:"16px 20px 20px"}}>
@@ -249,118 +302,6 @@ function FieldActions(){
   </div>;
 }
 
-/* ── Mobile Dashboard ── */
-function MobileDash(){
-  return<div>
-    <div style={{background:T.navy,padding:"16px 20px 20px"}}>
-      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Dashboard</div>
-      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>Northern Rivers Flood Response overview</div>
-    </div>
-    <div style={{padding:16}}>
-      {/* Summary cards */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
-        {[{l:"Deployed",v:"64",c:T.blue},{l:"Working",v:"48",c:T.green},{l:"Resting",v:"12",c:T.teal},{l:"Issues",v:"3",c:T.coral}].map((m,i)=><div key={i} style={{background:"#fff",borderRadius:10,padding:"14px",border:`1px solid ${T.g200}`,textAlign:"center"}}>
-          <div style={{fontSize:22,fontWeight:700,color:m.c}}>{m.v}</div>
-          <div style={{fontSize:11,color:T.g500,marginTop:2}}>{m.l}</div>
-        </div>)}
-      </div>
-
-      {/* Mini map */}
-      <div style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,overflow:"hidden",marginBottom:14}}>
-        <div style={{height:140,background:`linear-gradient(170deg,${T.g100},#e0eef8 60%,#e8f0e4)`,position:"relative"}}>
-          <svg viewBox="0 0 340 140" style={{width:"100%",height:"100%"}}>
-            <circle cx="170" cy="50" r="8" fill={T.blue} stroke="#fff" strokeWidth="2.5"/>
-            <text x="185" y="52" fontSize="10" fill={T.navy} fontWeight="600">Lismore (68)</text>
-          </svg>
-        </div>
-        <div style={{padding:"10px 14px",display:"flex",justifyContent:"space-between",fontSize:11.5}}>
-          <span style={{color:T.g500}}>Active deployments</span>
-          <span style={{fontWeight:600}}>Lismore, NSW</span>
-        </div>
-      </div>
-
-      {/* Active issues */}
-      <div style={{fontSize:13,fontWeight:650,marginBottom:10}}>Active Issues</div>
-      {[
-        {title:"Fatigue warning — K. Wong",sub:"9 consecutive work days",c:"orange"},
-        {title:"Rotation gap — DM",sub:"Replacement needed by 1 Apr",c:"coral"},
-        {title:"Claims overdue",sub:"3 past review window",c:"orange"},
-      ].map((iss,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:"#fff",borderRadius:10,marginBottom:6,border:`1px solid ${T.g200}`}}>
-        <Chip color={iss.c}>{iss.c==="coral"?"!":"⏱"}</Chip>
-        <div style={{flex:1}}><div style={{fontSize:12.5,fontWeight:600}}>{iss.title}</div><div style={{fontSize:11,color:T.g500}}>{iss.sub}</div></div>
-        <span style={{color:T.g400,fontSize:16}}>›</span>
-      </div>)}
-
-      {/* Contingent summary */}
-      <div style={{fontSize:13,fontWeight:650,marginTop:16,marginBottom:10}}>My Contingent — CREW2</div>
-      {[
-        {name:"Daniel Thornton",status:"Working",day:8},
-        {name:"Tom Briggs",status:"Resting",day:8},
-        {name:"Karen Wong",status:"Working",day:8},
-        {name:"Ben Taylor",status:"Working",day:8},
-      ].map((p,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 14px",background:"#fff",borderRadius:8,marginBottom:4,border:`1px solid ${T.g200}`}}>
-        <span style={{fontSize:13,fontWeight:600,flex:1}}>{p.name}</span>
-        <Chip color={p.status==="Working"?"blue":"teal"}>{p.status}</Chip>
-        <span style={{fontSize:11,color:T.g400}}>D{p.day}</span>
-      </div>)}
-    </div>
-  </div>;
-}
-
-/* ── Mobile Approvals ── */
-function MobileApprovals(){
-  const[confirmed,setConfirmed]=useState(null);
-  return<div>
-    <div style={{background:T.navy,padding:"16px 20px 20px"}}>
-      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Approvals</div>
-      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>Agency Staff — pending review items</div>
-    </div>
-    <div style={{padding:16}}>
-      <div style={{display:"flex",gap:8,marginBottom:14}}>
-        {[{l:"Claims",count:3,active:true},{l:"EOIs",count:2},{l:"Role Changes",count:1}].map((t,i)=><div key={i} style={{flex:1,padding:"8px",background:t.active?"#fff":T.g100,borderRadius:8,textAlign:"center",border:t.active?`1px solid ${T.blue}`:`1px solid ${T.g200}`,cursor:"pointer"}}>
-          <div style={{fontSize:16,fontWeight:700,color:t.active?T.blue:T.g500}}>{t.count}</div>
-          <div style={{fontSize:10.5,fontWeight:550,color:t.active?T.blue:T.g500}}>{t.l}</div>
-        </div>)}
-      </div>
-
-      {confirmed!==null?
-        <div style={{textAlign:"center",padding:40}}>
-          <div style={{width:56,height:56,borderRadius:"50%",background:T.greenL,color:T.green,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,margin:"0 auto 14px"}}>✓</div>
-          <div style={{fontSize:16,fontWeight:650,marginBottom:4}}>Approved</div>
-          <div style={{fontSize:13,color:T.g500}}>Claim CLM-2025-0891 has been approved. Audit trail updated.</div>
-          <div style={{marginTop:16,padding:"10px 20px",background:T.blue,color:"#fff",borderRadius:8,display:"inline-block",fontSize:13,fontWeight:600,cursor:"pointer"}} onClick={()=>setConfirmed(null)}>Back to Queue</div>
-        </div>
-      :
-        <>
-          {[
-            {id:"CLM-2025-0891",person:"Daniel Thornton",cat:"Meal",amt:"$52.40",cur:"AUD",date:"29 Mar"},
-            {id:"CLM-2025-0892",person:"Tom Briggs",cat:"Sundries",amt:"$31.90",cur:"AUD",date:"29 Mar"},
-            {id:"CLM-2025-0889",person:"Alice Nguyễn",cat:"Meal",amt:"C$62.30",cur:"CAD",date:"27 Mar"},
-          ].map((cl,i)=><div key={i} style={{background:"#fff",borderRadius:12,border:`1px solid ${T.g200}`,padding:16,marginBottom:10}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-              <div><div style={{fontSize:14,fontWeight:650}}>{cl.person}</div><div style={{fontSize:11.5,color:T.g500}}>{cl.cat} · {cl.date}</div></div>
-              <div style={{textAlign:"right"}}><div style={{fontSize:16,fontWeight:700}}>{cl.amt}</div><div style={{fontSize:10.5,color:T.g400}}>{cl.cur}</div></div>
-            </div>
-            <div style={{fontSize:11,color:T.g500,fontFamily:"'DM Mono',monospace",marginBottom:10}}>{cl.id}</div>
-            {/* Confirm step */}
-            <div style={{display:"flex",gap:8}}>
-              <div onClick={()=>setConfirmed(cl.id)} style={{flex:1,padding:"10px",background:T.greenL,borderRadius:8,textAlign:"center",cursor:"pointer",border:`1px solid ${T.green}30`}}>
-                <span style={{fontSize:14,fontWeight:650,color:"#5a8a1f"}}>✓ Approve</span>
-              </div>
-              <div style={{flex:1,padding:"10px",background:T.coralL,borderRadius:8,textAlign:"center",cursor:"pointer",border:`1px solid ${T.coral}30`}}>
-                <span style={{fontSize:14,fontWeight:650,color:T.coral}}>✕ Reject</span>
-              </div>
-            </div>
-          </div>)}
-
-          <div style={{marginTop:10,padding:12,background:T.g50,borderRadius:8,fontSize:11.5,color:T.g500,textAlign:"center"}}>
-            All approval actions are audit-logged with timestamp, device, and user identity.
-          </div>
-        </>
-      }
-    </div>
-  </div>;
-}
 
 /* ── Daily Check-In (NDMS-014) ── */
 function DailyCheckIn(){
@@ -484,10 +425,8 @@ function IIISelfReport(){
 
 export {
   MobileHome,
-  OfflineQueue,
+  MobileClaims,
   FieldActions,
-  MobileDash,
-  MobileApprovals,
   DailyCheckIn,
   IIISelfReport
 };
