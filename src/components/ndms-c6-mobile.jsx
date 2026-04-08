@@ -5,13 +5,13 @@ const T={blue:"#0E78C9",blueL:"#E8F4FC",teal:"#1FB6C9",tealL:"#E6F8FA",coral:"#E
 const Chip=({color,children,s})=>{const c={blue:{bg:T.blueL,fg:T.blue},teal:{bg:T.tealL,fg:"#148895"},coral:{bg:T.coralL,fg:T.coral},orange:{bg:T.orangeL,fg:"#c06e15"},green:{bg:T.greenL,fg:"#5a8a1f"},gray:{bg:T.g100,fg:T.g600}}[color]||{bg:T.g100,fg:T.g600};return<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"2px 10px",borderRadius:20,fontSize:11,fontWeight:550,background:c.bg,color:c.fg,...s}}><span style={{width:5,height:5,borderRadius:"50%",background:c.fg}}/>{children}</span>};
 
 const SCREENS=[
-  {id:"home",label:"Home",icon:"🏠"},
-  {id:"checkin",label:"Daily Check-In",icon:"📋"},
-  {id:"actions",label:"Field Actions",icon:"⚡"},
-  {id:"iii",label:"I/I/I Report",icon:"⚠️"},
-  {id:"offline",label:"Offline Queue",icon:"📡"},
-  {id:"dashboard",label:"Dashboard",icon:"📊"},
-  {id:"approvals",label:"Approvals",icon:"✓"},
+  {id:"home",label:"Home"},
+  {id:"checkin",label:"Daily Check-In"},
+  {id:"actions",label:"Field Actions"},
+  {id:"iii",label:"I/I/I Report"},
+  {id:"offline",label:"Offline Queue"},
+  {id:"dashboard",label:"Dashboard"},
+  {id:"approvals",label:"Approvals"},
 ];
 
 export default function C6Mobile({onBackToDesktop}){
@@ -29,14 +29,14 @@ export default function C6Mobile({onBackToDesktop}){
           <div style={{fontSize:12,color:T.g500}}>Capability 6 — Companion App</div>
         </div>
         {SCREENS.map(s=><div key={s.id} onClick={()=>setScreen(s.id)} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:8,cursor:"pointer",background:screen===s.id?"#fff":"transparent",border:screen===s.id?`1px solid ${T.g200}`:"1px solid transparent",marginBottom:4,fontWeight:screen===s.id?650:450,color:screen===s.id?T.navy:T.g600,fontSize:13,boxShadow:screen===s.id?"0 1px 3px rgba(0,0,0,.06)":"none"}}>
-          <span style={{fontSize:16}}>{s.icon}</span>{s.label}
+          {s.label}
         </div>)}
         <div style={{marginTop:20,padding:14,background:"#fff",borderRadius:8,border:`1px solid ${T.g200}`}}>
           <div style={{fontSize:11,color:T.g400,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>Viewing as</div>
           <div style={{fontSize:13,fontWeight:600}}>Daniel Thornton</div>
           <div style={{fontSize:11.5,color:T.g500}}>Team Member · QLD QFES</div>
         </div>
-        {onBackToDesktop && <button onClick={onBackToDesktop} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,width:"100%",marginTop:12,padding:"9px 14px",background:T.navy,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}><span style={{fontSize:14}}>🖥</span> Back to Desktop</button>}
+        {onBackToDesktop && <button onClick={onBackToDesktop} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,width:"100%",marginTop:12,padding:"9px 14px",background:T.navy,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Back to Desktop</button>}
       </div>
 
       {/* Phone frame */}
@@ -59,10 +59,9 @@ export default function C6Mobile({onBackToDesktop}){
           <div style={{flex:1,overflowY:"auto"}} key={screen}>{R[screen]}</div>
 
           {/* Bottom nav */}
-          <div style={{height:80,background:"#fff",borderTop:`1px solid ${T.g200}`,display:"flex",alignItems:"flex-start",paddingTop:6,flexShrink:0}}>
-            {SCREENS.map(s=><div key={s.id} onClick={()=>setScreen(s.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2,cursor:"pointer",paddingTop:4}}>
-              <span style={{fontSize:20,opacity:screen===s.id?1:.4}}>{s.icon}</span>
-              <span style={{fontSize:9.5,fontWeight:screen===s.id?650:450,color:screen===s.id?T.blue:T.g500}}>{s.label}</span>
+          <div style={{height:56,background:"#fff",borderTop:`1px solid ${T.g200}`,display:"flex",alignItems:"center",flexShrink:0}}>
+            {SCREENS.map(s=><div key={s.id} onClick={()=>setScreen(s.id)} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",padding:"8px 0"}}>
+              <span style={{fontSize:10.5,fontWeight:screen===s.id?650:450,color:screen===s.id?T.blue:T.g500}}>{s.label}</span>
             </div>)}
           </div>
         </div>
@@ -109,10 +108,9 @@ function MobileHome(){
       {/* Open tasks */}
       <div style={{fontSize:13,fontWeight:650,marginBottom:10}}>Open Tasks</div>
       {[
-        {icon:"⚠",bg:T.orangeL,fg:T.orange,title:"WWCC expiring in 3 days",sub:"Upload renewed document"},
-        {icon:"📎",bg:T.blueL,fg:T.blue,title:"Upload passport",sub:"Required for international readiness"},
+        {title:"WWCC expiring in 3 days",sub:"Upload renewed document"},
+        {title:"Upload passport",sub:"Required for international readiness"},
       ].map((t,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:14,background:"#fff",borderRadius:10,marginBottom:8,border:`1px solid ${T.g200}`}}>
-        <div style={{width:36,height:36,borderRadius:10,background:t.bg,color:t.fg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}>{t.icon}</div>
         <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600}}>{t.title}</div><div style={{fontSize:11.5,color:T.g500}}>{t.sub}</div></div>
         <span style={{color:T.g400,fontSize:18}}>›</span>
       </div>)}
@@ -120,9 +118,8 @@ function MobileHome(){
       {/* Quick actions */}
       <div style={{fontSize:13,fontWeight:650,marginTop:16,marginBottom:10}}>Quick Actions</div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-        {[{icon:"⚠",label:"Report Incident",bg:T.coralL},{icon:"💰",label:"Submit Claim",bg:T.blueL},{icon:"📋",label:"Log Fatigue",bg:T.tealL},{icon:"📸",label:"Capture Receipt",bg:T.orangeL}].map((a,i)=><div key={i} style={{padding:16,background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,textAlign:"center",cursor:"pointer"}}>
-          <div style={{width:44,height:44,borderRadius:12,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,margin:"0 auto 8px"}}>{a.icon}</div>
-          <div style={{fontSize:12,fontWeight:600}}>{a.label}</div>
+        {[{label:"Report Incident",bg:T.coralL,fg:T.coral},{label:"Submit Claim",bg:T.blueL,fg:T.blue},{label:"Log Fatigue",bg:T.tealL,fg:T.teal},{label:"Capture Receipt",bg:T.orangeL,fg:T.orange}].map((a,i)=><div key={i} style={{padding:16,background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,textAlign:"center",cursor:"pointer"}}>
+          <div style={{fontSize:12,fontWeight:600,color:a.fg}}>{a.label}</div>
         </div>)}
       </div>
 
@@ -175,18 +172,17 @@ function OfflineQueue(){
       </div>
 
       {[
-        {icon:"📋",title:"Fatigue entry — 30 Mar",sub:"Working day logged at 08:00",status:"Queued",c:"orange"},
-        {icon:"📸",title:"Receipt capture",sub:"receipt_lunch_30mar.jpg (2.1 MB)",status:"Queued",c:"orange"},
-        {icon:"💰",title:"Claim draft — Lunch",sub:"$38.50 AUD · Meal category",status:"Draft saved",c:"blue"},
+        {title:"Fatigue entry — 30 Mar",sub:"Working day logged at 08:00",status:"Queued",c:"orange"},
+        {title:"Receipt capture",sub:"receipt_lunch_30mar.jpg (2.1 MB)",status:"Queued",c:"orange"},
+        {title:"Claim draft — Lunch",sub:"$38.50 AUD · Meal category",status:"Draft saved",c:"blue"},
       ].map((item,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:14,background:"#fff",borderRadius:10,marginBottom:8,border:`1px solid ${T.g200}`}}>
-        <div style={{width:40,height:40,borderRadius:10,background:T.orangeL,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>{item.icon}</div>
         <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600}}>{item.title}</div><div style={{fontSize:11.5,color:T.g500}}>{item.sub}</div></div>
         <Chip color={item.c}>{item.status}</Chip>
       </div>)}
 
       {/* Sync button */}
       <div style={{padding:14,background:T.blueL,borderRadius:10,textAlign:"center",marginTop:12,cursor:"pointer",border:`1px solid ${T.blue}30`}}>
-        <div style={{fontSize:14,fontWeight:650,color:T.blue}}>🔄 Retry Sync Now</div>
+        <div style={{fontSize:14,fontWeight:650,color:T.blue}}>Retry Sync Now</div>
         <div style={{fontSize:11.5,color:T.g500,marginTop:2}}>3 items will be uploaded when connection resumes</div>
       </div>
 
@@ -205,7 +201,7 @@ function OfflineQueue(){
 
       {/* Conflict */}
       <div style={{marginTop:12,padding:14,background:T.coralL,borderRadius:10,border:`1px solid ${T.coral}30`}}>
-        <div style={{fontSize:12.5,fontWeight:650,color:T.coral,marginBottom:4}}>⚠ Sync Conflict</div>
+        <div style={{fontSize:12.5,fontWeight:650,color:T.coral,marginBottom:4}}>Sync Conflict</div>
         <div style={{fontSize:12,color:T.g600}}>Fatigue entry for 29 Mar was updated on server by AREP. Review and resolve before next sync.</div>
         <div style={{marginTop:8,padding:"8px 14px",background:"#fff",borderRadius:6,textAlign:"center",fontSize:12,fontWeight:600,color:T.coral,cursor:"pointer"}}>Resolve Conflict</div>
       </div>
@@ -223,13 +219,12 @@ function FieldActions(){
     <div style={{padding:16}}>
       {/* Action buttons - large touch targets */}
       {[
-        {icon:"📋",title:"Log Fatigue Status",desc:"Record today's work/rest status",bg:T.blueL,border:T.blue},
-        {icon:"⚠",title:"Report Incident (I/I/I)",desc:"Illness, injury, or incident self-report",bg:T.coralL,border:T.coral},
-        {icon:"👤",title:"Log Welfare Contact",desc:"Record welfare check or team contact",bg:T.tealL,border:T.teal},
-        {icon:"💰",title:"Submit Expense Claim",desc:"New claim with receipt capture",bg:T.orangeL,border:T.orange},
-        {icon:"📸",title:"Capture Attachment",desc:"Photo or document for any workflow",bg:T.greenL,border:T.green},
+        {title:"Log Fatigue Status",desc:"Record today's work/rest status",bg:T.blueL,border:T.blue},
+        {title:"Report Incident (I/I/I)",desc:"Illness, injury, or incident self-report",bg:T.coralL,border:T.coral},
+        {title:"Log Welfare Contact",desc:"Record welfare check or team contact",bg:T.tealL,border:T.teal},
+        {title:"Submit Expense Claim",desc:"New claim with receipt capture",bg:T.orangeL,border:T.orange},
+        {title:"Capture Attachment",desc:"Photo or document for any workflow",bg:T.greenL,border:T.green},
       ].map((a,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:14,padding:16,background:"#fff",borderRadius:12,marginBottom:10,border:`1px solid ${T.g200}`,borderLeft:`4px solid ${a.border}`,cursor:"pointer"}}>
-        <div style={{width:48,height:48,borderRadius:12,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{a.icon}</div>
         <div style={{flex:1}}><div style={{fontSize:14,fontWeight:650}}>{a.title}</div><div style={{fontSize:12,color:T.g500,marginTop:2}}>{a.desc}</div></div>
         <span style={{color:T.g400,fontSize:22}}>›</span>
       </div>)}
@@ -243,12 +238,10 @@ function FieldActions(){
         </div>)}
         <div style={{display:"flex",gap:8}}>
           <div style={{flex:1,padding:"12px",background:T.blueL,borderRadius:8,textAlign:"center",cursor:"pointer",border:`1px solid ${T.blue}30`}}>
-            <div style={{fontSize:18}}>📸</div>
-            <div style={{fontSize:11,fontWeight:600,color:T.blue,marginTop:2}}>Take Photo</div>
+            <div style={{fontSize:11,fontWeight:600,color:T.blue}}>Take Photo</div>
           </div>
           <div style={{flex:1,padding:"12px",background:T.g100,borderRadius:8,textAlign:"center",cursor:"pointer"}}>
-            <div style={{fontSize:18}}>📎</div>
-            <div style={{fontSize:11,fontWeight:600,color:T.g600,marginTop:2}}>Attach File</div>
+            <div style={{fontSize:11,fontWeight:600,color:T.g600}}>Attach File</div>
           </div>
         </div>
       </div>
@@ -380,19 +373,17 @@ function DailyCheckIn(){
       <div style={{fontSize:13,fontWeight:650,marginBottom:10}}>Today's Status</div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:16}}>
         {[
-          {icon:"🛠",label:"Working",selected:true,c:T.blue},
-          {icon:"💤",label:"Rest Day",selected:false,c:T.teal},
-          {icon:"✈️",label:"Travel Day",selected:false,c:T.orange},
-          {icon:"🏫",label:"Briefing/Training",selected:false,c:T.green},
+          {label:"Working",selected:true,c:T.blue},
+          {label:"Rest Day",selected:false,c:T.teal},
+          {label:"Travel Day",selected:false,c:T.orange},
+          {label:"Briefing/Training",selected:false,c:T.green},
         ].map((s,i)=><div key={i} style={{padding:"14px",background:s.selected?`${s.c}10`:"#fff",borderRadius:10,border:`2px solid ${s.selected?s.c:T.g200}`,textAlign:"center",cursor:"pointer"}}>
-          <div style={{fontSize:20}}>{s.icon}</div>
-          <div style={{fontSize:12,fontWeight:s.selected?700:500,color:s.selected?s.c:T.g600,marginTop:4}}>{s.label}</div>
+          <div style={{fontSize:12,fontWeight:s.selected?700:500,color:s.selected?s.c:T.g600}}>{s.label}</div>
         </div>)}
       </div>
 
       <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Location</div>
       <div style={{padding:"12px 14px",background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,marginBottom:14,display:"flex",alignItems:"center",gap:10}}>
-        <span style={{fontSize:16}}>📍</span>
         <div style={{flex:1}}>
           <div style={{fontSize:13,fontWeight:550}}>Lismore SES HQ</div>
           <div style={{fontSize:11,color:T.g500}}>GPS: -28.8149, 153.2794</div>
@@ -402,7 +393,7 @@ function DailyCheckIn(){
 
       <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Welfare Check</div>
       <div style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:14,marginBottom:14}}>
-        {[["Physical wellbeing","😃 Good"],["Mental wellbeing","😃 Good"],["Sleep quality","😐 Fair"],["Any concerns?","No"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",fontSize:12.5,borderBottom:i<3?`1px solid ${T.g100}`:"none"}}>
+        {[["Physical wellbeing","Good"],["Mental wellbeing","Good"],["Sleep quality","Fair"],["Any concerns?","No"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",fontSize:12.5,borderBottom:i<3?`1px solid ${T.g100}`:"none"}}>
           <span style={{color:T.g600}}>{k}</span>
           <span style={{fontWeight:550}}>{v}</span>
         </div>)}
@@ -412,19 +403,19 @@ function DailyCheckIn(){
       <div style={{padding:"10px 14px",background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,fontSize:12.5,color:T.g400,minHeight:50,marginBottom:16}}>Add any notes for your AREP or DM…</div>
 
       <div style={{padding:14,background:T.blue,borderRadius:12,textAlign:"center",cursor:"pointer"}}>
-        <div style={{color:"#fff",fontSize:15,fontWeight:700}}>✓ Submit Check-In</div>
+        <div style={{color:"#fff",fontSize:15,fontWeight:700}}>Submit Check-In</div>
         <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>Visible to your AREP and Deployment Manager</div>
       </div>
 
       <div style={{fontSize:12,fontWeight:650,marginTop:16,marginBottom:8,color:T.g500}}>Previous Check-Ins</div>
       {[
-        {date:"29 Mar",status:"Working",welfare:"😃",time:"07:45"},
-        {date:"28 Mar",status:"Working",welfare:"😃",time:"08:00"},
-        {date:"27 Mar",status:"Rest Day",welfare:"😃",time:"09:15"},
+        {date:"29 Mar",status:"Working",time:"07:45"},
+        {date:"28 Mar",status:"Working",time:"08:00"},
+        {date:"27 Mar",status:"Rest Day",time:"09:15"},
       ].map((d,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 14px",background:"#fff",borderRadius:8,marginBottom:4,border:`1px solid ${T.g200}`,fontSize:12}}>
         <span style={{fontWeight:600,width:50}}>{d.date}</span>
         <Chip color={d.status==="Working"?"blue":"teal"}>{d.status}</Chip>
-        <span>{d.welfare}</span>
+
         <span style={{marginLeft:"auto",color:T.g400,fontSize:11}}>{d.time}</span>
       </div>)}
     </div>
@@ -435,7 +426,7 @@ function DailyCheckIn(){
 function IIISelfReport(){
   return<div>
     <div style={{background:"linear-gradient(135deg,#8B2020,#c0392b)",padding:"16px 20px 20px"}}>
-      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>⚠ I/I/I Self-Report</div>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>I/I/I Self-Report</div>
       <div style={{color:"rgba(255,255,255,.6)",fontSize:12,marginTop:2}}>Illness / Injury / Incident</div>
     </div>
     <div style={{padding:16}}>
@@ -446,12 +437,11 @@ function IIISelfReport(){
       <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Report Type</div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:16}}>
         {[
-          {icon:"🩺",label:"Illness",selected:false},
-          {icon:"🤕",label:"Injury",selected:true},
-          {icon:"⚠️",label:"Incident",selected:false},
+          {label:"Illness",selected:false},
+          {label:"Injury",selected:true},
+          {label:"Incident",selected:false},
         ].map((t,i)=><div key={i} style={{padding:"12px",background:t.selected?T.coralL:"#fff",borderRadius:10,border:`2px solid ${t.selected?T.coral:T.g200}`,textAlign:"center",cursor:"pointer"}}>
-          <div style={{fontSize:18}}>{t.icon}</div>
-          <div style={{fontSize:12,fontWeight:t.selected?700:500,color:t.selected?T.coral:T.g600,marginTop:4}}>{t.label}</div>
+          <div style={{fontSize:12,fontWeight:t.selected?700:500,color:t.selected?T.coral:T.g600}}>{t.label}</div>
         </div>)}
       </div>
 
@@ -464,7 +454,6 @@ function IIISelfReport(){
 
       <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Location of Incident</div>
       <div style={{padding:"12px 14px",background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,marginBottom:14,display:"flex",alignItems:"center",gap:10}}>
-        <span style={{fontSize:16}}>📍</span>
         <div style={{flex:1}}>
           <div style={{fontSize:13,fontWeight:550}}>Lismore SES HQ — Operations Area</div>
           <div style={{fontSize:11,color:T.g500}}>GPS: -28.8149, 153.2794</div>
@@ -482,7 +471,7 @@ function IIISelfReport(){
       </div>
 
       <div style={{padding:14,background:T.coral,borderRadius:12,textAlign:"center",cursor:"pointer"}}>
-        <div style={{color:"#fff",fontSize:15,fontWeight:700}}>⚠ Submit I/I/I Report</div>
+        <div style={{color:"#fff",fontSize:15,fontWeight:700}}>Submit I/I/I Report</div>
         <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>AREP, DM, and Agency will be notified</div>
       </div>
 
