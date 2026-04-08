@@ -665,227 +665,498 @@ function NRSCHome({ onOpenWizard, onOpenSitRep }) {
 }
 
 /* ═══════════════════════════════════════════════════
-   TEAM MEMBER — My Readiness Home
+   TEAM MEMBER — Single-Screen Operational Home
    ═══════════════════════════════════════════════════ */
 function TeamMemberHome() {
-  return (
-    <div style={{ padding: "24px 32px" }}>
-      {/* Welcome banner */}
-      <div style={{
-        background: `linear-gradient(135deg, ${T.blue} 0%, #0a5f9e 100%)`,
-        borderRadius: 10, padding: "22px 32px", color: T.white, marginBottom: 24,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <div>
-          <h2 style={{ color: T.white, fontSize: 20, fontWeight: 700, margin: 0 }}>Welcome back, Daniel</h2>
-          <p style={{ color: "rgba(255,255,255,.65)", fontSize: 13, margin: "4px 0 0" }}>You have 2 items requiring attention and 1 active deployment — Northern Rivers Flood Response.</p>
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <Btn variant="light">View deployment</Btn>
-          <Btn variant="light" style={{ background: "rgba(255,255,255,.25)" }}>Submit claim</Btn>
-        </div>
+  const [drawer, setDrawer] = useState(null);
+
+  /* — Compact summary card — */
+  const SumCard = ({ label, value, sub, chip, chipColor, cta, onClick }) => (
+    <div onClick={onClick} style={{
+      background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8,
+      padding: "14px 18px", cursor: onClick ? "pointer" : "default",
+      transition: "box-shadow .12s",
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+        <span style={{ fontSize: 10.5, color: T.g500, fontWeight: 600, textTransform: "uppercase", letterSpacing: .4 }}>{label}</span>
+        {chip && <Chip color={chipColor}>{chip}</Chip>}
       </div>
+      <div style={{ fontSize: 20, fontWeight: 700, color: T.navy }}>{value}</div>
+      {sub && <div style={{ fontSize: 11.5, color: T.g500, marginTop: 2 }}>{sub}</div>}
+      {cta && <div style={{ fontSize: 11.5, color: T.blue, fontWeight: 600, marginTop: 6, cursor: "pointer" }}>{cta}</div>}
+    </div>
+  );
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
-        {/* Col 1: Readiness */}
-        <div>
-          <Card title="Deployability Status" right={<Chip color="green">Interstate Ready</Chip>}>
-            <div style={{ textAlign: "center", padding: "10px 0 6px" }}>
-              <div style={{ width: 130, height: 130, margin: "0 auto 12px", position: "relative" }}>
-                <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
-                  <circle cx="50" cy="50" r="42" fill="none" stroke={T.g200} strokeWidth="8" />
-                  <circle cx="50" cy="50" r="42" fill="none" stroke={T.green} strokeWidth="8"
-                    strokeLinecap="round" strokeDasharray="264" strokeDashoffset="40"
-                    style={{ transition: "stroke-dashoffset .8s ease" }} />
-                </svg>
-                <div style={{
-                  position: "absolute", inset: 0, display: "flex", flexDirection: "column",
-                  alignItems: "center", justifyContent: "center",
-                }}>
-                  <span style={{ fontSize: 28, fontWeight: 700 }}>85%</span>
-                  <span style={{ fontSize: 11, color: T.g500, fontWeight: 500 }}>Complete</span>
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 20, justifyContent: "center" }}>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 18, color: T.green }}>✓</div>
-                  <div style={{ fontSize: 11, color: T.g500 }}>Interstate</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 18, color: T.orange }}>○</div>
-                  <div style={{ fontSize: 11, color: T.g500 }}>International</div>
-                </div>
-              </div>
-            </div>
-          </Card>
+  /* — Section header — */
+  const SH = ({ children, right }) => (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+      <h3 style={{ fontSize: 14, fontWeight: 650, margin: 0 }}>{children}</h3>
+      {right}
+    </div>
+  );
 
-          <Card title="Readiness Checklist" style={{ marginTop: 16 }}>
-            {[
-              { done: true, text: "Profile complete", sub: "Personal details, emergency contacts" },
-              { done: true, text: "Code of Conduct signed", sub: "Signed 12 Jan 2026" },
-              { done: true, text: "MFA enabled", sub: "Authenticator app linked" },
-              { done: true, text: "Roles approved", sub: "Crew Leader, Strike Team Leader" },
-              { done: true, text: "Medical fitness", sub: "Approved · Expires 18 Nov 2026" },
-              { done: false, text: "Passport uploaded", sub: "Required for international readiness", action: "Upload →" },
-              { done: false, text: "WWCC", sub: "Expires 2 Apr 2026 — 3 days", action: "Update →" },
-            ].map((item, i) => (
-              <div key={i} style={{
-                display: "flex", alignItems: "center", gap: 10,
-                padding: "10px 0", borderBottom: i < 6 ? `1px solid ${T.g100}` : "none",
-              }}>
-                <div style={{
-                  width: 22, height: 22, borderRadius: "50%",
-                  background: item.done ? T.greenL : T.orangeL,
-                  color: item.done ? T.green : T.orange,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 11, fontWeight: 700, flexShrink: 0,
-                }}>{item.done ? "✓" : "!"}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>{item.text}</div>
-                  <div style={{ fontSize: 11, color: item.done ? T.g500 : T.orange }}>{item.sub}</div>
-                </div>
-                {item.action && <span style={{ fontSize: 11, color: T.blue, fontWeight: 600, cursor: "pointer" }}>{item.action}</span>}
-              </div>
-            ))}
-          </Card>
+  return (
+    <div style={{ display: "flex", height: "100%" }}>
+      {/* ═ Main content ═ */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "20px 28px" }}>
+
+        {/* ── ROW 1: Summary strip ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 22 }}>
+          <SumCard label="Readiness" value="85%" chip="Interstate Ready" chipColor="green" sub="5 of 7 items complete" cta="View details →" onClick={() => setDrawer("readiness")} />
+          <SumCard label="EOI Status" value="Submitted" chip="Under Review" chipColor="teal" sub="Interstate — QLD QFES" cta="Update EOI →" onClick={() => setDrawer("readiness")} />
+          <SumCard label="Current Deployment" value="Day 8" chip="In Field" chipColor="blue" sub="Northern Rivers Flood Response" cta="View deployment →" onClick={() => setDrawer("deployment")} />
+          <SumCard label="Open Tasks" value="3" chip="2 urgent" chipColor="orange" sub="1 document · 1 check-in · 1 claim" />
         </div>
 
-        {/* Col 2: Active Deployment */}
-        <div>
-          <Card title="Current Deployment" right={<Chip color="blue">In Field</Chip>}>
-            <div style={{
-              border: `1px solid ${T.g200}`, borderLeft: `3px solid ${T.blue}`,
-              borderRadius: 6, padding: 16, marginBottom: 16,
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ fontSize: 15, fontWeight: 650 }}>Northern Rivers Flood Response</span>
-                <Chip color="blue">Day 8</Chip>
+        {/* ── ROW 2: Two-column main body ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20 }}>
+
+          {/* ═══ LEFT COLUMN ═══ */}
+          <div>
+            {/* ── Zone A: My Readiness ── */}
+            <Card>
+              <SH right={<span style={{ fontSize: 11, color: T.blue, fontWeight: 600, cursor: "pointer" }} onClick={() => setDrawer("readiness")}>View all →</span>}>My Readiness</SH>
+              <div style={{ display: "flex", gap: 12, marginBottom: 14 }}>
+                {/* Completeness ring — small */}
+                <div style={{ width: 54, height: 54, position: "relative", flexShrink: 0 }}>
+                  <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
+                    <circle cx="50" cy="50" r="42" fill="none" stroke={T.g200} strokeWidth="10" />
+                    <circle cx="50" cy="50" r="42" fill="none" stroke={T.green} strokeWidth="10"
+                      strokeLinecap="round" strokeDasharray="264" strokeDashoffset="40"
+                      style={{ transition: "stroke-dashoffset .6s ease" }} />
+                  </svg>
+                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700 }}>85%</div>
+                </div>
+                <div style={{ flex: 1, display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
+                  <Chip color="green">Interstate Ready</Chip>
+                  <Chip color="orange">International Incomplete</Chip>
+                  <Chip color="green">Code of Conduct</Chip>
+                  {[{ r: "Crew Leader", ok: true }, { r: "Strike Team Leader", ok: true }].map((x, i) => (
+                    <span key={i} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: T.g100, color: T.g600, fontWeight: 500 }}>{x.r}</span>
+                  ))}
+                </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 16px", fontSize: 12 }}>
+              {/* Compact checklist — only incomplete items */}
+              <div style={{ borderTop: `1px solid ${T.g100}`, paddingTop: 10 }}>
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Requires attention</div>
                 {[
-                  ["Request", "2025_26_007NSW_QLD001"],
-                  ["Role", "Crew Leader"],
-                  ["Location", "Lismore, NSW"],
-                  ["Agency", "QLD QFES"],
-                  ["Contingent", "CREW2"],
-                  ["Status", "Working"],
-                  ["Start", "22 Mar 2026"],
-                  ["Est. end", "5 Apr 2026"],
-                ].map(([k, v], i) => (
-                  <div key={i}>
-                    <span style={{ color: T.g400, fontSize: 11 }}>{k}</span>
-                    <div style={{ fontWeight: 550, fontFamily: k === "Request" ? "'DM Mono', monospace" : "inherit", fontSize: k === "Request" ? 11 : 12.5 }}>{v}</div>
+                  { text: "Passport not uploaded", sub: "Required for international readiness", action: "Upload" },
+                  { text: "WWCC expiring", sub: "Expires 2 Apr 2026 — 3 days", action: "Update" },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: i < 1 ? `1px solid ${T.g50}` : "none" }}>
+                    <div style={{ width: 18, height: 18, borderRadius: "50%", background: T.orangeL, color: T.orange, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>!</div>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: 12.5, fontWeight: 550 }}>{item.text}</span>
+                      <span style={{ fontSize: 11, color: T.g400, marginLeft: 6 }}>{item.sub}</span>
+                    </div>
+                    <span style={{ fontSize: 11, color: T.blue, fontWeight: 600, cursor: "pointer" }}>{item.action} →</span>
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
 
-            {/* Fatigue tracker */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Fatigue Tracker</div>
-              <div style={{ display: "flex", gap: 3 }}>
-                {["W","W","R","W","W","R","W","✦"].map((d, i) => (
-                  <div key={i} style={{
-                    flex: 1, height: 26, borderRadius: 3,
-                    background: d === "R" ? T.teal : d === "✦" ? T.green : T.blue,
-                    color: T.white, display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 10, fontWeight: 700,
-                    border: d === "✦" ? `2px solid ${T.navy}` : "none",
-                  }}>{d}</div>
+            {/* ── Zone B: My Requests & Mobilisation ── */}
+            <Card style={{ marginTop: 16 }}>
+              <SH right={<Chip color="blue">1 active</Chip>}>My Requests & Mobilisation</SH>
+              {/* Request card */}
+              <div onClick={() => setDrawer("request")} style={{
+                border: `1px solid ${T.g200}`, borderLeft: `3px solid ${T.blue}`,
+                borderRadius: 6, padding: "12px 14px", cursor: "pointer",
+                transition: "box-shadow .12s",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11.5, fontWeight: 600 }}>2025_26_007NSW_QLD001</span>
+                  <Chip color="blue">In Field</Chip>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px 12px", fontSize: 12 }}>
+                  {[
+                    ["Deployment", "Northern Rivers Flood Response"],
+                    ["Role", "Crew Leader"],
+                    ["Start", "22 Mar 2026"],
+                    ["Agency", "QLD QFES"],
+                    ["Contingent", "CREW2"],
+                    ["Next milestone", "Rotation review 2 Apr"],
+                  ].map(([k, v], i) => (
+                    <div key={i}>
+                      <span style={{ fontSize: 10, color: T.g400 }}>{k}</span>
+                      <div style={{ fontWeight: 550, fontSize: 12 }}>{v}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Previous/upcoming — compact */}
+              <div style={{ marginTop: 10, padding: "8px 10px", background: T.g50, borderRadius: 6, fontSize: 12, color: T.g500, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>No upcoming requests</span>
+                <span style={{ color: T.blue, fontWeight: 600, cursor: "pointer", fontSize: 11 }}>View history →</span>
+              </div>
+            </Card>
+
+            {/* ── Zone C: My Deployment ── */}
+            <Card style={{ marginTop: 16 }}>
+              <SH right={<Chip color="blue">Day 8 · Working</Chip>}>My Deployment</SH>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px 16px", marginBottom: 14 }}>
+                {[
+                  ["Deployment", "Northern Rivers Flood Response"],
+                  ["Location", "Lismore, NSW"],
+                  ["Status", "Working"],
+                  ["Contingent", "CREW2"],
+                  ["Liaison", "Rachel Kimura (DM)"],
+                  ["Next check-in", "Today, 18:00"],
+                ].map(([k, v], i) => (
+                  <div key={i}>
+                    <span style={{ fontSize: 10, color: T.g400 }}>{k}</span>
+                    <div style={{ fontSize: 12.5, fontWeight: 550 }}>{v}</div>
+                  </div>
                 ))}
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: T.g400, marginTop: 4 }}>
-                <span>22 Mar</span><span style={{ color: T.navy, fontWeight: 600 }}>Today</span>
+              {/* Mini-modules */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14 }}>
+                {[
+                  { label: "Status", value: "Working", color: T.green },
+                  { label: "Welfare", value: "No issues", color: T.green },
+                  { label: "Rotation", value: "Active", color: T.blue },
+                ].map((m, i) => (
+                  <div key={i} style={{ padding: "8px 10px", background: T.g50, borderRadius: 6, border: `1px solid ${T.g100}` }}>
+                    <div style={{ fontSize: 10, color: T.g400, fontWeight: 550, textTransform: "uppercase", letterSpacing: .3 }}>{m.label}</div>
+                    <div style={{ fontSize: 12.5, fontWeight: 600, color: m.color, marginTop: 2 }}>{m.value}</div>
+                  </div>
+                ))}
               </div>
-              <div style={{ fontSize: 10.5, color: T.g500, marginTop: 6 }}>W = Working · R = Rest · 5 consecutive work days</div>
-            </div>
-
-            <div style={{ display: "flex", gap: 8 }}>
-              <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", fontSize: 12 }}>{Icons.alert} Report Incident</Btn>
-              <Btn variant="primary" style={{ flex: 1, justifyContent: "center", fontSize: 12 }}>{Icons.dollar} Submit Claim</Btn>
-            </div>
-          </Card>
-
-          <Card title="My Documents" right={<Btn variant="ghost" style={{ fontSize: 11 }}>Upload →</Btn>} style={{ marginTop: 16 }}>
-            {[
-              { name: "Medical Fitness Certificate", meta: "Expires 18 Nov 2026", status: "Valid", color: "green" },
-              { name: "Code of Conduct Declaration", meta: "Signed 12 Jan 2026", status: "Valid", color: "green" },
-              { name: "Working With Children Check", meta: "Expires 2 Apr 2026", status: "Expiring", color: "orange" },
-              { name: "Chainsaw Operator Certificate", meta: "Uploaded 8 Sep 2025", status: "Valid", color: "green" },
-            ].map((doc, i) => (
-              <div key={i} style={{
-                display: "flex", alignItems: "center", gap: 10,
-                padding: "10px 0", borderBottom: i < 3 ? `1px solid ${T.g100}` : "none",
-              }}>
-                <div style={{
-                  width: 34, height: 34, background: T.g100, borderRadius: 4,
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16,
-                }}>📄</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>{doc.name}</div>
-                  <div style={{ fontSize: 11, color: T.g500 }}>{doc.meta}</div>
+              {/* Fatigue strip */}
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .3, marginBottom: 6 }}>Fatigue</div>
+                <div style={{ display: "flex", gap: 2 }}>
+                  {["W","W","R","W","W","R","W","✦"].map((d, i) => (
+                    <div key={i} style={{
+                      flex: 1, height: 22, borderRadius: 3,
+                      background: d === "R" ? T.teal : d === "✦" ? T.green : T.blue,
+                      color: T.white, display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 9, fontWeight: 700,
+                      border: d === "✦" ? `2px solid ${T.navy}` : "none",
+                    }}>{d}</div>
+                  ))}
                 </div>
-                <Chip color={doc.color}>{doc.status}</Chip>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9.5, color: T.g400, marginTop: 3 }}>
+                  <span>22 Mar</span><span style={{ color: T.navy, fontWeight: 600 }}>Today</span>
+                </div>
               </div>
-            ))}
-          </Card>
+              {/* Deployment CTAs */}
+              <div style={{ display: "flex", gap: 6, borderTop: `1px solid ${T.g100}`, paddingTop: 10 }}>
+                <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", fontSize: 11.5 }}>Log status</Btn>
+                <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", fontSize: 11.5 }}>Report issue</Btn>
+                <Btn variant="primary" style={{ flex: 1, justifyContent: "center", fontSize: 11.5 }} onClick={() => setDrawer("deployment")}>View details</Btn>
+              </div>
+            </Card>
+          </div>
+
+          {/* ═══ RIGHT COLUMN ═══ */}
+          <div>
+            {/* ── Zone E: Required Actions ── */}
+            <Card>
+              <SH right={<Chip color="orange">3 items</Chip>}>Required Actions</SH>
+              {[
+                { icon: "⚠", text: "WWCC expires in 3 days", cta: "Update", urgent: true },
+                { icon: "📋", text: "Daily check-in due today", cta: "Submit", urgent: true },
+                { icon: "💰", text: "Claim returned — info needed", cta: "Review", urgent: false },
+                { icon: "📄", text: "Upload passport", cta: "Upload", urgent: false },
+                { icon: "✓", text: "Role evidence pending review", cta: null, urgent: false },
+              ].map((a, i) => (
+                <div key={i} style={{
+                  display: "flex", alignItems: "center", gap: 8, padding: "8px 0",
+                  borderBottom: i < 4 ? `1px solid ${T.g50}` : "none",
+                }}>
+                  <span style={{ fontSize: 13, flexShrink: 0, width: 20, textAlign: "center" }}>{a.icon}</span>
+                  <span style={{ flex: 1, fontSize: 12.5, fontWeight: a.urgent ? 600 : 450, color: a.urgent ? T.navy : T.g600 }}>{a.text}</span>
+                  {a.cta && <span style={{ fontSize: 11, color: T.blue, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>{a.cta} →</span>}
+                </div>
+              ))}
+            </Card>
+
+            {/* ── Zone D: Quick Actions ── */}
+            <Card style={{ marginTop: 16 }}>
+              <SH>Quick Actions</SH>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                {[
+                  { label: "Update EOI", bg: T.blueL, fg: T.blue },
+                  { label: "Upload Doc", bg: T.greenL, fg: "#5a8a1f" },
+                  { label: "View Request", bg: T.tealL, fg: "#148895" },
+                  { label: "Log Fatigue", bg: "#F3F0FF", fg: "#6C5CE7" },
+                  { label: "Report I/I/I", bg: T.coralL, fg: T.coral },
+                  { label: "Submit Claim", bg: T.orangeL, fg: "#c06e15" },
+                ].map((qa, i) => (
+                  <button key={i} style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    padding: "12px 6px", borderRadius: 6, border: "none",
+                    background: qa.bg, color: qa.fg, fontSize: 11.5, fontWeight: 600,
+                    cursor: "pointer", fontFamily: "inherit", transition: "opacity .12s",
+                  }}>{qa.label}</button>
+                ))}
+              </div>
+            </Card>
+
+            {/* ── Recent Updates ── */}
+            <Card style={{ marginTop: 16 }}>
+              <SH>Recent Updates</SH>
+              {[
+                { text: "Rotation extended to 5 Apr", time: "Yesterday, 16:30", unread: true },
+                { text: "Claim approved — $47.50 meals", time: "27 Mar, 11:20", unread: false },
+                { text: "Assigned to CREW2", time: "21 Mar, 09:00", unread: false },
+                { text: "Code of Conduct signed", time: "12 Jan, 14:15", unread: false },
+              ].map((u, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: i < 3 ? `1px solid ${T.g50}` : "none" }}>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: u.unread ? T.blue : T.g200, flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 12.5, fontWeight: u.unread ? 600 : 450 }}>{u.text}</div>
+                    <div style={{ fontSize: 10.5, color: T.g400 }}>{u.time}</div>
+                  </div>
+                </div>
+              ))}
+            </Card>
+
+            {/* ── Key Contacts ── */}
+            <Card style={{ marginTop: 16 }}>
+              <SH>Key Contacts</SH>
+              {[
+                { initials: "RK", name: "Rachel Kimura", role: "Deployment Manager", color: T.blue },
+                { initials: "MS", name: "Mark Sullivan", role: "AREP — Northern Rivers", color: T.teal },
+                { initials: "SP", name: "Sarah Patel", role: "QLD QFES Coordinator", color: T.coral },
+              ].map((c, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: i < 2 ? `1px solid ${T.g50}` : "none" }}>
+                  <Avatar initials={c.initials} color={c.color} size={26} />
+                  <div>
+                    <div style={{ fontSize: 12.5, fontWeight: 550 }}>{c.name}</div>
+                    <div style={{ fontSize: 10.5, color: T.g500 }}>{c.role}</div>
+                  </div>
+                </div>
+              ))}
+            </Card>
+          </div>
         </div>
+      </div>
 
-        {/* Col 3: Notifications */}
-        <div>
-          <Card title="Notifications" right={<Chip color="blue">2 new</Chip>}>
-            {[
-              { unread: true, title: "WWCC expiring", body: "Your WWCC expires on 2 Apr 2026. Upload a renewed document.", time: "Today, 08:00" },
-              { unread: true, title: "Rotation update", body: "Deployment extended to 5 Apr 2026. Contact your DM if needed.", time: "Yesterday, 16:30" },
-              { unread: false, title: "Claim approved", body: "Meal expense ($47.50 AUD) for 25 Mar approved by NSW RFS.", time: "27 Mar, 11:20" },
-              { unread: false, title: "Deployment confirmed", body: "Assigned to CREW2 for request 2025_26_007NT_NSW001.", time: "21 Mar, 09:00" },
-            ].map((n, i) => (
-              <div key={i} style={{
-                display: "flex", gap: 10, padding: "10px 0",
-                borderBottom: i < 3 ? `1px solid ${T.g100}` : "none", cursor: "pointer",
-              }}>
-                <div style={{
-                  width: 8, height: 8, borderRadius: "50%", marginTop: 5,
-                  background: n.unread ? T.blue : "transparent", flexShrink: 0,
-                }} />
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{n.title}</div>
-                  <div style={{ fontSize: 12, color: T.g600, marginTop: 2 }}>{n.body}</div>
-                  <div style={{ fontSize: 11, color: T.g400, marginTop: 3 }}>{n.time}</div>
+      {/* ═══ RIGHT DRAWER ═══ */}
+      {drawer && (
+        <div style={{
+          width: 380, borderLeft: `1px solid ${T.g200}`, background: T.white,
+          flexShrink: 0, overflowY: "auto", display: "flex", flexDirection: "column",
+        }}>
+          <div style={{ padding: "14px 20px", borderBottom: `1px solid ${T.g200}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 14, fontWeight: 650 }}>
+              {drawer === "readiness" && "My Readiness"}
+              {drawer === "request" && "Request Details"}
+              {drawer === "deployment" && "Deployment Details"}
+            </span>
+            <span onClick={() => setDrawer(null)} style={{ cursor: "pointer", color: T.g400, fontSize: 20, lineHeight: 1 }}>×</span>
+          </div>
+          <div style={{ padding: "16px 20px", flex: 1 }}>
+
+            {/* ─ READINESS DRAWER ─ */}
+            {drawer === "readiness" && <>
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                  <span style={{ fontSize: 16, fontWeight: 700 }}>Readiness Profile</span>
+                  <Chip color="green">Interstate Ready</Chip>
+                </div>
+                <div style={{ width: 80, height: 80, position: "relative", margin: "0 auto 12px" }}>
+                  <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
+                    <circle cx="50" cy="50" r="42" fill="none" stroke={T.g200} strokeWidth="10" />
+                    <circle cx="50" cy="50" r="42" fill="none" stroke={T.green} strokeWidth="10" strokeLinecap="round" strokeDasharray="264" strokeDashoffset="40" />
+                  </svg>
+                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700 }}>85%</div>
+                </div>
+                <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 12 }}>
+                  <div style={{ textAlign: "center" }}><div style={{ fontSize: 16, color: T.green }}>✓</div><div style={{ fontSize: 10, color: T.g500 }}>Interstate</div></div>
+                  <div style={{ textAlign: "center" }}><div style={{ fontSize: 16, color: T.orange }}>○</div><div style={{ fontSize: 10, color: T.g500 }}>International</div></div>
                 </div>
               </div>
-            ))}
-          </Card>
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>EOI Status</div>
+              <div style={{ padding: "10px 12px", border: `1px solid ${T.g200}`, borderRadius: 6, marginBottom: 14 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 13, fontWeight: 600 }}>Interstate EOI</span>
+                  <Chip color="teal">Under Review</Chip>
+                </div>
+                <div style={{ fontSize: 11.5, color: T.g500, marginTop: 2 }}>Submitted 15 Jan 2026 · QLD QFES</div>
+              </div>
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Readiness Checklist</div>
+              {[
+                { done: true, text: "Profile complete" },
+                { done: true, text: "Code of Conduct signed" },
+                { done: true, text: "MFA enabled" },
+                { done: true, text: "Roles approved" },
+                { done: true, text: "Medical fitness" },
+                { done: false, text: "Passport uploaded" },
+                { done: false, text: "WWCC current" },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: `1px solid ${T.g50}` }}>
+                  <div style={{
+                    width: 18, height: 18, borderRadius: "50%", flexShrink: 0,
+                    background: item.done ? T.greenL : T.orangeL,
+                    color: item.done ? T.green : T.orange,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 10, fontWeight: 700,
+                  }}>{item.done ? "✓" : "!"}</div>
+                  <span style={{ fontSize: 12.5, fontWeight: item.done ? 450 : 600, color: item.done ? T.g600 : T.navy }}>{item.text}</span>
+                </div>
+              ))}
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 14 }}>Approved Roles</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {["Crew Leader", "Strike Team Leader"].map(r => <span key={r} style={{ padding: "3px 10px", borderRadius: 4, background: T.g100, fontSize: 11.5, fontWeight: 500 }}>{r}</span>)}
+              </div>
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 14 }}>Documents</div>
+              {[
+                { name: "Medical Fitness Certificate", status: "Valid", color: "green", exp: "18 Nov 2026" },
+                { name: "Code of Conduct Declaration", status: "Valid", color: "green", exp: "—" },
+                { name: "Working With Children Check", status: "Expiring", color: "orange", exp: "2 Apr 2026" },
+                { name: "Chainsaw Operator Certificate", status: "Valid", color: "green", exp: "—" },
+              ].map((d, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 0", borderBottom: `1px solid ${T.g50}` }}>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 500 }}>{d.name}</div>
+                    <div style={{ fontSize: 10.5, color: T.g400 }}>Exp: {d.exp}</div>
+                  </div>
+                  <Chip color={d.color}>{d.status}</Chip>
+                </div>
+              ))}
+            </>}
 
-          <Card title="Key Contacts" style={{ marginTop: 16 }}>
-            <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 10, color: T.g400, textTransform: "uppercase", letterSpacing: .8, fontWeight: 600, marginBottom: 8 }}>Deployment</div>
+            {/* ─ REQUEST DRAWER ─ */}
+            {drawer === "request" && <>
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 14, fontWeight: 700 }}>2025_26_007NSW_QLD001</span>
+                  <Chip color="blue">In Field</Chip>
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Northern Rivers Flood Response</div>
+              </div>
+              <div style={{ fontSize: 12.5 }}>
+                {[
+                  ["Jurisdiction", "NSW (interstate)"],
+                  ["Requesting Agency", "NSW RFS"],
+                  ["Home Agency", "QLD QFES"],
+                  ["Role", "Crew Leader"],
+                  ["Contingent", "CREW2"],
+                  ["Start Date", "22 Mar 2026"],
+                  ["Est. End Date", "5 Apr 2026"],
+                  ["Movement State", "In Field"],
+                  ["Next Milestone", "Rotation review — 2 Apr 2026"],
+                ].map(([k, v], i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${T.g50}`, gap: 8 }}>
+                    <span style={{ color: T.g500 }}>{k}</span>
+                    <span style={{ fontWeight: 550, textAlign: "right" }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 16 }}>Travel & Manifest</div>
+              <div style={{ padding: "10px 12px", border: `1px solid ${T.g200}`, borderRadius: 6, marginBottom: 14 }}>
+                <div style={{ fontSize: 12, marginBottom: 4 }}><span style={{ color: T.g500 }}>Outbound:</span> <span style={{ fontWeight: 550 }}>QF1521 BNE→LIS 21 Mar 2026</span></div>
+                <div style={{ fontSize: 12 }}><span style={{ color: T.g500 }}>Return:</span> <span style={{ fontWeight: 550 }}>QF1428 LIS→BNE 5 Apr 2026</span></div>
+              </div>
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Movement Timeline</div>
+              {[
+                { step: "Confirmed", date: "20 Mar", done: true },
+                { step: "Mobilising", date: "21 Mar", done: true },
+                { step: "Briefing", date: "22 Mar", done: true },
+                { step: "In Field", date: "22 Mar — now", done: true, current: true },
+                { step: "Demobilising", date: "~5 Apr", done: false },
+                { step: "Finished", date: "—", done: false },
+              ].map((s, i) => (
+                <div key={i} style={{ display: "flex", gap: 10 }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{
+                      width: 18, height: 18, borderRadius: "50%", flexShrink: 0,
+                      background: s.done ? s.current ? T.blue : T.green : T.g200,
+                      color: s.done ? "#fff" : T.g500,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 9, fontWeight: 700,
+                    }}>{s.done ? "✓" : i + 1}</div>
+                    {i < 5 && <div style={{ width: 2, height: 18, background: s.done ? T.green : T.g200 }} />}
+                  </div>
+                  <div style={{ paddingBottom: 4 }}>
+                    <div style={{ fontSize: 12, fontWeight: s.current ? 650 : s.done ? 500 : 400, color: s.done ? T.navy : T.g400 }}>{s.step}</div>
+                    <div style={{ fontSize: 10, color: T.g400 }}>{s.date}</div>
+                  </div>
+                </div>
+              ))}
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 16 }}>Assigned Contacts</div>
               {[
                 { initials: "RK", name: "Rachel Kimura", role: "Deployment Manager", color: T.blue },
                 { initials: "MS", name: "Mark Sullivan", role: "AREP — Northern Rivers", color: T.teal },
               ].map((c, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                  <Avatar initials={c.initials} color={c.color} size={28} />
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0" }}>
+                  <Avatar initials={c.initials} color={c.color} size={24} />
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 550 }}>{c.name}</div>
-                    <div style={{ fontSize: 11, color: T.g500 }}>{c.role}</div>
+                    <div style={{ fontSize: 12, fontWeight: 550 }}>{c.name}</div>
+                    <div style={{ fontSize: 10, color: T.g500 }}>{c.role}</div>
                   </div>
                 </div>
               ))}
-            </div>
-            <div>
-              <div style={{ fontSize: 10, color: T.g400, textTransform: "uppercase", letterSpacing: .8, fontWeight: 600, marginBottom: 8 }}>Agency</div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <Avatar initials="SP" color={T.coral} size={28} />
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 550 }}>Sarah Patel</div>
-                  <div style={{ fontSize: 11, color: T.g500 }}>QLD QFES Coordinator</div>
+            </>}
+
+            {/* ─ DEPLOYMENT DRAWER ─ */}
+            {drawer === "deployment" && <>
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                  <span style={{ fontSize: 16, fontWeight: 700 }}>Northern Rivers Flood Response</span>
+                  <Chip color="blue">Day 8</Chip>
                 </div>
               </div>
-            </div>
-          </Card>
+              <div style={{ fontSize: 12.5 }}>
+                {[
+                  ["Location", "Lismore, NSW"],
+                  ["Status", "Working"],
+                  ["Contingent", "CREW2"],
+                  ["Start", "22 Mar 2026"],
+                  ["Est. End", "5 Apr 2026"],
+                  ["Welfare", "No issues reported"],
+                  ["Rotation", "Active — no replacement planned"],
+                  ["Last Check-in", "Today, 06:00"],
+                  ["Next Check-in", "Today, 18:00"],
+                ].map(([k, v], i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${T.g50}`, gap: 8 }}>
+                    <span style={{ color: T.g500 }}>{k}</span>
+                    <span style={{ fontWeight: 550, textAlign: "right" }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 16 }}>Fatigue Log</div>
+              <div style={{ display: "flex", gap: 2, marginBottom: 4 }}>
+                {["W","W","R","W","W","R","W","✦"].map((d, i) => (
+                  <div key={i} style={{
+                    flex: 1, height: 20, borderRadius: 3,
+                    background: d === "R" ? T.teal : d === "✦" ? T.green : T.blue,
+                    color: T.white, display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 9, fontWeight: 700,
+                    border: d === "✦" ? `2px solid ${T.navy}` : "none",
+                  }}>{d}</div>
+                ))}
+              </div>
+              <div style={{ fontSize: 9.5, color: T.g400, marginBottom: 14 }}>5 consecutive work days · W = Working · R = Rest</div>
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Active Alerts</div>
+              <div style={{ padding: "8px 10px", background: T.orangeL, borderRadius: 6, fontSize: 12, color: "#c06e15", fontWeight: 600, marginBottom: 10 }}>Check-in due today at 18:00</div>
+              <div style={{ padding: "8px 10px", background: T.blueL, borderRadius: 6, fontSize: 12, color: T.blue, fontWeight: 500 }}>Deployment extended to 5 Apr — rotation review pending</div>
+              <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 16 }}>Liaison Chain</div>
+              {[
+                { initials: "RK", name: "Rachel Kimura", role: "Deployment Manager", color: T.blue },
+                { initials: "MS", name: "Mark Sullivan", role: "AREP — Northern Rivers", color: T.teal },
+                { initials: "SP", name: "Sarah Patel", role: "QLD QFES Coordinator", color: T.coral },
+              ].map((c, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0" }}>
+                  <Avatar initials={c.initials} color={c.color} size={24} />
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 550 }}>{c.name}</div>
+                    <div style={{ fontSize: 10, color: T.g500 }}>{c.role}</div>
+                  </div>
+                </div>
+              ))}
+              <div style={{ display: "flex", gap: 6, marginTop: 14, borderTop: `1px solid ${T.g100}`, paddingTop: 12 }}>
+                <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", fontSize: 11 }}>Log status</Btn>
+                <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", fontSize: 11 }}>Report I/I/I</Btn>
+                <Btn variant="primary" style={{ flex: 1, justifyContent: "center", fontSize: 11 }}>Submit claim</Btn>
+              </div>
+            </>}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
