@@ -177,7 +177,7 @@ export default function NDMSPrototype({ onOpenMobile }) {
       case "requests":
         return <RequestsWorkspace onOpenWizard={() => setWizardOpen(true)} />;
       case "deployments":
-        if (role === "team") return <TeamMemberHome />;
+        if (role === "team") return <TeamMemberHome deploymentOnly />;
         return <DeploymentsWorkspace />;
       case "map":
         return <MapWorkspace />;
@@ -670,7 +670,7 @@ function NRSCHome({ onOpenWizard, onOpenSitRep }) {
 /* ═══════════════════════════════════════════════════
    TEAM MEMBER — Single-Screen Operational Home
    ═══════════════════════════════════════════════════ */
-function TeamMemberHome() {
+function TeamMemberHome({ deploymentOnly = false }) {
   const [drawer, setDrawer] = useState(null);
 
   /* — Section header — */
@@ -686,11 +686,12 @@ function TeamMemberHome() {
       {/* ═ Main content ═ */}
       <div style={{ flex: 1, overflowY: "auto", padding: "20px 28px" }}>
 
-        {/* ── ROW 2: Two-column main body ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20 }}>
+        {/* ── Two-column main body ── */}
+        <div style={{ display: "grid", gridTemplateColumns: deploymentOnly ? "1fr" : "1fr 340px", gap: 20 }}>
 
           {/* ═══ LEFT COLUMN ═══ */}
           <div>
+            {!deploymentOnly && <>
             {/* ── Zone A: My Readiness ── */}
             <Card>
               <SH right={<span style={{ fontSize: 11, color: T.blue, fontWeight: 600, cursor: "pointer" }} onClick={() => setDrawer("readiness")}>View all →</span>}>My Readiness</SH>
@@ -732,11 +733,10 @@ function TeamMemberHome() {
                 ))}
               </div>
             </Card>
-
-
+            </>}
 
             {/* ── Zone C: My Deployment ── */}
-            <Card style={{ marginTop: 16 }}>
+            <Card style={{ marginTop: deploymentOnly ? 0 : 16 }}>
               <SH right={<Chip color="blue">Day 8 · Working</Chip>}>My Deployment</SH>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px 16px", marginBottom: 14 }}>
                 {[
@@ -793,8 +793,7 @@ function TeamMemberHome() {
             </Card>
           </div>
 
-          {/* ═══ RIGHT COLUMN ═══ */}
-          <div>
+          {!deploymentOnly && <div>
             {/* ── Zone E: Required Actions ── */}
             <Card>
               <SH right={<Chip color="orange">3 items</Chip>}>Required Actions</SH>
@@ -857,7 +856,7 @@ function TeamMemberHome() {
             </Card>
 
 
-          </div>
+          </div>}
         </div>
       </div>
 
