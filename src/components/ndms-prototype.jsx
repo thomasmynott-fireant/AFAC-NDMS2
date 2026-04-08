@@ -735,8 +735,9 @@ function TeamMemberHome({ deploymentOnly = false }) {
             </Card>
             </>}
 
+            {deploymentOnly && <>
             {/* ── Zone C: My Deployment ── */}
-            <Card style={{ marginTop: deploymentOnly ? 0 : 16 }}>
+            <Card>
               <SH right={<Chip color="blue">Day 8 · Working</Chip>}>My Deployment</SH>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px 16px", marginBottom: 14 }}>
                 {[
@@ -791,6 +792,7 @@ function TeamMemberHome({ deploymentOnly = false }) {
                 <Btn variant="primary" style={{ flex: 1, justifyContent: "center", fontSize: 11.5 }} onClick={() => setDrawer("deployment")}>View details</Btn>
               </div>
             </Card>
+            </>}
           </div>
 
           {!deploymentOnly && <div>

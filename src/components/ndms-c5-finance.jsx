@@ -36,12 +36,13 @@ export default function FinanceWorkspace({scope="national"}){
   const[wizardOpen,setWizardOpen]=useState(false);
   const[drawerClaim,setDrawerClaim]=useState(null);
 
-  const tabs=[
+  const allTabs=[
     {id:"my-claims",label:"My Claims",count:CLAIMS.filter(c=>c.person==="Daniel Thornton").length},
     {id:"agency-review",label:"Agency Review",count:CLAIMS.filter(c=>["Submitted","Special Approval Required"].includes(c.status)).length},
     {id:"nrsc-audit",label:"NRSC Audit",count:CLAIMS.filter(c=>["Approved at Agency","Under NRSC Audit"].includes(c.status)).length},
     {id:"reconciliation",label:"Reconciliation",count:null},
   ];
+  const tabs=scope==="personal"?allTabs.filter(t=>t.id==="my-claims"):allTabs;
 
   if(wizardOpen) return <ClaimWizard onClose={()=>setWizardOpen(false)}/>;
 
