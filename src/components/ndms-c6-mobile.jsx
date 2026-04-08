@@ -119,21 +119,6 @@ function MobileHome(){
         </div>)}
       </div>
 
-      {/* Deployment card */}
-      <div style={{fontSize:13,fontWeight:650,marginTop:16,marginBottom:10}}>Current Deployment</div>
-      <div style={{background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,padding:14}}>
-        <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
-          <span style={{fontSize:14,fontWeight:650}}>Northern Rivers Flood Response</span>
-          <Chip color="blue">Day 8</Chip>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px 14px",fontSize:12}}>
-          {[["Role","Crew Leader"],["Location","Lismore, NSW"],["Contingent","CREW2"],["Status","Working"]].map(([k,v],i)=><div key={i}><span style={{color:T.g400,fontSize:10.5}}>{k}</span><div style={{fontWeight:550}}>{v}</div></div>)}
-        </div>
-        {/* Mini fatigue */}
-        <div style={{display:"flex",gap:2,marginTop:10}}>
-          {["W","W","R","W","W","R","W","✦"].map((d,i)=><div key={i} style={{flex:1,height:20,borderRadius:3,background:d==="R"?T.teal:d==="✦"?T.green:T.blue,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700}}>{d}</div>)}
-        </div>
-      </div>
 
       {/* Notifications */}
       <div style={{fontSize:13,fontWeight:650,marginTop:16,marginBottom:10}}>Notifications</div>
