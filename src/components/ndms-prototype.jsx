@@ -117,14 +117,16 @@ const getNavItems = (role) => {
   const shell = ROLES.find(r => r.id === role)?.shell || "nrsc";
   const homeLabel = { nrsc: "Home", team: "My Readiness", agency: "Agency Home" }[role] || "Home";
 
+  const platformItems = [
+    { icon: "home", label: homeLabel, id: "home" },
+    { icon: "people", label: shell === "team" ? "My Record" : "People", id: "people", badge: shell === "agency" ? "5" : null },
+  ];
+  if (shell !== "team") platformItems.push({ icon: "doc", label: "Requests", id: "requests", badge: shell === "nrsc" ? "3" : null });
+  platformItems.push({ icon: "mapPin", label: shell === "team" ? "My Deployment" : "Deployments", id: "deployments", badge: shell === "nrsc" ? "!" : null });
+  if (shell !== "team") platformItems.push({ icon: "globe", label: "Map", id: "map" });
+
   const core = [
-    { section: "Platform", items: [
-      { icon: "home", label: homeLabel, id: "home" },
-      { icon: "people", label: shell === "team" ? "My Record" : "People", id: "people", badge: shell === "agency" ? "5" : null },
-      { icon: "doc", label: "Requests", id: "requests", badge: shell === "nrsc" ? "3" : null },
-      { icon: "mapPin", label: "Deployments", id: "deployments", badge: shell === "nrsc" ? "!" : null },
-      { icon: "globe", label: "Map", id: "map" },
-    ]},
+    { section: "Platform", items: platformItems },
   ];
 
   // Finance — all 3 roles
@@ -175,6 +177,7 @@ export default function NDMSPrototype({ onOpenMobile }) {
       case "requests":
         return <RequestsWorkspace onOpenWizard={() => setWizardOpen(true)} />;
       case "deployments":
+        if (role === "team") return <TeamMemberHome />;
         return <DeploymentsWorkspace />;
       case "map":
         return <MapWorkspace />;
@@ -670,23 +673,6 @@ function NRSCHome({ onOpenWizard, onOpenSitRep }) {
 function TeamMemberHome() {
   const [drawer, setDrawer] = useState(null);
 
-  /* — Compact summary card — */
-  const SumCard = ({ label, value, sub, chip, chipColor, cta, onClick }) => (
-    <div onClick={onClick} style={{
-      background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8,
-      padding: "14px 18px", cursor: onClick ? "pointer" : "default",
-      transition: "box-shadow .12s",
-    }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-        <span style={{ fontSize: 10.5, color: T.g500, fontWeight: 600, textTransform: "uppercase", letterSpacing: .4 }}>{label}</span>
-        {chip && <Chip color={chipColor}>{chip}</Chip>}
-      </div>
-      <div style={{ fontSize: 20, fontWeight: 700, color: T.navy }}>{value}</div>
-      {sub && <div style={{ fontSize: 11.5, color: T.g500, marginTop: 2 }}>{sub}</div>}
-      {cta && <div style={{ fontSize: 11.5, color: T.blue, fontWeight: 600, marginTop: 6, cursor: "pointer" }}>{cta}</div>}
-    </div>
-  );
-
   /* — Section header — */
   const SH = ({ children, right }) => (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -699,14 +685,6 @@ function TeamMemberHome() {
     <div style={{ display: "flex", height: "100%" }}>
       {/* ═ Main content ═ */}
       <div style={{ flex: 1, overflowY: "auto", padding: "20px 28px" }}>
-
-        {/* ── ROW 1: Summary strip ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 22 }}>
-          <SumCard label="Readiness" value="85%" chip="Interstate Ready" chipColor="green" sub="5 of 7 items complete" cta="View details →" onClick={() => setDrawer("readiness")} />
-          <SumCard label="EOI Status" value="Submitted" chip="Under Review" chipColor="teal" sub="Interstate — QLD QFES" cta="Update EOI →" onClick={() => setDrawer("readiness")} />
-          <SumCard label="Current Deployment" value="Day 8" chip="In Field" chipColor="blue" sub="Northern Rivers Flood Response" cta="View deployment →" onClick={() => setDrawer("deployment")} />
-          <SumCard label="Open Tasks" value="3" chip="2 urgent" chipColor="orange" sub="1 document · 1 check-in · 1 claim" />
-        </div>
 
         {/* ── ROW 2: Two-column main body ── */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20 }}>
@@ -755,41 +733,7 @@ function TeamMemberHome() {
               </div>
             </Card>
 
-            {/* ── Zone B: My Requests & Mobilisation ── */}
-            <Card style={{ marginTop: 16 }}>
-              <SH right={<Chip color="blue">1 active</Chip>}>My Requests & Mobilisation</SH>
-              {/* Request card */}
-              <div onClick={() => setDrawer("request")} style={{
-                border: `1px solid ${T.g200}`, borderLeft: `3px solid ${T.blue}`,
-                borderRadius: 6, padding: "12px 14px", cursor: "pointer",
-                transition: "box-shadow .12s",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11.5, fontWeight: 600 }}>2025_26_007NSW_QLD001</span>
-                  <Chip color="blue">In Field</Chip>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px 12px", fontSize: 12 }}>
-                  {[
-                    ["Deployment", "Northern Rivers Flood Response"],
-                    ["Role", "Crew Leader"],
-                    ["Start", "22 Mar 2026"],
-                    ["Agency", "QLD QFES"],
-                    ["Contingent", "CREW2"],
-                    ["Next milestone", "Rotation review 2 Apr"],
-                  ].map(([k, v], i) => (
-                    <div key={i}>
-                      <span style={{ fontSize: 10, color: T.g400 }}>{k}</span>
-                      <div style={{ fontWeight: 550, fontSize: 12 }}>{v}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {/* Previous/upcoming — compact */}
-              <div style={{ marginTop: 10, padding: "8px 10px", background: T.g50, borderRadius: 6, fontSize: 12, color: T.g500, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>No upcoming requests</span>
-                <span style={{ color: T.blue, fontWeight: 600, cursor: "pointer", fontSize: 11 }}>View history →</span>
-              </div>
-            </Card>
+
 
             {/* ── Zone C: My Deployment ── */}
             <Card style={{ marginTop: 16 }}>
@@ -855,17 +799,16 @@ function TeamMemberHome() {
             <Card>
               <SH right={<Chip color="orange">3 items</Chip>}>Required Actions</SH>
               {[
-                { icon: "⚠", text: "WWCC expires in 3 days", cta: "Update", urgent: true },
-                { icon: "📋", text: "Daily check-in due today", cta: "Submit", urgent: true },
-                { icon: "💰", text: "Claim returned — info needed", cta: "Review", urgent: false },
-                { icon: "📄", text: "Upload passport", cta: "Upload", urgent: false },
-                { icon: "✓", text: "Role evidence pending review", cta: null, urgent: false },
+                { text: "WWCC expires in 3 days", cta: "Update", urgent: true },
+                { text: "Daily check-in due today", cta: "Submit", urgent: true },
+                { text: "Claim returned — info needed", cta: "Review", urgent: false },
+                { text: "Upload passport", cta: "Upload", urgent: false },
+                { text: "Role evidence pending review", cta: null, urgent: false },
               ].map((a, i) => (
                 <div key={i} style={{
                   display: "flex", alignItems: "center", gap: 8, padding: "8px 0",
                   borderBottom: i < 4 ? `1px solid ${T.g50}` : "none",
                 }}>
-                  <span style={{ fontSize: 13, flexShrink: 0, width: 20, textAlign: "center" }}>{a.icon}</span>
                   <span style={{ flex: 1, fontSize: 12.5, fontWeight: a.urgent ? 600 : 450, color: a.urgent ? T.navy : T.g600 }}>{a.text}</span>
                   {a.cta && <span style={{ fontSize: 11, color: T.blue, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>{a.cta} →</span>}
                 </div>
@@ -913,23 +856,7 @@ function TeamMemberHome() {
               ))}
             </Card>
 
-            {/* ── Key Contacts ── */}
-            <Card style={{ marginTop: 16 }}>
-              <SH>Key Contacts</SH>
-              {[
-                { initials: "RK", name: "Rachel Kimura", role: "Deployment Manager", color: T.blue },
-                { initials: "MS", name: "Mark Sullivan", role: "AREP — Northern Rivers", color: T.teal },
-                { initials: "SP", name: "Sarah Patel", role: "QLD QFES Coordinator", color: T.coral },
-              ].map((c, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: i < 2 ? `1px solid ${T.g50}` : "none" }}>
-                  <Avatar initials={c.initials} color={c.color} size={26} />
-                  <div>
-                    <div style={{ fontSize: 12.5, fontWeight: 550 }}>{c.name}</div>
-                    <div style={{ fontSize: 10.5, color: T.g500 }}>{c.role}</div>
-                  </div>
-                </div>
-              ))}
-            </Card>
+
           </div>
         </div>
       </div>

@@ -569,9 +569,30 @@ function PersonalRecord({ tab, setTab, tabs }) {
     </div>
     <TabBar tabs={tabs} active={tab} onChange={setTab} />
 
-    {tab === "My Profile" && <Card title="Personal Details">
-      {[["Full Name", "Daniel Thornton"], ["Agency", "Queensland Fire & Emergency Services"], ["Jurisdiction", "QLD"], ["Primary Role", "Crew Leader"], ["System Access", "Team Member"], ["Deployment Appointment", "Crew Leader — Northern Rivers Flood Response"], ["Phone", "+61 4XX XXX XXX"], ["Email", "d.thornton@qfes.qld.gov.au"], ["Emergency Contact", "Jane Thornton (spouse)"]].map(([k, v], i) => <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", fontSize: 13, borderBottom: `1px solid ${T.g50}` }}><span style={{ color: T.g500 }}>{k}</span><span style={{ fontWeight: 550 }}>{v}</span></div>)}
-    </Card>}
+    {tab === "My Profile" && <>
+      <Card title="Personal Details">
+        {[["Full Name", "Daniel Thornton"], ["Agency", "Queensland Fire & Emergency Services"], ["Jurisdiction", "QLD"], ["Primary Role", "Crew Leader"], ["System Access", "Team Member"], ["Deployment Appointment", "Crew Leader — Northern Rivers Flood Response"], ["Phone", "+61 4XX XXX XXX"], ["Email", "d.thornton@qfes.qld.gov.au"], ["Emergency Contact", "Jane Thornton (spouse)"]].map(([k, v], i) => <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", fontSize: 13, borderBottom: `1px solid ${T.g50}` }}><span style={{ color: T.g500 }}>{k}</span><span style={{ fontWeight: 550 }}>{v}</span></div>)}
+      </Card>
+      <Card title="Key Contacts" style={{ marginTop: 16 }}>
+        {[
+          { initials: "RK", name: "Rachel Kimura", role: "Deployment Manager", color: T.blue },
+          { initials: "MS", name: "Mark Sullivan", role: "AREP — Northern Rivers", color: T.teal },
+          { initials: "SP", name: "Sarah Patel", role: "QLD QFES Coordinator", color: T.coral },
+        ].map((c, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < 2 ? `1px solid ${T.g100}` : "none" }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: "50%", background: c.color,
+              color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 12, fontWeight: 700, flexShrink: 0,
+            }}>{c.initials}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 550 }}>{c.name}</div>
+              <div style={{ fontSize: 11.5, color: T.g500 }}>{c.role}</div>
+            </div>
+          </div>
+        ))}
+      </Card>
+    </>}
 
     {tab === "My EOIs" && <>
       <div style={{ marginBottom: 16 }}>
