@@ -544,6 +544,49 @@ export function RequestWizard({ onClose }) {
           <Field label="Urgency"><Select value={form.urgency} onChange={e => setForm({ ...form, urgency: e.target.value })}><option value="">Select…</option><option>Immediate</option><option>Urgent</option><option>Planned</option><option>Non-Urgent</option></Select></Field>
           <Field label="Priority"><Select><option value="">Select…</option><option>P1 — Life Safety</option><option>P2 — Property Protection</option><option>P3 — Environmental</option><option>P4 — Planned Support</option></Select></Field>
           <Field label="Justification" span={2}><textarea placeholder="Describe why this request is needed…" style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.g300}`, borderRadius: 6, fontSize: 13, fontFamily: "inherit", minHeight: 80, resize: "vertical", boxSizing: "border-box" }} /></Field>
+
+          {/* Briefing Materials */}
+          <div style={{ gridColumn: "1 / -1", marginTop: 4 }}>
+            <div style={{ fontSize: 13, fontWeight: 650, marginBottom: 8 }}>Briefing Materials</div>
+            <div style={{ fontSize: 12, color: T.g500, marginBottom: 12 }}>Attach photos, briefing packs, videos, or maps that will be shown to team members when reviewing this request for EOI submission.</div>
+
+            {/* Upload zone */}
+            <div style={{
+              padding: "20px", border: `2px dashed ${T.g300}`, borderRadius: 10,
+              textAlign: "center", cursor: "pointer", marginBottom: 12,
+              background: T.g50, transition: "border-color .15s",
+            }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: T.blue, marginBottom: 4 }}>Drop files here or click to browse</div>
+              <div style={{ fontSize: 11.5, color: T.g400 }}>Supports PDF, JPG, PNG, MP4, MOV · Max 50 MB per file</div>
+            </div>
+
+            {/* Simulated already-attached files */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {[
+                { name: "Ops Briefing Pack.pdf", type: "PDF", size: "4.2 MB", color: T.orangeL, fg: "#c06e15" },
+                { name: "Aerial overview — fire perimeter.jpg", type: "Photo", size: "1.8 MB", color: T.blueL, fg: T.blue },
+                { name: "Base camp layout.jpg", type: "Photo", size: "2.1 MB", color: T.blueL, fg: T.blue },
+                { name: "Terrain briefing video.mp4", type: "Video", size: "18.4 MB", color: T.coralL, fg: T.coral },
+              ].map((f, i) => (
+                <div key={i} style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  padding: "8px 12px", background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8,
+                }}>
+                  <div style={{
+                    width: 32, height: 32, borderRadius: 6, background: f.color,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 9, fontWeight: 700, color: f.fg, flexShrink: 0,
+                  }}>{f.type}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 12.5, fontWeight: 550, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{f.name}</div>
+                    <div style={{ fontSize: 10.5, color: T.g400 }}>{f.size} · Uploaded just now</div>
+                  </div>
+                  <span style={{ fontSize: 11, color: T.coral, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>Remove</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 11, color: T.g400, marginTop: 8 }}>These materials will be visible to eligible team members when they review this request and submit an Expression of Interest.</div>
+          </div>
         </div>}
 
         {step === 3 && <div>

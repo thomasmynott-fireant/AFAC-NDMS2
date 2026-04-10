@@ -676,9 +676,23 @@ function TeamMemberHome({ deploymentOnly = false }) {
   const [eoiStep, setEoiStep] = useState(0); // 0=review, 1=confirm, 2=submitted
 
   const ELIGIBLE_REQUESTS = [
-    { id: "REQ-2026-014", title: "SA Bushfire Support — Kangaroo Island", type: "Interstate", state: "SA", roles: ["Crew Leader", "Strike Team Leader"], personnel: 24, closes: "15 Apr 2026", status: "Open", urgency: "high", deployment: "14-day rotation", briefing: "Bushfire suppression support across KI. Ground crews needed for containment and mop-up operations.", eligibility: ["Interstate Ready", "Crew Leader or Strike Team Leader", "Medical fitness current", "Code of Conduct signed"] },
-    { id: "REQ-2026-018", title: "VIC Storm Season — Gippsland", type: "Interstate", state: "VIC", roles: ["Crew Leader", "Storm Damage Operator"], personnel: 16, closes: "22 Apr 2026", status: "Open", urgency: "medium", deployment: "10-day rotation", briefing: "Storm damage assessment and clearance. Personnel with chainsaw certification preferred.", eligibility: ["Interstate Ready", "Crew Leader or Storm Damage Operator", "Medical fitness current"] },
-    { id: "REQ-2026-021", title: "NZ Earthquake Response — Christchurch", type: "International", state: "NZ", roles: ["Strike Team Leader"], personnel: 8, closes: "10 Apr 2026", status: "Open", urgency: "high", deployment: "21-day rotation", briefing: "USAR support for earthquake response. International readiness and passport required. Team will embed with NZ Fire and Emergency.", eligibility: ["International Ready", "Strike Team Leader", "Valid passport & visa", "Medical fitness current", "Code of Conduct signed"] },
+    { id: "REQ-2026-014", title: "SA Bushfire Support — Kangaroo Island", type: "Interstate", state: "SA", roles: ["Crew Leader", "Strike Team Leader"], personnel: 24, closes: "15 Apr 2026", status: "Open", urgency: "high", deployment: "14-day rotation", briefing: "Bushfire suppression support across KI. Ground crews needed for containment and mop-up operations. Terrain is rugged coastal bushland with limited vehicle access. Crews will operate in 12-hour shifts with overnight rest at base camp.", eligibility: ["Interstate Ready", "Crew Leader or Strike Team Leader", "Medical fitness current", "Code of Conduct signed"], attachments: [
+      { name: "KI Ops Briefing Pack.pdf", type: "document", size: "4.2 MB", uploaded: "8 Apr 2026", author: "NRSC Ops" },
+      { name: "Aerial overview — KI fire perimeter.jpg", type: "photo", size: "1.8 MB", uploaded: "8 Apr 2026", author: "SA CFS Air Ops" },
+      { name: "Base camp layout.jpg", type: "photo", size: "2.1 MB", uploaded: "7 Apr 2026", author: "Logistics" },
+      { name: "KI terrain briefing.mp4", type: "video", size: "18.4 MB", uploaded: "7 Apr 2026", author: "SA CFS Air Ops" },
+    ] },
+    { id: "REQ-2026-018", title: "VIC Storm Season — Gippsland", type: "Interstate", state: "VIC", roles: ["Crew Leader", "Storm Damage Operator"], personnel: 16, closes: "22 Apr 2026", status: "Open", urgency: "medium", deployment: "10-day rotation", briefing: "Storm damage assessment and clearance across the Gippsland region. Personnel with chainsaw certification preferred. Crews will be based at Traralgon staging area.", eligibility: ["Interstate Ready", "Crew Leader or Storm Damage Operator", "Medical fitness current"], attachments: [
+      { name: "Gippsland Storm Ops Brief.pdf", type: "document", size: "3.1 MB", uploaded: "9 Apr 2026", author: "NRSC Ops" },
+      { name: "Damage assessment map.jpg", type: "photo", size: "900 KB", uploaded: "9 Apr 2026", author: "VIC SES" },
+    ] },
+    { id: "REQ-2026-021", title: "NZ Earthquake Response — Christchurch", type: "International", state: "NZ", roles: ["Strike Team Leader"], personnel: 8, closes: "10 Apr 2026", status: "Open", urgency: "high", deployment: "21-day rotation", briefing: "USAR support for earthquake response. International readiness and passport required. Team will embed with NZ Fire and Emergency at the Christchurch EOC. Operating environment includes collapsed structures and aftershock risk.", eligibility: ["International Ready", "Strike Team Leader", "Valid passport & visa", "Medical fitness current", "Code of Conduct signed"], attachments: [
+      { name: "USAR Deployment Brief — NZ.pdf", type: "document", size: "5.6 MB", uploaded: "6 Apr 2026", author: "NRSC International" },
+      { name: "Christchurch EOC location map.jpg", type: "photo", size: "1.2 MB", uploaded: "6 Apr 2026", author: "NZ F&E" },
+      { name: "Aftershock risk — GeoNet summary.pdf", type: "document", size: "800 KB", uploaded: "6 Apr 2026", author: "GeoNet NZ" },
+      { name: "NZ deployment safety induction.mp4", type: "video", size: "24.1 MB", uploaded: "5 Apr 2026", author: "NRSC Safety" },
+      { name: "Christchurch damage overview.jpg", type: "photo", size: "3.4 MB", uploaded: "5 Apr 2026", author: "NZ F&E" },
+    ] },
   ];
 
   /* — Section header — */
@@ -1015,6 +1029,35 @@ function TeamMemberHome({ deploymentOnly = false }) {
                 ))}
                 <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 14 }}>Operational Briefing</div>
                 <div style={{ padding: "10px 12px", background: T.g50, borderRadius: 6, fontSize: 12.5, color: T.g600, lineHeight: 1.6, marginBottom: 14 }}>{eoiRequest.briefing}</div>
+
+                {/* Briefing Materials Gallery */}
+                {eoiRequest.attachments && eoiRequest.attachments.length > 0 && <>
+                  <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Briefing Materials</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 14 }}>
+                    {eoiRequest.attachments.map((att, ai) => {
+                      const typeConfig = { photo: { bg: T.blueL, fg: T.blue, label: "Photo" }, video: { bg: T.coralL, fg: T.coral, label: "Video" }, document: { bg: T.orangeL, fg: "#c06e15", label: "PDF" } }[att.type] || { bg: T.g100, fg: T.g600, label: "File" };
+                      return (
+                        <div key={ai} style={{
+                          display: "flex", alignItems: "center", gap: 10,
+                          padding: "8px 12px", background: "#fff", border: `1px solid ${T.g200}`,
+                          borderRadius: 8, cursor: "pointer", transition: "border-color .12s",
+                        }}>
+                          <div style={{
+                            width: 36, height: 36, borderRadius: 6, flexShrink: 0,
+                            background: att.type === "photo" ? "linear-gradient(135deg, #c8d8e8, #a4b8cc)" : att.type === "video" ? "linear-gradient(135deg, #2c2c2c, #4a4a4a)" : T.g100,
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontSize: att.type === "video" ? 14 : 10, color: att.type === "video" ? "#fff" : T.g500, fontWeight: 700,
+                          }}>{att.type === "video" ? "▶" : att.type === "photo" ? "" : "PDF"}</div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 12, fontWeight: 550, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{att.name}</div>
+                            <div style={{ fontSize: 10.5, color: T.g400 }}>{att.size} · {att.author} · {att.uploaded}</div>
+                          </div>
+                          <span style={{ padding: "2px 8px", borderRadius: 4, background: typeConfig.bg, color: typeConfig.fg, fontSize: 10, fontWeight: 600, flexShrink: 0 }}>{typeConfig.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>}
                 <Btn variant="primary" style={{ width: "100%", justifyContent: "center", marginTop: 6 }} onClick={() => setEoiStep(1)}>Continue to Eligibility Check →</Btn>
               </>}
 
