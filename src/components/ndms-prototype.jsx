@@ -479,7 +479,7 @@ function NRSCHome({ onOpenWizard, onOpenSitRep }) {
             { label: "Total Deployed", value: "101", sub: "Across 2 deployments", color: T.green },
             { label: "Active Contingents", value: "8", sub: "4 Northern Rivers + 4 Canada", color: T.blue },
             { label: "NAA Assets Active", value: "3", sub: "1 pending approval", color: T.navy },
-            { label: "Inbound Rotations", value: "14", sub: "Next 72h", color: T.orange },
+            { label: "EOIs to Review", value: "6", sub: "3 new this week", color: T.orange },
             { label: "Season Requests", value: "5", sub: "2 active, 1 pending", color: T.teal },
           ].map((m, i) => (
             <div key={i} style={{
@@ -672,6 +672,14 @@ function NRSCHome({ onOpenWizard, onOpenSitRep }) {
    ═══════════════════════════════════════════════════ */
 function TeamMemberHome({ deploymentOnly = false }) {
   const [drawer, setDrawer] = useState(null);
+  const [eoiRequest, setEoiRequest] = useState(null);
+  const [eoiStep, setEoiStep] = useState(0); // 0=review, 1=confirm, 2=submitted
+
+  const ELIGIBLE_REQUESTS = [
+    { id: "REQ-2026-014", title: "SA Bushfire Support — Kangaroo Island", type: "Interstate", state: "SA", roles: ["Crew Leader", "Strike Team Leader"], personnel: 24, closes: "15 Apr 2026", status: "Open", urgency: "high", deployment: "14-day rotation", briefing: "Bushfire suppression support across KI. Ground crews needed for containment and mop-up operations.", eligibility: ["Interstate Ready", "Crew Leader or Strike Team Leader", "Medical fitness current", "Code of Conduct signed"] },
+    { id: "REQ-2026-018", title: "VIC Storm Season — Gippsland", type: "Interstate", state: "VIC", roles: ["Crew Leader", "Storm Damage Operator"], personnel: 16, closes: "22 Apr 2026", status: "Open", urgency: "medium", deployment: "10-day rotation", briefing: "Storm damage assessment and clearance. Personnel with chainsaw certification preferred.", eligibility: ["Interstate Ready", "Crew Leader or Storm Damage Operator", "Medical fitness current"] },
+    { id: "REQ-2026-021", title: "NZ Earthquake Response — Christchurch", type: "International", state: "NZ", roles: ["Strike Team Leader"], personnel: 8, closes: "10 Apr 2026", status: "Open", urgency: "high", deployment: "21-day rotation", briefing: "USAR support for earthquake response. International readiness and passport required. Team will embed with NZ Fire and Emergency.", eligibility: ["International Ready", "Strike Team Leader", "Valid passport & visa", "Medical fitness current", "Code of Conduct signed"] },
+  ];
 
   /* — Section header — */
   const SH = ({ children, right }) => (
@@ -732,6 +740,35 @@ function TeamMemberHome({ deploymentOnly = false }) {
                   </div>
                 ))}
               </div>
+            </Card>
+
+            {/* ── Zone B: Available Requests (EOI) ── */}
+            <Card style={{ marginTop: 16 }}>
+              <SH right={<Chip color="blue">{ELIGIBLE_REQUESTS.length} eligible</Chip>}>Available Requests</SH>
+              <div style={{ fontSize: 11.5, color: T.g500, marginBottom: 12 }}>Deployment requests matching your roles and readiness. Submit an EOI to express interest.</div>
+              {ELIGIBLE_REQUESTS.map((req, i) => (
+                <div key={i} onClick={() => { setEoiRequest(req); setEoiStep(0); setDrawer("eoi"); }} style={{
+                  display: "flex", alignItems: "center", gap: 12, padding: "10px 12px",
+                  border: `1px solid ${T.g200}`, borderRadius: 8, marginBottom: 8, cursor: "pointer",
+                  borderLeft: `3px solid ${req.urgency === "high" ? T.coral : T.blue}`,
+                  transition: "background .12s",
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                      <span style={{ fontSize: 13, fontWeight: 600 }}>{req.title}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
+                      <Chip color={req.type === "International" ? "coral" : "blue"}>{req.type}</Chip>
+                      <span style={{ fontSize: 11, color: T.g500 }}>{req.personnel} personnel · {req.deployment}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: T.g400, marginTop: 4 }}>Closes {req.closes} · Matching roles: {req.roles.join(", ")}</div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
+                    <Chip color={req.urgency === "high" ? "orange" : "teal"}>{req.urgency === "high" ? "Urgent" : "Standard"}</Chip>
+                    <span style={{ fontSize: 11, color: T.blue, fontWeight: 600 }}>Submit EOI →</span>
+                  </div>
+                </div>
+              ))}
             </Card>
             </>}
 
@@ -873,6 +910,7 @@ function TeamMemberHome({ deploymentOnly = false }) {
               {drawer === "readiness" && "My Readiness"}
               {drawer === "request" && "Request Details"}
               {drawer === "deployment" && "Deployment Details"}
+              {drawer === "eoi" && (eoiStep === 2 ? "EOI Submitted" : "Submit Expression of Interest")}
             </span>
             <span onClick={() => setDrawer(null)} style={{ cursor: "pointer", color: T.g400, fontSize: 20, lineHeight: 1 }}>×</span>
           </div>
@@ -945,6 +983,108 @@ function TeamMemberHome({ deploymentOnly = false }) {
                   <Chip color={d.color}>{d.status}</Chip>
                 </div>
               ))}
+            </>}
+
+            {/* ─ EOI SUBMISSION DRAWER ─ */}
+            {drawer === "eoi" && eoiRequest && <>
+              {eoiStep === 0 && <>
+                {/* Step 1: Review request details */}
+                <div style={{ padding: "10px 14px", background: T.blueL, borderRadius: 8, marginBottom: 14, fontSize: 12, color: T.blue, fontWeight: 550 }}>
+                  Step 1 of 3 — Review the request details below before proceeding.
+                </div>
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 13, fontWeight: 700 }}>{eoiRequest.id}</span>
+                    <Chip color={eoiRequest.type === "International" ? "coral" : "blue"}>{eoiRequest.type}</Chip>
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>{eoiRequest.title}</div>
+                  <Chip color={eoiRequest.urgency === "high" ? "orange" : "teal"}>{eoiRequest.urgency === "high" ? "Urgent" : "Standard"}</Chip>
+                </div>
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Request Details</div>
+                {[
+                  ["Requesting State", eoiRequest.state],
+                  ["Personnel Required", `${eoiRequest.personnel} personnel`],
+                  ["Eligible Roles", eoiRequest.roles.join(", ")],
+                  ["Deployment Length", eoiRequest.deployment],
+                  ["EOI Closes", eoiRequest.closes],
+                ].map(([k, v], i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: `1px solid ${T.g50}`, fontSize: 12.5 }}>
+                    <span style={{ color: T.g500 }}>{k}</span>
+                    <span style={{ fontWeight: 550 }}>{v}</span>
+                  </div>
+                ))}
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 14 }}>Operational Briefing</div>
+                <div style={{ padding: "10px 12px", background: T.g50, borderRadius: 6, fontSize: 12.5, color: T.g600, lineHeight: 1.6, marginBottom: 14 }}>{eoiRequest.briefing}</div>
+                <Btn variant="primary" style={{ width: "100%", justifyContent: "center", marginTop: 6 }} onClick={() => setEoiStep(1)}>Continue to Eligibility Check →</Btn>
+              </>}
+
+              {eoiStep === 1 && <>
+                {/* Step 2: Confirm eligibility */}
+                <div style={{ padding: "10px 14px", background: T.blueL, borderRadius: 8, marginBottom: 14, fontSize: 12, color: T.blue, fontWeight: 550 }}>
+                  Step 2 of 3 — Confirm you meet the eligibility requirements.
+                </div>
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Eligibility Requirements</div>
+                {eoiRequest.eligibility.map((req, i) => {
+                  const met = !req.includes("International") || true; // simulated
+                  return (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: `1px solid ${T.g50}` }}>
+                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: met ? T.greenL : T.orangeL, color: met ? T.green : T.orange, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>{met ? "✓" : "!"}</div>
+                      <span style={{ fontSize: 12.5, fontWeight: 500 }}>{req}</span>
+                    </div>
+                  );
+                })}
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 16 }}>Preferred Role</div>
+                <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+                  {eoiRequest.roles.map(r => (
+                    <div key={r} style={{ padding: "8px 14px", border: `2px solid ${T.blue}`, borderRadius: 6, fontSize: 12, fontWeight: 600, color: T.blue, background: T.blueL, cursor: "pointer" }}>{r}</div>
+                  ))}
+                </div>
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Availability Dates</div>
+                <div style={{ padding: "10px 14px", background: T.g50, border: `1px solid ${T.g200}`, borderRadius: 8, fontSize: 13, color: T.g600, marginBottom: 14 }}>Available from earliest deployment date</div>
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Notes to Reviewer (optional)</div>
+                <div style={{ padding: "10px 14px", background: "#fff", border: `1px solid ${T.g200}`, borderRadius: 8, fontSize: 12.5, color: T.g400, minHeight: 50, marginBottom: 16 }}>Add any additional information…</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <Btn variant="secondary" style={{ flex: 1, justifyContent: "center" }} onClick={() => setEoiStep(0)}>← Back</Btn>
+                  <Btn variant="primary" style={{ flex: 2, justifyContent: "center" }} onClick={() => setEoiStep(2)}>Submit EOI →</Btn>
+                </div>
+                <div style={{ marginTop: 10, padding: "8px 12px", background: T.g50, borderRadius: 6, fontSize: 11, color: T.g500, textAlign: "center" }}>Your EOI will be sent to your Agency for endorsement, then to NRSC Operations for processing.</div>
+              </>}
+
+              {eoiStep === 2 && <>
+                {/* Step 3: Submitted confirmation */}
+                <div style={{ textAlign: "center", padding: "20px 0" }}>
+                  <div style={{ width: 60, height: 60, borderRadius: "50%", background: T.greenL, color: T.green, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, margin: "0 auto 14px" }}>✓</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>EOI Submitted</div>
+                  <div style={{ fontSize: 13, color: T.g500, marginBottom: 16 }}>Your Expression of Interest for <strong>{eoiRequest.title}</strong> has been submitted successfully.</div>
+                </div>
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>What Happens Next</div>
+                {[
+                  { step: "1", text: "Agency review", desc: "QLD QFES will review and endorse your EOI", color: T.blue },
+                  { step: "2", text: "NRSC processing", desc: "NRSC Operations will assess against request requirements", color: T.teal },
+                  { step: "3", text: "Notification", desc: "You will be notified of the outcome via the platform", color: T.green },
+                ].map((s, i) => (
+                  <div key={i} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: `1px solid ${T.g50}` }}>
+                    <div style={{ width: 24, height: 24, borderRadius: "50%", background: s.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{s.step}</div>
+                    <div>
+                      <div style={{ fontSize: 12.5, fontWeight: 600 }}>{s.text}</div>
+                      <div style={{ fontSize: 11.5, color: T.g500 }}>{s.desc}</div>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8, marginTop: 16 }}>Submission Summary</div>
+                {[
+                  ["Request", eoiRequest.id],
+                  ["Role", eoiRequest.roles[0]],
+                  ["Submitted", "Just now"],
+                  ["Status", "Pending Agency Review"],
+                ].map(([k, v], i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${T.g50}`, fontSize: 12 }}>
+                    <span style={{ color: T.g500 }}>{k}</span>
+                    <span style={{ fontWeight: 550 }}>{v}</span>
+                  </div>
+                ))}
+                <Btn variant="primary" style={{ width: "100%", justifyContent: "center", marginTop: 16 }} onClick={() => { setDrawer(null); setEoiRequest(null); setEoiStep(0); }}>Done — Return to Home</Btn>
+              </>}
             </>}
 
             {/* ─ REQUEST DRAWER ─ */}
@@ -1124,7 +1264,7 @@ function AgencyHome() {
           { val: "142", label: "Registered Personnel", color: T.navy },
           { val: "118", label: "Interstate Ready", color: T.green },
           { val: "34", label: "Currently Deployed", color: T.blue },
-          { val: "5", label: "Pending Approvals", color: T.orange },
+          { val: "3", label: "EOIs to Review", color: T.orange },
           { val: "8", label: "Claims to Review", color: T.coral },
         ].map((t, i) => (
           <div key={i} style={{
@@ -1152,7 +1292,7 @@ function AgencyHome() {
           {/* Pending Approvals */}
           <Card title="Pending Approvals" right={<Chip color="orange">5 awaiting</Chip>}>
             {[
-              { initials: "DT", color: T.blue, name: "Daniel Thornton", detail: "EOI submitted · Crew Leader · 3 documents pending" },
+              { initials: "DT", color: T.blue, name: "Daniel Thornton", detail: "New EOI submitted · SA Bushfire Support — Kangaroo Island · Crew Leader" },
               { initials: "KW", color: T.teal, name: "Karen Wong", detail: "Role change · Storm Damage Operator → Crew Leader" },
               { initials: "JM", color: T.orange, name: "James McAllister", detail: "Medical fitness resubmission · Updated certificate" },
               { initials: "AN", color: T.green, name: "Alice Nguyễn", detail: "International readiness · Passport & eTA uploaded" },
