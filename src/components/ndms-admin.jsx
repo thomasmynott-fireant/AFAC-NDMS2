@@ -25,6 +25,7 @@ export default function AdminWorkspace(){
         {id:"roles",label:"Role Profiles"},
         {id:"agencies",label:"Agency Scoping"},
         {id:"audit",label:"Audit Log",count:142},
+        {id:"reports",label:"Report Builder"},
         {id:"integrations",label:"Integrations"},
         {id:"system",label:"System Config"},
       ]} active={tab} onChange={setTab}/>
@@ -32,6 +33,7 @@ export default function AdminWorkspace(){
       {tab==="roles"&&<RoleProfiles/>}
       {tab==="agencies"&&<AgencyScoping/>}
       {tab==="audit"&&<AuditLog/>}
+      {tab==="reports"&&<ReportBuilder/>}
       {tab==="integrations"&&<Integrations/>}
       {tab==="system"&&<SystemConfig/>}
     </div>
@@ -189,3 +191,103 @@ function SystemConfig(){
     </div>
   </div>;
 }
+
+function ReportBuilder(){
+  const fieldGroups=[
+    {group:"Personnel",fields:["Full Name","Agency","State","Role","Readiness Status","Deployment Status","Qualification","Expiry Date","Contact","Emergency Contact"]},
+    {group:"Deployments",fields:["Deployment Name","Request ID","Status","Start Date","End Date","Location","Personnel Count","Jurisdiction","Type"]},
+    {group:"Financial",fields:["Claim ID","Claimant","Category","Amount","Status","Deployment","Submit Date","Review Date"]},
+    {group:"EOI",fields:["EOI ID","Team Member","Request","Role Applied","Submit Date","Agency Decision","NRSC Decision"]},
+  ];
+  const selectedFields=["Full Name","Agency","Role","Readiness Status","Deployment Status"];
+  const selectedFilters=[
+    {field:"State",operator:"equals",value:"QLD"},
+    {field:"Readiness Status",operator:"in",value:"Interstate Ready, International Ready"},
+  ];
+  const previewData=[
+    ["Daniel Thornton","QLD QFES","Crew Leader","Interstate Ready","Deployed"],
+    ["Sarah Chen","QLD QFES","Strike Team Leader","Interstate Ready","Available"],
+    ["Mark O'Brien","QLD QFES","Crew Leader","International Ready","Available"],
+    ["Lisa Park","QLD QFES","Storm Damage Operator","Interstate Ready","Available"],
+  ];
+
+  return<div style={{display:"grid",gridTemplateColumns:"280px 1fr",gap:20}}>
+    {/* Left — Config */}
+    <div>
+      <Card title="Data Source" s={{marginBottom:14}}>
+        {["Personnel Registry","Deployment History","Financial Claims","EOI Submissions","Audit Log"].map((ds,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:i<4?`1px solid ${T.g100}`:"none",cursor:"pointer"}}>
+            <div style={{width:16,height:16,borderRadius:4,border:`2px solid ${i===0?T.blue:T.g300}`,background:i===0?T.blue:"transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
+              {i===0&&<span style={{color:"#fff",fontSize:10,fontWeight:800}}>✓</span>}
+            </div>
+            <span style={{fontSize:12.5,fontWeight:i===0?600:400,color:i===0?T.navy:T.g600}}>{ds}</span>
+          </div>
+        ))}
+      </Card>
+
+      <Card title="Output Format" s={{marginBottom:14}}>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+          {[{label:"Excel (.xlsx)",selected:true},{label:"PDF",selected:false},{label:"CSV",selected:false},{label:"On-screen",selected:false}].map((f,i)=>(
+            <div key={i} style={{padding:"8px 10px",borderRadius:6,border:`2px solid ${f.selected?T.blue:T.g200}`,background:f.selected?T.blueL:"#fff",textAlign:"center",cursor:"pointer"}}>
+              <div style={{fontSize:11.5,fontWeight:f.selected?650:500,color:f.selected?T.blue:T.g600}}>{f.label}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <div style={{display:"flex",gap:8}}>
+        <Btn v="primary" s={{flex:1,justifyContent:"center"}}>Run Report</Btn>
+        <Btn v="secondary">Save</Btn>
+      </div>
+    </div>
+
+    {/* Right — Builder */}
+    <div>
+      <Card title="Select Fields" s={{marginBottom:14}}>
+        <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
+          {fieldGroups.map((fg,gi)=>(
+            <div key={gi} style={{flex:"1 1 200px",minWidth:180}}>
+              <div style={{fontSize:10.5,fontWeight:600,color:T.g400,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>{fg.group}</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
+                {fg.fields.map((f,fi)=>{
+                  const sel=selectedFields.includes(f);
+                  return<span key={fi} onClick={()=>{}} style={{padding:"3px 10px",borderRadius:4,fontSize:11,fontWeight:sel?600:400,cursor:"pointer",background:sel?T.blueL:"#fff",color:sel?T.blue:T.g600,border:`1px solid ${sel?T.blue+"40":T.g200}`}}>{f}</span>;
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card title={<span>Filters <Chip color="blue">{selectedFilters.length} active</Chip></span>} s={{marginBottom:14}}>
+        {selectedFilters.map((fl,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:i<selectedFilters.length-1?`1px solid ${T.g100}`:"none"}}>
+            <span style={{padding:"3px 10px",background:T.g100,borderRadius:4,fontSize:11,fontWeight:600}}>{fl.field}</span>
+            <span style={{fontSize:11,color:T.g500}}>{fl.operator}</span>
+            <span style={{padding:"3px 10px",background:T.blueL,borderRadius:4,fontSize:11,fontWeight:550,color:T.blue}}>{fl.value}</span>
+            <span style={{marginLeft:"auto",fontSize:11,color:T.coral,fontWeight:600,cursor:"pointer"}}>Remove</span>
+          </div>
+        ))}
+        <Btn v="secondary" s={{marginTop:8,fontSize:11,padding:"4px 12px"}}>+ Add Filter</Btn>
+      </Card>
+
+      <Card title={<span>Preview <Chip color="green">4 records</Chip></span>}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr>{selectedFields.map(f=><TH key={f}>{f}</TH>)}</tr></thead>
+          <tbody>{previewData.map((row,ri)=><tr key={ri}>{row.map((cell,ci)=>(
+            <TD key={ci} fw={ci===0?600:400}>
+              {ci===3?<Chip color={cell.includes("International")?"teal":"blue"}>{cell}</Chip>:
+               ci===4?<Chip color={cell==="Deployed"?"coral":cell==="Available"?"green":"gray"}>{cell}</Chip>:
+               cell}
+            </TD>
+          ))}</tr>)}</tbody>
+        </table>
+        <div style={{marginTop:10,display:"flex",justifyContent:"space-between",fontSize:11.5,color:T.g500}}>
+          <span>Showing 4 of 186 matching records</span>
+          <span>Report generated: {new Date().toLocaleDateString("en-AU")} at {new Date().toLocaleTimeString("en-AU",{hour:"2-digit",minute:"2-digit"})}</span>
+        </div>
+      </Card>
+    </div>
+  </div>;
+}
+

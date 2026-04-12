@@ -328,6 +328,31 @@ function DailyCheckIn(){
       <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Notes (optional)</div>
       <div style={{padding:"10px 14px",background:"#fff",border:`1px solid ${T.g200}`,borderRadius:10,fontSize:12.5,color:T.g400,minHeight:50,marginBottom:16}}>Add any notes for your AREP or DM…</div>
 
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Work Hours</div>
+      <div style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:14,marginBottom:14}}>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+          <div>
+            <div style={{fontSize:11,color:T.g500,marginBottom:4}}>Shift start</div>
+            <div style={{padding:"10px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:8,fontSize:13,fontWeight:600,textAlign:"center"}}>06:00</div>
+          </div>
+          <div>
+            <div style={{fontSize:11,color:T.g500,marginBottom:4}}>Shift end</div>
+            <div style={{padding:"10px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:8,fontSize:13,fontWeight:600,textAlign:"center"}}>18:00</div>
+          </div>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderTop:`1px solid ${T.g100}`}}>
+          <span style={{fontSize:12,color:T.g600}}>Total hours today</span>
+          <span style={{fontSize:14,fontWeight:700,color:T.blue}}>12.0 hrs</span>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderTop:`1px solid ${T.g100}`}}>
+          <span style={{fontSize:12,color:T.g600}}>Consecutive work days</span>
+          <span style={{fontSize:14,fontWeight:700,color:T.orange}}>5 days</span>
+        </div>
+        <div style={{padding:"8px 10px",background:T.orangeL,borderRadius:6,marginTop:4}}>
+          <div style={{fontSize:11,fontWeight:600,color:"#c06e15"}}>Fatigue threshold reached — your AREP has been notified</div>
+        </div>
+      </div>
+
       <div style={{padding:14,background:T.blue,borderRadius:12,textAlign:"center",cursor:"pointer"}}>
         <div style={{color:"#fff",fontSize:15,fontWeight:700}}>Submit Check-In</div>
         <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>Visible to your AREP and Deployment Manager</div>
