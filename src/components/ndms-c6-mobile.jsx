@@ -4,19 +4,34 @@ const T={blue:"#0E78C9",blueL:"#E8F4FC",teal:"#1FB6C9",tealL:"#E6F8FA",coral:"#E
 
 const Chip=({color,children,s})=>{const c={blue:{bg:T.blueL,fg:T.blue},teal:{bg:T.tealL,fg:"#148895"},coral:{bg:T.coralL,fg:T.coral},orange:{bg:T.orangeL,fg:"#c06e15"},green:{bg:T.greenL,fg:"#5a8a1f"},gray:{bg:T.g100,fg:T.g600}}[color]||{bg:T.g100,fg:T.g600};return<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"2px 10px",borderRadius:20,fontSize:11,fontWeight:550,background:c.bg,color:c.fg,...s}}><span style={{width:5,height:5,borderRadius:"50%",background:c.fg}}/>{children}</span>};
 
-const SCREENS=[
+const TM_SCREENS=[
   {id:"home",label:"Home"},
   {id:"checkin",label:"Daily Check-In"},
   {id:"actions",label:"Field Actions"},
   {id:"iii",label:"I/I/I Report"},
   {id:"claims",label:"My Claims"},
 ];
+const AREP_SCREENS=[
+  {id:"arep-dash",label:"Dashboard"},
+  {id:"arep-team",label:"My Team"},
+  {id:"arep-sitrep",label:"SitReps"},
+  {id:"arep-rolechange",label:"Role Changes"},
+  {id:"arep-rfa",label:"Requests for Assist."},
+];
 
 export default function C6Mobile({onBackToDesktop}){
   const[screen,setScreen]=useState("home");
+  const[mobileRole,setMobileRole]=useState("tm"); // "tm" or "arep"
   const[m,setM]=useState(false);
   useEffect(()=>setM(true),[]);
-  const R={"home":<MobileHome/>,"checkin":<DailyCheckIn/>,"actions":<FieldActions/>,"iii":<IIISelfReport/>,"claims":<MobileClaims/>};
+
+  const SCREENS=mobileRole==="tm"?TM_SCREENS:AREP_SCREENS;
+
+  const tmRoutes={"home":<MobileHome/>,"checkin":<DailyCheckIn/>,"actions":<FieldActions/>,"iii":<IIISelfReport/>,"claims":<MobileClaims/>};
+  const arepRoutes={"arep-dash":<AREPDashboard/>,"arep-team":<AREPMyTeam/>,"arep-sitrep":<AREPSitReps/>,"arep-rolechange":<AREPRoleChanges/>,"arep-rfa":<AREPRFA/>};
+  const R=mobileRole==="tm"?tmRoutes:arepRoutes;
+
+  const handleRoleSwitch=(r)=>{setMobileRole(r);setScreen(r==="tm"?"home":"arep-dash");};
 
   return(
     <div style={{display:"flex",height:"100vh",fontFamily:"'DM Sans',-apple-system,sans-serif",color:T.navy,fontSize:14,lineHeight:1.5,WebkitFontSmoothing:"antialiased",opacity:m?1:0,transition:"opacity .3s",background:T.g100,alignItems:"center",justifyContent:"center",gap:32}}>
@@ -29,10 +44,21 @@ export default function C6Mobile({onBackToDesktop}){
         {SCREENS.map(s=><div key={s.id} onClick={()=>setScreen(s.id)} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:8,cursor:"pointer",background:screen===s.id?"#fff":"transparent",border:screen===s.id?`1px solid ${T.g200}`:"1px solid transparent",marginBottom:4,fontWeight:screen===s.id?650:450,color:screen===s.id?T.navy:T.g600,fontSize:13,boxShadow:screen===s.id?"0 1px 3px rgba(0,0,0,.06)":"none"}}>
           {s.label}
         </div>)}
-        <div style={{marginTop:20,padding:14,background:"#fff",borderRadius:8,border:`1px solid ${T.g200}`}}>
+
+        {/* Role switcher */}
+        <div style={{marginTop:16,padding:10,background:"#fff",borderRadius:8,border:`1px solid ${T.g200}`}}>
+          <div style={{fontSize:10,color:T.g400,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>Switch Role</div>
+          <div style={{display:"flex",gap:4}}>
+            {[{id:"tm",label:"Team Member"},{id:"arep",label:"AREP / Supervisor"}].map(r=>(
+              <div key={r.id} onClick={()=>handleRoleSwitch(r.id)} style={{flex:1,padding:"6px 0",borderRadius:6,textAlign:"center",cursor:"pointer",fontSize:10.5,fontWeight:mobileRole===r.id?650:450,background:mobileRole===r.id?T.blueL:"transparent",color:mobileRole===r.id?T.blue:T.g500,border:`1px solid ${mobileRole===r.id?T.blue+"30":"transparent"}`}}>{r.label}</div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{marginTop:10,padding:14,background:"#fff",borderRadius:8,border:`1px solid ${T.g200}`}}>
           <div style={{fontSize:11,color:T.g400,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:6}}>Viewing as</div>
-          <div style={{fontSize:13,fontWeight:600}}>Daniel Thornton</div>
-          <div style={{fontSize:11.5,color:T.g500}}>Team Member · QLD QFES</div>
+          <div style={{fontSize:13,fontWeight:600}}>{mobileRole==="tm"?"Daniel Thornton":"Mark Sullivan"}</div>
+          <div style={{fontSize:11.5,color:T.g500}}>{mobileRole==="tm"?"Team Member · QLD QFES":"AREP · Northern Rivers"}</div>
         </div>
         {onBackToDesktop && <button onClick={onBackToDesktop} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,width:"100%",marginTop:12,padding:"9px 14px",background:T.navy,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Back to Desktop</button>}
       </div>
@@ -429,6 +455,245 @@ function IIISelfReport(){
       <div style={{marginTop:12,padding:"10px 14px",background:T.g100,borderRadius:8,fontSize:11,color:T.g500,textAlign:"center"}}>
         For emergencies call 000. This form is for post-event recording only.
       </div>
+    </div>
+  </div>;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AREP / SUPERVISOR MOBILE SCREENS
+   ═══════════════════════════════════════════════════════════ */
+
+const TEAM_MEMBERS=[
+  {name:"Daniel Thornton",init:"DT",role:"Crew Leader",agency:"QLD QFES",status:"Working",hours:"12.0",consec:5,lastContact:"30 Mar 07:45",welfare:"Good",c:T.blue},
+  {name:"Sarah Chen",init:"SC",role:"Strike Team Leader",agency:"QLD QFES",status:"Working",hours:"10.5",consec:4,lastContact:"30 Mar 08:00",welfare:"Good",c:T.teal},
+  {name:"James Morton",init:"JM",role:"Crew Leader",agency:"SA CFS",status:"Rest Day",hours:"0",consec:0,lastContact:"30 Mar 09:15",welfare:"Good",c:T.green},
+  {name:"Kira Wong",init:"KW",role:"Storm Damage Operator",agency:"VIC CFA",status:"Working",hours:"11.0",consec:5,lastContact:"29 Mar 18:30",welfare:"Fatigued",c:T.orange},
+  {name:"Ben Harper",init:"BH",role:"Management Support",agency:"NSW RFS",status:"Working",hours:"8.0",consec:3,lastContact:"30 Mar 10:00",welfare:"Good",c:T.coral},
+  {name:"Priya Nandan",init:"PN",role:"Crew Leader",agency:"WA DFES",status:"Travel Day",hours:"0",consec:0,lastContact:"30 Mar 06:30",welfare:"Good",c:"#6C5CE7"},
+];
+
+/* ── AREP Dashboard (6.24, 6.25, 6.27, 6.28) ── */
+function AREPDashboard(){
+  return<div>
+    <div style={{background:"linear-gradient(135deg,#1a3a5c,#23344A)",padding:"16px 20px 20px"}}>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Operations Dashboard</div>
+      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>Northern Rivers Flood Response · Day 8</div>
+    </div>
+    <div style={{padding:16}}>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
+        {[
+          {label:"Team Members",value:"6",c:T.blue},
+          {label:"Checked In Today",value:"4",c:T.green},
+          {label:"Welfare Flags",value:"1",c:T.coral},
+          {label:"Open Reports",value:"2",c:T.orange},
+        ].map((k,i)=><div key={i} style={{padding:"12px 14px",background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`}}>
+          <div style={{fontSize:10.5,color:T.g500,fontWeight:550,textTransform:"uppercase",letterSpacing:.3}}>{k.label}</div>
+          <div style={{fontSize:22,fontWeight:700,color:k.c,marginTop:2}}>{k.value}</div>
+        </div>)}
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Team Status</div>
+      <div style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,marginBottom:14}}>
+        {TEAM_MEMBERS.map((tm,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderBottom:i<TEAM_MEMBERS.length-1?`1px solid ${T.g100}`:"none"}}>
+          <div style={{width:32,height:32,borderRadius:"50%",background:tm.c,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,flexShrink:0}}>{tm.init}</div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:12.5,fontWeight:600}}>{tm.name}</div>
+            <div style={{fontSize:10.5,color:T.g500}}>{tm.role}</div>
+          </div>
+          <Chip color={tm.status==="Working"?"blue":tm.status==="Rest Day"?"teal":"orange"} s={{fontSize:10}}>{tm.status}</Chip>
+        </div>)}
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Today's Activity</div>
+      <div style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:14}}>
+        {[
+          {time:"10:35",text:"Welfare flag raised — K. Wong (fatigue threshold)",c:T.coral},
+          {time:"09:15",text:"Check-in received — J. Morton (Rest Day)",c:T.teal},
+          {time:"08:00",text:"Check-in received — S. Chen (Working)",c:T.blue},
+          {time:"07:45",text:"Check-in received — D. Thornton (Working, 12hrs)",c:T.blue},
+          {time:"06:30",text:"P. Nandan departed for Lismore (Travel Day)",c:T.orange},
+        ].map((a,i)=><div key={i} style={{display:"flex",gap:8,padding:"6px 0",borderBottom:i<4?`1px solid ${T.g100}`:"none"}}>
+          <span style={{fontSize:10.5,color:T.g400,fontWeight:600,width:38,flexShrink:0}}>{a.time}</span>
+          <div style={{width:6,height:6,borderRadius:"50%",background:a.c,marginTop:5,flexShrink:0}}/>
+          <span style={{fontSize:11.5,color:T.g600}}>{a.text}</span>
+        </div>)}
+      </div>
+    </div>
+  </div>;
+}
+
+/* ── AREP My Team (6.9, 6.14, 6.20, 6.22, 6.23) ── */
+function AREPMyTeam(){
+  return<div>
+    <div style={{background:T.navy,padding:"16px 20px 20px"}}>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>My Team</div>
+      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>6 members · Northern Rivers Flood Response</div>
+    </div>
+    <div style={{padding:16}}>
+      {TEAM_MEMBERS.map((tm,i)=><div key={i} style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:14,marginBottom:10}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+          <div style={{width:36,height:36,borderRadius:"50%",background:tm.c,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,flexShrink:0}}>{tm.init}</div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:13,fontWeight:650}}>{tm.name}</div>
+            <div style={{fontSize:11,color:T.g500}}>{tm.role} · {tm.agency}</div>
+          </div>
+          {tm.welfare==="Fatigued"&&<Chip color="coral" s={{fontSize:9}}>Fatigued</Chip>}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6}}>
+          {[
+            {label:"Status",value:tm.status,c:tm.status==="Working"?T.blue:T.teal},
+            {label:"Hours today",value:tm.hours==="0"?"—":`${tm.hours} hrs`,c:parseFloat(tm.hours)>10?T.coral:T.navy},
+            {label:"Consec. days",value:tm.consec===0?"—":tm.consec,c:tm.consec>=5?T.coral:T.navy},
+          ].map((f,fi)=><div key={fi} style={{padding:"6px 8px",background:T.g50,borderRadius:6}}>
+            <div style={{fontSize:9.5,color:T.g400,textTransform:"uppercase",letterSpacing:.3}}>{f.label}</div>
+            <div style={{fontSize:12,fontWeight:650,color:f.c,marginTop:1}}>{f.value}</div>
+          </div>)}
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8,paddingTop:8,borderTop:`1px solid ${T.g100}`}}>
+          <span style={{fontSize:10.5,color:T.g400}}>Last contact: {tm.lastContact}</span>
+          <span style={{fontSize:11,fontWeight:600,color:T.blue,cursor:"pointer"}}>Log Contact</span>
+        </div>
+      </div>)}
+    </div>
+  </div>;
+}
+
+/* ── AREP SitReps (6.29, 6.31, 6.32) ── */
+function AREPSitReps(){
+  return<div>
+    <div style={{background:T.navy,padding:"16px 20px 20px"}}>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Situation Reports</div>
+      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>Create, review, and forward SitReps</div>
+    </div>
+    <div style={{padding:16}}>
+      <div style={{padding:14,background:T.blue,borderRadius:12,textAlign:"center",cursor:"pointer",marginBottom:16}}>
+        <div style={{color:"#fff",fontSize:14,fontWeight:700}}>+ New SitRep</div>
+        <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>Create and submit a new situation report</div>
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Draft SitRep</div>
+      <div style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:14,marginBottom:14}}>
+        <div style={{marginBottom:10}}>
+          <div style={{fontSize:11,color:T.g500,marginBottom:4}}>Subject</div>
+          <div style={{padding:"8px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:6,fontSize:12.5}}>Northern Rivers Ops — Day 8 Update</div>
+        </div>
+        <div style={{marginBottom:10}}>
+          <div style={{fontSize:11,color:T.g500,marginBottom:4}}>Summary</div>
+          <div style={{padding:"8px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:6,fontSize:12,minHeight:60,lineHeight:1.6,color:T.g600}}>
+            Ground crews completed containment on Sector 3. One welfare flag (fatigue) — K. Wong stood down for rest. P. Nandan arriving today as rotation replacement. Weather forecast: improving conditions next 48 hrs.
+          </div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
+          <div><div style={{fontSize:11,color:T.g500,marginBottom:4}}>Personnel on ground</div><div style={{padding:"8px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:6,fontSize:12.5,fontWeight:600}}>5 active</div></div>
+          <div><div style={{fontSize:11,color:T.g500,marginBottom:4}}>Incidents (24hr)</div><div style={{padding:"8px 12px",background:T.g50,border:`1px solid ${T.g200}`,borderRadius:6,fontSize:12.5,fontWeight:600}}>0</div></div>
+        </div>
+        <div style={{display:"flex",gap:8}}>
+          <div style={{flex:1,padding:"10px",background:T.blue,borderRadius:8,textAlign:"center",color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer"}}>Submit SitRep</div>
+          <div style={{padding:"10px 16px",background:"#fff",border:`1px solid ${T.g300}`,borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer"}}>Save Draft</div>
+        </div>
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Recent SitReps</div>
+      {[
+        {id:"SITREP-009",title:"Day 7 — Sector 2 cleared",time:"29 Mar 18:00",status:"Submitted"},
+        {id:"SITREP-008",title:"Day 6 — Weather delay",time:"28 Mar 17:30",status:"Forwarded to NRSC"},
+        {id:"SITREP-007",title:"Day 5 — Rotation R1 complete",time:"27 Mar 18:00",status:"Forwarded to NRSC"},
+      ].map((sr,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"#fff",borderRadius:8,border:`1px solid ${T.g200}`,marginBottom:6}}>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{fontSize:12,fontWeight:600}}>{sr.title}</div>
+          <div style={{fontSize:10.5,color:T.g400}}>{sr.id} · {sr.time}</div>
+        </div>
+        <Chip color={sr.status.includes("Forward")?"green":"blue"} s={{fontSize:9}}>{sr.status}</Chip>
+      </div>)}
+    </div>
+  </div>;
+}
+
+/* ── AREP Role Changes (6.15, 6.16, 6.17, 6.18) ── */
+function AREPRoleChanges(){
+  return<div>
+    <div style={{background:T.navy,padding:"16px 20px 20px"}}>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Role Change Requests</div>
+      <div style={{color:"rgba(255,255,255,.5)",fontSize:12,marginTop:2}}>Submit and review field role changes</div>
+    </div>
+    <div style={{padding:16}}>
+      <div style={{padding:14,background:T.blue,borderRadius:12,textAlign:"center",cursor:"pointer",marginBottom:16}}>
+        <div style={{color:"#fff",fontSize:14,fontWeight:700}}>+ New Role Change Request</div>
+        <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>Request a role change for a team member</div>
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Pending Requests</div>
+      {[
+        {member:"Kira Wong",from:"Storm Damage Operator",to:"Crew Leader",reason:"Performance and experience — field promotion",status:"Pending Agency",date:"30 Mar"},
+      ].map((rc,i)=><div key={i} style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:14,marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
+          <span style={{fontSize:12.5,fontWeight:650}}>{rc.member}</span>
+          <Chip color="orange" s={{fontSize:9}}>{rc.status}</Chip>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
+          <span style={{padding:"3px 8px",background:T.g100,borderRadius:4,fontSize:11,fontWeight:550}}>{rc.from}</span>
+          <span style={{fontSize:11,color:T.g400}}>→</span>
+          <span style={{padding:"3px 8px",background:T.blueL,borderRadius:4,fontSize:11,fontWeight:550,color:T.blue}}>{rc.to}</span>
+        </div>
+        <div style={{fontSize:11.5,color:T.g600,marginBottom:8}}>{rc.reason}</div>
+        <div style={{fontSize:10.5,color:T.g400}}>Submitted: {rc.date} · Awaiting agency endorsement</div>
+      </div>)}
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8,marginTop:14}}>Completed</div>
+      {[
+        {member:"Ben Harper",from:"Crew Leader",to:"Management Support",status:"Approved",date:"25 Mar"},
+        {member:"James Morton",from:"Strike Team Leader",to:"Crew Leader",status:"Declined",date:"22 Mar"},
+      ].map((rc,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"#fff",borderRadius:8,border:`1px solid ${T.g200}`,marginBottom:6}}>
+        <div style={{flex:1}}>
+          <div style={{fontSize:12,fontWeight:600}}>{rc.member}: {rc.from} → {rc.to}</div>
+          <div style={{fontSize:10.5,color:T.g400}}>{rc.date}</div>
+        </div>
+        <Chip color={rc.status==="Approved"?"green":"coral"} s={{fontSize:9}}>{rc.status}</Chip>
+      </div>)}
+    </div>
+  </div>;
+}
+
+/* ── AREP Requests for Assistance (6.33, 6.34) ── */
+function AREPRFA(){
+  return<div>
+    <div style={{background:"linear-gradient(135deg,#8B4513,#A0522D)",padding:"16px 20px 20px"}}>
+      <div style={{color:"#fff",fontSize:17,fontWeight:700}}>Requests for Assistance</div>
+      <div style={{color:"rgba(255,255,255,.6)",fontSize:12,marginTop:2}}>Submit and manage field resource requests</div>
+    </div>
+    <div style={{padding:16}}>
+      <div style={{padding:14,background:T.blue,borderRadius:12,textAlign:"center",cursor:"pointer",marginBottom:16}}>
+        <div style={{color:"#fff",fontSize:14,fontWeight:700}}>+ New Request for Assistance</div>
+        <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:2}}>Submit an electronic request to NRSC</div>
+      </div>
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Active Requests</div>
+      {[
+        {id:"RFA-2026-003",title:"Additional chainsaw operators — Sector 4",urgency:"Urgent",status:"Under Review",date:"30 Mar 09:00",details:"2x chainsaw-certified operators needed for Sector 4 clearance. Current team capacity insufficient for fallen timber volume."},
+        {id:"RFA-2026-002",title:"Generator replacement — Base Camp",urgency:"Non-Urgent",status:"Approved",date:"29 Mar 14:00",details:"Primary generator showing faults. Replacement needed before next rotation."},
+      ].map((rfa,i)=><div key={i} style={{background:"#fff",borderRadius:10,border:`1px solid ${T.g200}`,padding:14,marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+          <span style={{fontSize:10.5,fontFamily:"'DM Mono',monospace",color:T.g400}}>{rfa.id}</span>
+          <div style={{display:"flex",gap:4}}>
+            <Chip color={rfa.urgency==="Urgent"?"coral":"gray"} s={{fontSize:9}}>{rfa.urgency}</Chip>
+            <Chip color={rfa.status==="Approved"?"green":"orange"} s={{fontSize:9}}>{rfa.status}</Chip>
+          </div>
+        </div>
+        <div style={{fontSize:12.5,fontWeight:650,marginBottom:4}}>{rfa.title}</div>
+        <div style={{fontSize:11.5,color:T.g600,marginBottom:6,lineHeight:1.5}}>{rfa.details}</div>
+        <div style={{fontSize:10.5,color:T.g400}}>Submitted: {rfa.date}</div>
+      </div>)}
+
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8,marginTop:14}}>Closed Requests</div>
+      {[
+        {id:"RFA-2026-001",title:"Medical supplies resupply",status:"Fulfilled",date:"27 Mar"},
+      ].map((rfa,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"#fff",borderRadius:8,border:`1px solid ${T.g200}`,marginBottom:6}}>
+        <div style={{flex:1}}>
+          <div style={{fontSize:12,fontWeight:600}}>{rfa.title}</div>
+          <div style={{fontSize:10.5,color:T.g400}}>{rfa.id} · {rfa.date}</div>
+        </div>
+        <Chip color="green" s={{fontSize:9}}>{rfa.status}</Chip>
+      </div>)}
     </div>
   </div>;
 }

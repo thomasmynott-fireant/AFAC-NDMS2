@@ -181,20 +181,68 @@ function NRSCAuditTab({onSelectClaim}){
    ══════════════════════════════════════════ */
 function ReconciliationTab(){
   const[deploy,setDeploy]=useState("Northern Rivers Flood");
+  const[showInvoice,setShowInvoice]=useState(false);
   return <div style={{padding:"20px 32px"}}>
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
       <div style={{display:"flex",gap:8}}>
         {["Northern Rivers Flood","Canada 2025 Wildfire","Darwin Support"].map(d=><button key={d} onClick={()=>setDeploy(d)} style={{padding:"6px 14px",borderRadius:6,fontSize:12,fontWeight:550,cursor:"pointer",border:`1px solid ${deploy===d?T.blue:T.g300}`,background:deploy===d?T.blueL:"#fff",color:deploy===d?T.blue:T.navy,fontFamily:"inherit"}}>{d}</button>)}
       </div>
-      <div style={{display:"flex",gap:8}}><Btn v="secondary">Export Invoice Pack</Btn><Btn v="primary">Generate Reconciliation</Btn></div>
+      <div style={{display:"flex",gap:8}}><Btn v="secondary" onClick={()=>setShowInvoice(!showInvoice)}>{showInvoice?"Close Invoice":"Generate Invoice"}</Btn><Btn v="primary">Export Reconciliation Pack</Btn></div>
     </div>
+
+    {showInvoice&&<div style={{background:"#fff",border:`2px solid ${T.blue}30`,borderRadius:10,padding:20,marginBottom:20}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <div><div style={{fontSize:16,fontWeight:700}}>Invoice Generation</div><div style={{fontSize:12,color:T.g500}}>Generate billing invoice for {deploy}</div></div>
+        <Chip color="orange">Draft</Chip>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,marginBottom:16}}>
+        <div style={{padding:"12px 16px",background:T.g50,borderRadius:8,border:`1px solid ${T.g200}`}}>
+          {[["Invoice Ref","INV-AFAC-NR-2025-003"],["Billing Entity","AFAC NRSC"],["Currency","AUD"],["Invoice Date",new Date().toLocaleDateString("en-AU")]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"4px 0",fontSize:12}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550}}>{v}</span></div>)}
+        </div>
+        <div style={{padding:"12px 16px",background:T.g50,borderRadius:8,border:`1px solid ${T.g200}`}}>
+          {[["Receiving","NSW Government"],["Period","14 Mar – 14 Apr 2026"],["Prepared by","Jessica Walsh"],["Status","Draft"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"4px 0",fontSize:12}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550}}>{v}</span></div>)}
+        </div>
+        <div style={{padding:"12px 16px",background:T.blueL,borderRadius:8,border:`1px solid ${T.blue}30`}}>
+          <div style={{fontSize:10.5,color:T.blue,fontWeight:600,textTransform:"uppercase",letterSpacing:.3,marginBottom:8}}>Invoice Total</div>
+          <div style={{fontSize:28,fontWeight:700,color:T.blue}}>$284,900</div>
+          <div style={{fontSize:11,color:T.g500,marginTop:4}}>64 claims · 6 jurisdictions</div>
+        </div>
+      </div>
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Line Items</div>
+      <table style={{width:"100%",borderCollapse:"collapse",marginBottom:16}}><thead><tr><TH>Category</TH><TH>Claims</TH><TH>Gross</TH><TH>Adjustments</TH><TH>Net</TH></tr></thead>
+        <tbody>{[
+          {cat:"Travel & Flights",claims:18,gross:"$102,400",adj:"-$4,200",net:"$98,200"},
+          {cat:"Accommodation",claims:22,gross:"$126,800",adj:"-$2,400",net:"$124,400"},
+          {cat:"Meals & Incidentals",claims:16,gross:"$18,600",adj:"—",net:"$18,600"},
+          {cat:"Ground Transport",claims:5,gross:"$8,400",adj:"-$100",net:"$8,300"},
+          {cat:"Communications",claims:2,gross:"$2,800",adj:"—",net:"$2,800"},
+          {cat:"Sundries",claims:1,gross:"$600",adj:"—",net:"$600"},
+        ].map((r,i)=><tr key={i}><TD fw={550}>{r.cat}</TD><TD>{r.claims}</TD><TD>{r.gross}</TD><TD>{r.adj!=="—"?<span style={{color:T.coral,fontWeight:600}}>{r.adj}</span>:<span style={{color:T.g400}}>—</span>}</TD><TD fw={600}>{r.net}</TD></tr>)}</tbody>
+      </table>
+      <div style={{fontSize:13,fontWeight:650,marginBottom:8}}>Cost-Sharing by Jurisdiction</div>
+      <table style={{width:"100%",borderCollapse:"collapse",marginBottom:16}}><thead><tr><TH>Jurisdiction</TH><TH>Personnel</TH><TH>Shared Cost</TH><TH>Share %</TH><TH>Amount Due</TH></tr></thead>
+        <tbody>{[
+          {j:"NSW (Requesting)",personnel:22,cost:"$142,450",pct:"50%",due:"$142,450"},
+          {j:"QLD (Assisting)",personnel:12,cost:"$71,225",pct:"25%",due:"$71,225"},
+          {j:"VIC (Assisting)",personnel:14,cost:"$42,735",pct:"15%",due:"$42,735"},
+          {j:"SA (Assisting)",personnel:8,cost:"$14,245",pct:"5%",due:"$14,245"},
+          {j:"International (FENZ)",personnel:4,cost:"$14,245",pct:"5%",due:"$14,245"},
+        ].map((r,i)=><tr key={i}><TD fw={550}>{r.j}</TD><TD>{r.personnel}</TD><TD>{r.cost}</TD><TD>{r.pct}</TD><TD fw={600}>{r.due}</TD></tr>)}</tbody>
+      </table>
+      <div style={{padding:"10px 14px",background:T.coralL,borderRadius:8,border:`1px solid ${T.coral}30`,marginBottom:12}}>
+        <div style={{fontSize:12,fontWeight:650,color:T.coral,marginBottom:4}}>Variance Alerts</div>
+        {["NSW accommodation $1,200 over budget threshold (3.2% variance)","International travel claims require FENZ bilateral confirmation","SA CFS — 1 claim pending exception resolution"].map((a,i)=><div key={i} style={{fontSize:11.5,color:T.g700||T.navy,padding:"3px 0"}}> • {a}</div>)}
+      </div>
+      <div style={{display:"flex",gap:8}}><Btn v="primary">Finalise & Generate PDF</Btn><Btn v="secondary">Export to Excel</Btn><Btn v="secondary">Save as Draft</Btn></div>
+    </div>}
+
     <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:12,marginBottom:20}}>
       <SCard label="Total Claims" value="64" color={T.navy}/>
       <SCard label="Approved Value" value="$62,400" color={T.green}/>
       <SCard label="Travel & Flights" value="$98,200" color={T.blue}/>
       <SCard label="Accommodation" value="$124,400" color={T.teal}/>
       <SCard label="Open Exceptions" value="3" color={T.coral}/>
-      <SCard label="Invoice Status" value="Draft" color={T.orange}/>
+      <SCard label="Invoice Status" value={showInvoice?"Draft":"Pending"} color={T.orange}/>
     </div>
     <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:20}}>
       <div>
@@ -210,6 +258,14 @@ function ReconciliationTab(){
               {j:"International",ag:"FENZ",claims:4,approved:"$10,900",travel:"$4,500",acc:"$4,000",variance:"$1,100"},
             ].map((r,i)=><tr key={i}><TD fw={600}>{r.j}</TD><TD>{r.ag}</TD><TD>{r.claims}</TD><TD fw={600}>{r.approved}</TD><TD>{r.travel}</TD><TD>{r.acc}</TD><TD>{r.variance!=="—"?<span style={{color:T.coral,fontWeight:600}}>{r.variance}</span>:<span style={{color:T.g400}}>—</span>}</TD></tr>)}</tbody>
           </table>
+        </div>
+        <div style={{background:"#fff",border:`1px solid ${T.g200}`,borderRadius:8,overflow:"hidden",marginBottom:16}}>
+          <div style={{padding:"13px 18px",borderBottom:`1px solid ${T.g200}`,fontWeight:650,fontSize:14}}>Cross-Deployment Cost Comparison</div>
+          <div style={{padding:"14px 18px"}}>
+            {[{name:"Northern Rivers Flood",cost:"$284,900",perPerson:"$4,190/person",perDay:"$20,350/day",c:T.blue},{name:"Canada 2025 Wildfire",cost:"$412,600",perPerson:"$12,503/person",perDay:"$14,736/day",c:T.teal},{name:"Darwin Support 2025/26",cost:"$89,200",perPerson:"$7,433/person",perDay:"$4,248/day",c:T.orange}].map((d,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:14,padding:"10px 0",borderBottom:i<2?`1px solid ${T.g100}`:"none"}}>
+              <div style={{width:8,height:8,borderRadius:"50%",background:d.c,flexShrink:0}}/><span style={{fontSize:12.5,fontWeight:600,flex:1}}>{d.name}</span><span style={{fontSize:12,fontWeight:600,width:80,textAlign:"right"}}>{d.cost}</span><span style={{fontSize:11,color:T.g500,width:100,textAlign:"right"}}>{d.perPerson}</span><span style={{fontSize:11,color:T.g500,width:90,textAlign:"right"}}>{d.perDay}</span>
+            </div>)}
+          </div>
         </div>
         <div style={{background:"#fff",border:`1px solid ${T.g200}`,borderRadius:8,overflow:"hidden"}}>
           <div style={{padding:"13px 18px",borderBottom:`1px solid ${T.g200}`,fontWeight:650,fontSize:14}}>Claims by Phase</div>
@@ -230,10 +286,16 @@ function ReconciliationTab(){
             {[["Invoice Reference","INV-AFAC-NR-2025-003"],["Billing Entity","AFAC NRSC"],["Receiving","NSW Government — Emergency Services"],["Period","14 Mar – 14 Apr 2026 (est.)"],["Status","Draft — awaiting final demob costs"],["Prepared by","Jessica Walsh (NRSC)"]].map(([k,v],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:`1px solid ${T.g50}`}}><span style={{color:T.g500}}>{k}</span><span style={{fontWeight:550,textAlign:"right",maxWidth:140}}>{v}</span></div>)}
           </div>
         </div>
+        <div style={{background:"#fff",border:`1px solid ${T.g200}`,borderRadius:8,overflow:"hidden",marginBottom:16}}>
+          <div style={{padding:"13px 18px",borderBottom:`1px solid ${T.g200}`,fontWeight:650,fontSize:14}}>Travel Calculator</div>
+          <div style={{padding:"14px 18px"}}>
+            {[{label:"Distance",value:"420 km",desc:"Round trip Brisbane → Lismore"},{label:"Rate",value:"$0.85/km",desc:"ATO approved rate 2025/26"},{label:"Estimated",value:"$357.00",desc:"Per claimant mileage total"},{label:"Actual avg.",value:"$312.40",desc:"Avg. submitted across 8 claims"}].map((f,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:i<3?`1px solid ${T.g100}`:"none"}}><div><div style={{fontSize:12,fontWeight:550}}>{f.label}</div><div style={{fontSize:10.5,color:T.g400}}>{f.desc}</div></div><span style={{fontWeight:600,fontSize:12.5}}>{f.value}</span></div>)}
+          </div>
+        </div>
         <div style={{background:"#fff",border:`1px solid ${T.g200}`,borderRadius:8,overflow:"hidden"}}>
           <div style={{padding:"13px 18px",borderBottom:`1px solid ${T.g200}`,fontWeight:650,fontSize:14}}>Pack Checklist</div>
           <div style={{padding:"14px 18px"}}>
-            {[{item:"All claims audited",done:false},{item:"Travel costs reconciled",done:true},{item:"Accommodation verified",done:true},{item:"Exceptions resolved",done:false},{item:"Invoice notes complete",done:false}].map((c,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"5px 0",fontSize:12.5}}>
+            {[{item:"All claims audited",done:false},{item:"Travel costs reconciled",done:true},{item:"Accommodation verified",done:true},{item:"Exceptions resolved",done:false},{item:"Invoice notes complete",done:false},{item:"Cost-sharing confirmed",done:false}].map((c,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"5px 0",fontSize:12.5}}>
               <span style={{width:18,height:18,borderRadius:4,border:`1.5px solid ${c.done?T.green:T.g300}`,background:c.done?T.greenL:"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,color:T.green}}>{c.done&&"✓"}</span>
               <span style={{color:c.done?T.g600:T.navy,fontWeight:c.done?400:550}}>{c.item}</span>
             </div>)}
