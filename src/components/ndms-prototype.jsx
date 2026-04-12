@@ -674,6 +674,8 @@ function TeamMemberHome({ deploymentOnly = false }) {
   const [drawer, setDrawer] = useState(null);
   const [eoiRequest, setEoiRequest] = useState(null);
   const [eoiStep, setEoiStep] = useState(0); // 0=review, 1=confirm, 2=submitted
+  const [submittedEois, setSubmittedEois] = useState([]);
+  const [eoiManageRequest, setEoiManageRequest] = useState(null); // for modify/withdraw from readiness
 
   const ELIGIBLE_REQUESTS = [
     { id: "REQ-2026-014", title: "SA Bushfire Support — Kangaroo Island", type: "Interstate", state: "SA", roles: ["Crew Leader", "Strike Team Leader"], personnel: 24, closes: "15 Apr 2026", status: "Open", urgency: "high", deployment: "14-day rotation", briefing: "Bushfire suppression support across KI. Ground crews needed for containment and mop-up operations. Terrain is rugged coastal bushland with limited vehicle access. Crews will operate in 12-hour shifts with overnight rest at base camp.", eligibility: ["Interstate Ready", "Crew Leader or Strike Team Leader", "Medical fitness current", "Code of Conduct signed"], attachments: [
@@ -754,18 +756,40 @@ function TeamMemberHome({ deploymentOnly = false }) {
                   </div>
                 ))}
               </div>
+
+              {/* Submitted EOIs summary on My Readiness (2.16) */}
+              {submittedEois.length > 0 && <>
+                <div style={{ borderTop: `1px solid ${T.g100}`, paddingTop: 10, marginTop: 10 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>My EOI Submissions ({submittedEois.length})</div>
+                  {submittedEois.map((eoi, i) => (
+                    <div key={i} style={{ padding: "8px 10px", border: `1px solid ${T.g200}`, borderRadius: 6, marginBottom: 6, borderLeft: `3px solid ${T.blue}` }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <span style={{ fontSize: 12, fontWeight: 600 }}>{eoi.title}</span>
+                        <Chip color="teal">Pending Review</Chip>
+                      </div>
+                      <div style={{ fontSize: 10.5, color: T.g500, marginBottom: 6 }}>{eoi.id} · {eoi.roles[0]} · Submitted just now</div>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <span style={{ fontSize: 10.5, color: T.blue, fontWeight: 600, cursor: "pointer" }} onClick={() => { setEoiRequest(eoi); setEoiStep(1); setDrawer("eoi"); }}>Modify →</span>
+                        <span style={{ fontSize: 10.5, color: T.coral, fontWeight: 600, cursor: "pointer" }} onClick={() => { if(confirm("Withdraw this EOI?")) setSubmittedEois(submittedEois.filter(e => e.id !== eoi.id)); }}>Withdraw</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>}
             </Card>
 
             {/* ── Zone B: Available Requests (EOI) ── */}
             <Card style={{ marginTop: 16 }}>
               <SH right={<Chip color="blue">{ELIGIBLE_REQUESTS.length} eligible</Chip>}>Available Requests</SH>
               <div style={{ fontSize: 11.5, color: T.g500, marginBottom: 12 }}>Deployment requests matching your roles and readiness. Submit an EOI to express interest.</div>
-              {ELIGIBLE_REQUESTS.map((req, i) => (
-                <div key={i} onClick={() => { setEoiRequest(req); setEoiStep(0); setDrawer("eoi"); }} style={{
+              {ELIGIBLE_REQUESTS.map((req, i) => {
+                const alreadySubmitted = submittedEois.some(e => e.id === req.id);
+                return (
+                <div key={i} onClick={() => { if (!alreadySubmitted) { setEoiRequest(req); setEoiStep(0); setDrawer("eoi"); } }} style={{
                   display: "flex", alignItems: "center", gap: 12, padding: "10px 12px",
-                  border: `1px solid ${T.g200}`, borderRadius: 8, marginBottom: 8, cursor: "pointer",
-                  borderLeft: `3px solid ${req.urgency === "high" ? T.coral : T.blue}`,
-                  transition: "background .12s",
+                  border: `1px solid ${T.g200}`, borderRadius: 8, marginBottom: 8, cursor: alreadySubmitted ? "default" : "pointer",
+                  borderLeft: `3px solid ${alreadySubmitted ? T.green : req.urgency === "high" ? T.coral : T.blue}`,
+                  transition: "background .12s", opacity: alreadySubmitted ? 0.7 : 1,
                 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
@@ -778,11 +802,14 @@ function TeamMemberHome({ deploymentOnly = false }) {
                     <div style={{ fontSize: 11, color: T.g400, marginTop: 4 }}>Closes {req.closes} · Matching roles: {req.roles.join(", ")}</div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
-                    <Chip color={req.urgency === "high" ? "orange" : "teal"}>{req.urgency === "high" ? "Urgent" : "Standard"}</Chip>
-                    <span style={{ fontSize: 11, color: T.blue, fontWeight: 600 }}>Submit EOI →</span>
+                    {alreadySubmitted
+                      ? <Chip color="green">EOI Submitted</Chip>
+                      : <><Chip color={req.urgency === "high" ? "orange" : "teal"}>{req.urgency === "high" ? "Urgent" : "Standard"}</Chip>
+                        <span style={{ fontSize: 11, color: T.blue, fontWeight: 600 }}>Submit EOI →</span></>}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </Card>
             </>}
 
@@ -950,13 +977,30 @@ function TeamMemberHome({ deploymentOnly = false }) {
                 </div>
               </div>
               <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>EOI Status</div>
-              <div style={{ padding: "10px 12px", border: `1px solid ${T.g200}`, borderRadius: 6, marginBottom: 14 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 13, fontWeight: 600 }}>Interstate EOI</span>
-                  <Chip color="teal">Under Review</Chip>
+
+              {/* Dynamic submitted EOIs */}
+              {submittedEois.length > 0 ? submittedEois.map((eoi, idx) => (
+                <div key={idx} style={{ padding: "10px 12px", border: `1px solid ${T.g200}`, borderRadius: 6, marginBottom: 8, borderLeft: `3px solid ${T.blue}` }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 13, fontWeight: 600 }}>{eoi.title}</span>
+                    <Chip color="teal">Pending Review</Chip>
+                  </div>
+                  <div style={{ fontSize: 11.5, color: T.g500, marginTop: 2 }}>{eoi.id} · {eoi.roles[0]} · Submitted just now</div>
+                  <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                    <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", fontSize: 11 }} onClick={() => { setEoiRequest(eoi); setEoiStep(1); setDrawer("eoi"); }}>Modify EOI</Btn>
+                    <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", fontSize: 11, color: T.coral, borderColor: `${T.coral}40` }} onClick={() => { if(confirm("Withdraw this EOI submission?")) setSubmittedEois(submittedEois.filter(e => e.id !== eoi.id)); }}>Withdraw EOI</Btn>
+                  </div>
+                  <div style={{ marginTop: 6, fontSize: 10, color: T.g400, textAlign: "center" }}>You can modify or withdraw until {eoi.closes} or until accepted</div>
                 </div>
-                <div style={{ fontSize: 11.5, color: T.g500, marginTop: 2 }}>Submitted 15 Jan 2026 · QLD QFES</div>
-              </div>
+              )) : (
+                <div style={{ padding: "10px 12px", border: `1px solid ${T.g200}`, borderRadius: 6, marginBottom: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 13, fontWeight: 600 }}>No active EOIs</span>
+                    <Chip color="gray">None</Chip>
+                  </div>
+                  <div style={{ fontSize: 11.5, color: T.g500, marginTop: 2 }}>Submit an EOI from the Available Requests section</div>
+                </div>
+              )}
               <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Readiness Checklist</div>
               {[
                 { done: true, text: "Profile complete" },
@@ -1144,12 +1188,20 @@ function TeamMemberHome({ deploymentOnly = false }) {
                     <span style={{ fontWeight: 550 }}>{v}</span>
                   </div>
                 ))}
-                <Btn variant="primary" style={{ width: "100%", justifyContent: "center", marginTop: 16 }} onClick={() => { setDrawer(null); setEoiRequest(null); setEoiStep(0); }}>Done — Return to Home</Btn>
+                <Btn variant="primary" style={{ width: "100%", justifyContent: "center", marginTop: 16 }} onClick={() => {
+                  if (!submittedEois.some(e => e.id === eoiRequest.id)) {
+                    setSubmittedEois([...submittedEois, eoiRequest]);
+                  }
+                  setDrawer(null); setEoiRequest(null); setEoiStep(0);
+                }}>Done — Return to Home</Btn>
 
                 {/* EOI Withdrawal & Modify (2.16) */}
                 <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
                   <Btn variant="secondary" style={{ flex: 1, justifyContent: "center" }} onClick={() => setEoiStep(1)}>Modify EOI</Btn>
-                  <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", color: "#E65A46", borderColor: "#E65A4640" }}>Withdraw EOI</Btn>
+                  <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", color: "#E65A46", borderColor: "#E65A4640" }} onClick={() => {
+                    setSubmittedEois(submittedEois.filter(e => e.id !== eoiRequest.id));
+                    setDrawer(null); setEoiRequest(null); setEoiStep(0);
+                  }}>Withdraw EOI</Btn>
                 </div>
                 <div style={{ marginTop: 6, padding: "6px 10px", background: T.g50, borderRadius: 6, fontSize: 10.5, color: T.g500, textAlign: "center" }}>You can modify or withdraw your EOI until the closing date or until it has been accepted by NRSC.</div>
               </>}
