@@ -390,7 +390,7 @@ function LiveOpsLog() {
    DEPLOYMENT DETAIL — Personnel, Welfare, SitReps, Rostering
    ═══════════════════════════════════════════════ */
 function DeploymentDetail({ deployment, onBack }) {
-  const tabs = ["Personnel", "Welfare", "SitReps", "Rostering"];
+  const tabs = ["Personnel", "Welfare", "SitReps", "Rostering", "Inbound", "Transfers"];
   const [tab, setTab] = useState(tabs[0]);
   const dep = deployment;
   const progress = dep.totalDays > 0 ? (dep.completedDays / dep.totalDays * 100) : 0;
@@ -453,6 +453,8 @@ function DeploymentDetail({ deployment, onBack }) {
     {tab === "Welfare" && <WelfareDetail />}
     {tab === "SitReps" && <SitRepsDetail />}
     {tab === "Rostering" && <RosteringDetail dep={dep} />}
+    {tab === "Inbound" && <InboundDetail dep={dep} />}
+    {tab === "Transfers" && <TransfersDetail />}
   </div>;
 }
 
@@ -647,6 +649,169 @@ function RosteringDetail({ dep }) {
           );
         })}
       </div>
+    </div>
+  </>;
+}
+
+/* ─── Inbound International Rotations (3.15) + Manifest-to-Logistics (3.18) ─── */
+function InboundDetail({ dep }) {
+  const inbound = [
+    { name: "Sarah Whitfield", init: "SW", country: "New Zealand", agency: "FENZ", role: "Strike Team Leader", arrivalDate: "4 Apr 2026", flight: "NZ103 → SYD → LIS", visa: "eVisitor Active", passport: "Valid to Mar 2030", dietary: "Vegetarian", medical: "None", status: "Confirmed", c: "#1FB6C9" },
+    { name: "James Cook", init: "JC", country: "Canada", agency: "BC Wildfire Service", role: "Air Operations", arrivalDate: "5 Apr 2026", flight: "AC035 → SYD → LIS", visa: "ETA Approved", passport: "Valid to Sep 2028", dietary: "Gluten-Free", medical: "EpiPen carrier", status: "Confirmed", c: "#E65A46" },
+    { name: "Maria Santos", init: "MS", country: "USA", agency: "USFS", role: "Crew Leader", arrivalDate: "6 Apr 2026", flight: "UA839 → MEL → LIS", visa: "ETA Pending", passport: "Valid to Jul 2029", dietary: "None", medical: "None", status: "Pending Visa", c: "#F08A27" },
+    { name: "Tane Heke", init: "TH", country: "New Zealand", agency: "FENZ", role: "Crew Leader", arrivalDate: "4 Apr 2026", flight: "NZ103 → SYD → LIS", visa: "eVisitor Active", passport: "Valid to Nov 2031", dietary: "Halal", medical: "None", status: "Confirmed", c: "#6C5CE7" },
+  ];
+
+  return <>
+    <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+      {[
+        { l: "Inbound Personnel", v: inbound.length, c: T.teal },
+        { l: "Countries", v: 3, c: T.blue },
+        { l: "Visa Cleared", v: inbound.filter(p => p.status === "Confirmed").length, c: T.green },
+        { l: "Visa Pending", v: inbound.filter(p => p.status !== "Confirmed").length, c: T.orange },
+      ].map((s, i) => (
+        <div key={i} style={{ flex: 1, background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ width: 8, height: 8, borderRadius: "50%", background: s.c }} />
+          <span style={{ fontSize: 12, color: T.g600 }}>{s.l}</span>
+          <span style={{ marginLeft: "auto", fontWeight: 700, fontSize: 16 }}>{s.v}</span>
+        </div>
+      ))}
+    </div>
+
+    <div style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, overflow: "hidden", marginBottom: 16 }}>
+      <div style={{ padding: "13px 18px", borderBottom: `1px solid ${T.g200}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontWeight: 650, fontSize: 14 }}>Inbound International Personnel</span>
+        <Btn v="primary" s={{ fontSize: 11, padding: "5px 14px" }}>+ Add Inbound Personnel</Btn>
+      </div>
+      {inbound.map((p, i) => (
+        <div key={i} style={{ padding: "14px 18px", borderBottom: i < inbound.length - 1 ? `1px solid ${T.g100}` : "none" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <Avatar i={p.init} c={p.c} s={30} />
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 650 }}>{p.name}</span>
+                <Chip color={p.status === "Confirmed" ? "green" : "orange"}>{p.status}</Chip>
+              </div>
+              <div style={{ fontSize: 11.5, color: T.g500 }}>{p.role} · {p.agency} ({p.country})</div>
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, fontSize: 11.5 }}>
+            {[
+              ["Arrival", p.arrivalDate],
+              ["Flight", p.flight],
+              ["Visa", p.visa],
+              ["Passport", p.passport],
+            ].map(([k, v], fi) => (
+              <div key={fi} style={{ padding: "4px 8px", background: T.g50, borderRadius: 4 }}>
+                <div style={{ fontSize: 9.5, color: T.g400, textTransform: "uppercase", letterSpacing: .3 }}>{k}</div>
+                <div style={{ fontWeight: 550, marginTop: 1 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+          {/* Manifest-to-logistics sync (3.18) */}
+          <div style={{ display: "flex", gap: 8, marginTop: 6, fontSize: 11 }}>
+            <span style={{ padding: "2px 8px", background: p.dietary !== "None" ? T.orangeL : T.g100, borderRadius: 4, fontWeight: 550, color: p.dietary !== "None" ? "#c06e15" : T.g500 }}>Dietary: {p.dietary}</span>
+            <span style={{ padding: "2px 8px", background: p.medical !== "None" ? T.coralL : T.g100, borderRadius: 4, fontWeight: 550, color: p.medical !== "None" ? T.coral : T.g500 }}>Medical: {p.medical}</span>
+            <span style={{ marginLeft: "auto", color: T.blue, fontWeight: 600, cursor: "pointer" }}>View Full Profile →</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Logistics Sync Summary (3.18) */}
+    <div style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, overflow: "hidden" }}>
+      <div style={{ padding: "13px 18px", borderBottom: `1px solid ${T.g200}`, fontWeight: 650, fontSize: 14 }}>Logistics Requirements (auto-synced from manifest)</div>
+      <div style={{ padding: "14px 18px" }}>
+        {[
+          { cat: "Accommodation", detail: "4 rooms required · ETA 4–6 Apr · Lismore Gateway Motel", synced: true },
+          { cat: "Dietary Requirements", detail: "1× Vegetarian, 1× Halal, 1× Gluten-Free, 1× Standard", synced: true },
+          { cat: "Medical", detail: "1 personnel requires EpiPen access — notify base camp medic", synced: true },
+          { cat: "Ground Transport", detail: "Airport pickup SYD→LIS shuttle × 2 days, MEL→LIS shuttle × 1 day", synced: false },
+          { cat: "PPE / Equipment", detail: "4× standard kit packs — pre-staged at Lismore depot", synced: true },
+        ].map((r, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: i < 4 ? `1px solid ${T.g100}` : "none" }}>
+            <div style={{ width: 18, height: 18, borderRadius: 4, border: `1.5px solid ${r.synced ? T.green : T.orange}`, background: r.synced ? T.greenL : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: T.green, flexShrink: 0 }}>{r.synced && "✓"}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 600 }}>{r.cat}</div>
+              <div style={{ fontSize: 11.5, color: T.g500 }}>{r.detail}</div>
+            </div>
+            <Chip color={r.synced ? "green" : "orange"} s={{ fontSize: 9 }}>{r.synced ? "Synced" : "Pending"}</Chip>
+          </div>
+        ))}
+      </div>
+    </div>
+  </>;
+}
+
+/* ─── Cross-Deployment Transfers (2.44) ─── */
+function TransfersDetail() {
+  const transfers = [
+    { name: "Hugo Bennett", init: "HB", from: "Canada 2025 Wildfire", to: "Northern Rivers Flood", role: "Management Support", reason: "Canada ops winding down — skills needed at Northern Rivers", status: "Pending Approval", requestedBy: "Mark Sullivan (AREP)", date: "30 Mar 2026", c: "#6C5CE7" },
+  ];
+  return <>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+      <div style={{ display: "flex", gap: 10 }}>
+        {[
+          { l: "Pending Transfers", v: 1, c: T.orange },
+          { l: "Completed This Rotation", v: 2, c: T.green },
+        ].map((s, i) => (
+          <div key={i} style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 6, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: s.c }} />
+            <span style={{ fontSize: 12, color: T.g600 }}>{s.l}</span>
+            <span style={{ fontWeight: 700, fontSize: 16, marginLeft: 6 }}>{s.v}</span>
+          </div>
+        ))}
+      </div>
+      <Btn v="primary" s={{ fontSize: 12 }}>+ New Transfer Request</Btn>
+    </div>
+
+    <div style={{ fontSize: 13, fontWeight: 650, marginBottom: 10 }}>Pending Transfer Requests</div>
+    {transfers.map((t, i) => (
+      <div key={i} style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, padding: "16px 20px", marginBottom: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <Avatar i={t.init} c={t.c} s={32} />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 650 }}>{t.name}</div>
+            <div style={{ fontSize: 12, color: T.g500 }}>{t.role}</div>
+          </div>
+          <Chip color="orange">{t.status}</Chip>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+          <span style={{ padding: "5px 12px", background: T.g100, borderRadius: 6, fontSize: 12, fontWeight: 550 }}>{t.from}</span>
+          <span style={{ fontSize: 14, color: T.g400 }}>→</span>
+          <span style={{ padding: "5px 12px", background: T.blueL, borderRadius: 6, fontSize: 12, fontWeight: 550, color: T.blue }}>{t.to}</span>
+        </div>
+        <div style={{ fontSize: 12.5, color: T.g600, marginBottom: 8, lineHeight: 1.5 }}>{t.reason}</div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: 11, color: T.g400 }}>Requested by {t.requestedBy} · {t.date}</span>
+          <div style={{ display: "flex", gap: 6 }}>
+            <Btn v="primary" s={{ fontSize: 11, padding: "4px 14px" }}>Approve</Btn>
+            <Btn v="secondary" s={{ fontSize: 11, padding: "4px 14px" }}>Decline</Btn>
+          </div>
+        </div>
+      </div>
+    ))}
+
+    <div style={{ fontSize: 13, fontWeight: 650, marginBottom: 10, marginTop: 16 }}>Completed Transfers</div>
+    <div style={{ background: T.white, border: `1px solid ${T.g200}`, borderRadius: 8, overflow: "hidden" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead><tr><TH>Name</TH><TH>From</TH><TH>To</TH><TH>Role</TH><TH>Date</TH><TH>Status</TH></tr></thead>
+        <tbody>
+          {[
+            { name: "Priya Nandan", from: "Canada 2025", to: "Northern Rivers", role: "Crew Leader", date: "28 Mar", status: "Completed" },
+            { name: "Sam Ortega", from: "Darwin Support", to: "Northern Rivers", role: "Crew Leader", date: "20 Mar", status: "Completed" },
+          ].map((t, i) => (
+            <tr key={i}>
+              <TD fw={600}>{t.name}</TD>
+              <TD>{t.from}</TD>
+              <TD>{t.to}</TD>
+              <TD>{t.role}</TD>
+              <TD>{t.date}</TD>
+              <TD><Chip color="green">{t.status}</Chip></TD>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   </>;
 }

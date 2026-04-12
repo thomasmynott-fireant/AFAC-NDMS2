@@ -1084,6 +1084,24 @@ function TeamMemberHome({ deploymentOnly = false }) {
                 </div>
                 <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Availability Dates</div>
                 <div style={{ padding: "10px 14px", background: T.g50, border: `1px solid ${T.g200}`, borderRadius: 8, fontSize: 13, color: T.g600, marginBottom: 14 }}>Available from earliest deployment date</div>
+
+                {/* Deployment Preferences (2.24) */}
+                <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Deployment Preferences</div>
+                <div style={{ background: T.g50, border: `1px solid ${T.g200}`, borderRadius: 8, padding: 12, marginBottom: 14 }}>
+                  {[
+                    { label: "Accommodation", value: "No preference", options: "Hotel / Motel / Shared / Camp / No preference" },
+                    { label: "Dietary Requirements", value: "None", options: "None / Vegetarian / Vegan / Halal / Kosher / Gluten-Free / Other" },
+                    { label: "Travel Preference", value: "Fly", options: "Fly / Self-drive / Agency vehicle / No preference" },
+                    { label: "Medical Conditions", value: "None declared", options: "Free-text or None declared" },
+                    { label: "Deployment Duration", value: "Full rotation", options: "Full rotation / Partial — specify dates / Flexible" },
+                  ].map((pref, i) => (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: i < 4 ? `1px solid ${T.g200}` : "none" }}>
+                      <span style={{ fontSize: 12, color: T.g600 }}>{pref.label}</span>
+                      <span style={{ fontSize: 12, fontWeight: 550, color: T.navy, padding: "3px 10px", background: "#fff", borderRadius: 4, border: `1px solid ${T.g200}`, cursor: "pointer" }}>{pref.value} ▾</span>
+                    </div>
+                  ))}
+                </div>
+
                 <div style={{ fontSize: 10.5, fontWeight: 600, color: T.g400, textTransform: "uppercase", letterSpacing: .5, marginBottom: 8 }}>Notes to Reviewer (optional)</div>
                 <div style={{ padding: "10px 14px", background: "#fff", border: `1px solid ${T.g200}`, borderRadius: 8, fontSize: 12.5, color: T.g400, minHeight: 50, marginBottom: 16 }}>Add any additional information…</div>
                 <div style={{ display: "flex", gap: 8 }}>
@@ -1127,6 +1145,13 @@ function TeamMemberHome({ deploymentOnly = false }) {
                   </div>
                 ))}
                 <Btn variant="primary" style={{ width: "100%", justifyContent: "center", marginTop: 16 }} onClick={() => { setDrawer(null); setEoiRequest(null); setEoiStep(0); }}>Done — Return to Home</Btn>
+
+                {/* EOI Withdrawal & Modify (2.16) */}
+                <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
+                  <Btn variant="secondary" style={{ flex: 1, justifyContent: "center" }} onClick={() => setEoiStep(1)}>Modify EOI</Btn>
+                  <Btn variant="secondary" style={{ flex: 1, justifyContent: "center", color: "#E65A46", borderColor: "#E65A4640" }}>Withdraw EOI</Btn>
+                </div>
+                <div style={{ marginTop: 6, padding: "6px 10px", background: T.g50, borderRadius: 6, fontSize: 10.5, color: T.g500, textAlign: "center" }}>You can modify or withdraw your EOI until the closing date or until it has been accepted by NRSC.</div>
               </>}
             </>}
 

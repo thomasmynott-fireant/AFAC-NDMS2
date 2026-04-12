@@ -612,6 +612,34 @@ export function RequestWizard({ onClose }) {
           <Field label="Key Contact — Operations"><Input placeholder="Name and phone" /></Field>
           <Field label="Key Contact — Logistics"><Input placeholder="Name and phone" /></Field>
           <Field label="Reimbursement Notes" span={2}><textarea placeholder="Optional notes on cost recovery arrangements…" style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.g300}`, borderRadius: 6, fontSize: 13, fontFamily: "inherit", minHeight: 60, resize: "vertical", boxSizing: "border-box" }} /></Field>
+
+          {/* Resource Sharing Agreement (2.33) */}
+          <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+            <div style={{ fontSize: 13, fontWeight: 650, marginBottom: 8 }}>Resource Sharing Agreement</div>
+            <div style={{ background: T.g50, border: `1px solid ${T.g200}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <span style={{ fontSize: 12.5, fontWeight: 550 }}>Bilateral Agreement Status</span>
+                <span style={{ padding: "3px 10px", background: T.greenL, color: "#5a8a1f", borderRadius: 20, fontSize: 11, fontWeight: 550 }}>Active</span>
+              </div>
+              {[
+                ["Agreement Type", "AFAC Standard Resource Sharing"],
+                ["Parties", form.jurisdiction ? `${form.jurisdiction} ↔ ${form.receiving || 'TBC'}` : "Select jurisdictions above"],
+                ["Effective Period", "1 Jul 2025 – 30 Jun 2026"],
+                ["Cost Basis", "Standard AFAC Cost-Sharing Formula"],
+                ["Insurance", "Workers comp covered by home agency"],
+                ["Liability", "Host agency assumes operational liability"],
+              ].map(([k, v], i) => (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${T.g200}`, fontSize: 12 }}>
+                  <span style={{ color: T.g500 }}>{k}</span>
+                  <span style={{ fontWeight: 550, textAlign: "right", maxWidth: 200 }}>{v}</span>
+                </div>
+              ))}
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                <Btn v="secondary" s={{ fontSize: 11, padding: "4px 12px" }}>View Full Agreement</Btn>
+                <Btn v="secondary" s={{ fontSize: 11, padding: "4px 12px" }}>Request Amendment</Btn>
+              </div>
+            </div>
+          </div>
         </div>}
 
         {step === 5 && <div>
@@ -647,6 +675,43 @@ export function RequestWizard({ onClose }) {
           <Card title="Request Summary">
             {[["Type", form.type ? form.type.charAt(0).toUpperCase() + form.type.slice(1) : "—"], ["Incident", form.incident || "—"], ["Route", `${form.jurisdiction || "—"} → ${form.receiving || "—"}`], ["Urgency", form.urgency || "—"], ["Roles Requested", `${form.roles.length} role type(s)`], ["Generated ID", "2025_26_011XX_XXX001"]].map(([k, v], i) => <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", fontSize: 13, borderBottom: `1px solid ${T.g100}` }}><span style={{ color: T.g500 }}>{k}</span><span style={{ fontWeight: 600, fontFamily: k === "Generated ID" ? "'DM Mono',monospace" : "inherit" }}>{v}</span></div>)}
           </Card>
+
+          {/* Cost Estimate (2.50) */}
+          <Card title="Estimated Deployment Cost" s={{ marginTop: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 14 }}>
+              <div style={{ padding: "12px 14px", background: T.blueL, borderRadius: 8, border: `1px solid ${T.blue}30` }}>
+                <div style={{ fontSize: 10, color: T.blue, fontWeight: 600, textTransform: "uppercase", letterSpacing: .3 }}>Total Estimate</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: T.blue, marginTop: 2 }}>$186,400</div>
+              </div>
+              <div style={{ padding: "12px 14px", background: T.g50, borderRadius: 8, border: `1px solid ${T.g200}` }}>
+                <div style={{ fontSize: 10, color: T.g500, fontWeight: 600, textTransform: "uppercase", letterSpacing: .3 }}>Per Person/Day</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: T.navy, marginTop: 2 }}>$620</div>
+              </div>
+              <div style={{ padding: "12px 14px", background: T.g50, borderRadius: 8, border: `1px solid ${T.g200}` }}>
+                <div style={{ fontSize: 10, color: T.g500, fontWeight: 600, textTransform: "uppercase", letterSpacing: .3 }}>Confidence</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: T.orange, marginTop: 2 }}>Medium</div>
+              </div>
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Cost Breakdown</div>
+            {[
+              { cat: "Travel & Flights", est: "$42,000", basis: "Based on avg. airfare $1,400 × 30 personnel" },
+              { cat: "Accommodation", est: "$56,000", basis: "$200/night × 14 days × 20 rooms" },
+              { cat: "Meals & Incidentals", est: "$25,200", basis: "$60/day × 14 days × 30 personnel" },
+              { cat: "Ground Transport", est: "$18,000", basis: "Vehicle hire + fuel est. for 6 vehicles" },
+              { cat: "Allowances", est: "$37,800", basis: "$90/day deployment allowance × 14 days × 30" },
+              { cat: "Insurance & Admin", est: "$7,400", basis: "4% overhead on total deployment cost" },
+            ].map((c, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", padding: "6px 0", borderBottom: i < 5 ? `1px solid ${T.g100}` : "none" }}>
+                <span style={{ fontSize: 12, fontWeight: 550, width: 160 }}>{c.cat}</span>
+                <span style={{ fontSize: 12, fontWeight: 650, width: 80 }}>{c.est}</span>
+                <span style={{ fontSize: 11, color: T.g500, flex: 1 }}>{c.basis}</span>
+              </div>
+            ))}
+            <div style={{ marginTop: 10, padding: "8px 12px", background: T.orangeL, borderRadius: 6, fontSize: 11.5, color: "#c06e15" }}>
+              Estimates based on historical deployment averages. Actual costs may vary based on duration, location, and personnel numbers.
+            </div>
+          </Card>
+
           <div style={{ marginTop: 16, padding: "12px 16px", background: T.orangeL, borderRadius: 6, fontSize: 12.5, color: "#c06e15", borderLeft: `3px solid ${T.orange}` }}>
             <strong>⚠ Warnings:</strong> No personnel shortlisted yet. Manifest details incomplete. These can be completed after request creation.
           </div>
